@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0D9488">
+<title>ShiftCare</title>
+<style>
+/* ── TOKENS ──────────────────────────────── */
+:root{
+  --p:#0D9488;--pd:#0F766E;--pl:#CCFBF1;--pm:#99F6E4;
+  --bg:#F1F5F9;--s:#FFFFFF;--s2:#F8FAFC;--b:#E2E8F0;--b2:#CBD5E1;
+  --t:#0F172A;--t2:#475569;--t3:#94A3B8;
+  --red:#DC2626;--rbg:#FEF2F2;--rborder:#FECACA;
+  --org:#D97706;--obg:#FFFBEB;--oborder:#FDE68A;
+  --grn:#059669;--gbg:#ECFDF5;--gborder:#A7F3D0;
+  --rad:14px;--rads:8px;--radsm:6px;
+  --shsm:0 1px 3px rgba(0,0,0,.07);
+  --sh:0 2px 8px rgba(0,0,0,.09);
+  --shm:0 4px 16px rgba(0,0,0,.11);
+  --shl:0 10px 32px rgba(0,0,0,.14);
+}
+/* ── RESET ───────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);font-size:16px;line-height:1.5}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;transition:opacity .18s,transform .18s}
+.screen.hidden{opacity:0;pointer-events:none;transform:translateX(12px)}
+/* ── INPUTS ──────────────────────────────── */
+input,textarea,select{font-family:inherit;font-size:15px;color:var(--t);background:var(--s2);border:1.5px solid var(--b);border-radius:var(--rads);padding:10px 12px;width:100%;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
+input:focus,textarea:focus,select:focus{border-color:var(--p);background:var(--s)}
+textarea{resize:vertical;min-height:80px}
+label,.flabel{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.fi{background:var(--s);border:1.5px solid var(--b);border-radius:var(--rads);padding:10px 12px;font-size:14px;color:var(--t);outline:none;width:100%}
+.fi:focus{border-color:var(--p)}
+/* ── BUTTONS ─────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--rads);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .14s;-webkit-user-select:none;user-select:none;letter-spacing:-.01em}
+.btn-p{background:var(--p);color:#fff;padding:12px 20px;border-radius:var(--rad)}
+.btn-p:active{background:var(--pd);transform:scale(.97)}
+.btn-o{background:var(--s);border:1.5px solid var(--b);color:var(--t);padding:10px 16px}
+.btn-o:active{background:var(--s2);transform:scale(.97)}
+.btn-g{background:transparent;color:var(--t2);padding:8px 6px;border:none}
+.btn-ic{width:36px;height:36px;border-radius:50%;background:var(--s);border:1px solid var(--b);color:var(--t2);padding:0;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .14s}
+.btn-ic:active{background:var(--s2)}
+.btn-sm{padding:8px 12px;font-size:13px}
+.btn-discharge{background:none;border:none;font-size:18px;cursor:pointer;padding:4px;border-radius:var(--radsm);transition:background .14s;flex-shrink:0}
+.btn-discharge:active{background:var(--rbg)}
+.rm-btn{width:28px;height:28px;border-radius:50%;background:var(--rbg);border:1px solid var(--rborder);color:var(--red);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .14s}
+.rm-btn:active{transform:scale(.92)}
+/* ── BADGE / CHIP ────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-r{background:var(--rbg);color:var(--red);border:1px solid var(--rborder)}
+.badge-g{background:var(--gbg);color:var(--grn);border:1px solid var(--gborder)}
+.badge-t{background:var(--pl);color:var(--pd)}
+.alert-pill{background:var(--red);color:#fff;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:800}
+.dtag{display:inline-flex;align-items:center;gap:5px;background:var(--pl);color:var(--pd);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600;border:1px solid var(--pm)}
+.dtag button{background:none;border:none;color:var(--pd);cursor:pointer;font-size:14px;line-height:1;padding:0}
+/* ── CARDS ───────────────────────────────── */
+.card{background:var(--s);border-radius:var(--rad);border:1px solid var(--b);box-shadow:var(--shsm)}
+.sub-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:0;margin-bottom:12px;overflow:hidden}
+.sub-card-hdr{padding:12px 14px;font-weight:700;font-size:13px;border-bottom:1px solid var(--b);background:var(--s2);color:var(--t2);text-transform:uppercase;letter-spacing:.04em}
+/* ── LAYOUT ──────────────────────────────── */
+.scroll-y{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+.scroll-y::-webkit-scrollbar{width:2px}
+.scroll-y::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sect-lbl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+/* ── LOGO / IDENTITY ─────────────────────── */
+.logo-mark{width:40px;height:40px;border-radius:10px;background:var(--p);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:22px;height:22px}
+.app-name{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.app-name em{color:var(--p);font-style:normal}
+/* ── AGE UNIT TOGGLE ─────────────────────── */
+.age-row{display:flex;gap:8px}
+.age-row input{flex:1}
+.unit-tog{display:flex;background:var(--b);border-radius:var(--radsm);overflow:hidden;padding:2px;gap:2px;flex-shrink:0;height:44px;border:none}
+.unit-btn{padding:0 10px;border:none;background:none;font-size:12px;font-weight:700;color:var(--t2);cursor:pointer;border-radius:4px;transition:all .14s;white-space:nowrap}
+.unit-btn.active{background:var(--s);color:var(--p);box-shadow:var(--shsm)}
+
+/* ════ SETUP SCREEN ══════════════════════════════════ */
+#s-setup .wrap{max-width:500px;margin:0 auto;padding:16px 16px 40px}
+.setup-hero{text-align:center;padding:24px 0 20px}
+.logo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px}
+.logo-row .logo-mark{width:50px;height:50px;border-radius:13px}
+.setup-hero h2{font-size:19px;font-weight:700;letter-spacing:-.2px;margin-bottom:5px}
+.setup-hero p{font-size:13px;color:var(--t2)}
+.pt-item{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:var(--shsm)}
+.pti{flex:1;min-width:0}
+.pti-name{font-weight:700;font-size:15px}
+.pti-sub{font-size:12px;color:var(--t2);margin-top:2px}
+.add-form{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:16px;margin-bottom:12px;box-shadow:var(--shsm)}
+.add-form-title{font-size:14px;font-weight:700;margin-bottom:14px;color:var(--t2);text-transform:uppercase;letter-spacing:.04em}
+.diag-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;min-height:8px}
+.diag2-row{display:flex;gap:8px}
+.diag2-row input{font-size:13px;padding:8px 11px}
+
+/* ════ DASHBOARD ═════════════════════════════════════ */
+#s-dashboard{background:var(--bg)}
+.dash-header{background:var(--s);border-bottom:1px solid var(--b);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:var(--shsm)}
+.dash-logo{display:flex;align-items:center;gap:9px}
+.dash-logo .logo-mark{width:30px;height:30px;border-radius:8px}
+.dash-app-name{font-size:17px;font-weight:800;letter-spacing:-.3px}
+.dash-app-name em{color:var(--p);font-style:normal}
+.dash-sub{font-size:10px;color:var(--t3);margin-top:1px}
+.dash-right{display:flex;align-items:center;gap:8px}
+.clock-display{font-family:'SF Mono','Fira Code',monospace;font-size:14px;font-weight:700;color:var(--pd);background:var(--pl);padding:5px 10px;border-radius:var(--radsm);border:1px solid var(--pm)}
+.cards-wrap{position:relative;flex:1;overflow:hidden}
+.cards-track{display:flex;gap:14px;height:100%;padding:12px 52px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;align-items:stretch}
+.cards-track::-webkit-scrollbar{display:none}
+/* ── Patient card ──────────────── */
+.pt-card{flex:0 0 min(calc(100vw - 104px), 380px);scroll-snap-align:center;background:var(--s);border-radius:var(--rad);border:1px solid var(--b);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shm)}
+.pt-card.has-alert{border-color:var(--red);border-width:2px}
+.pt-card.is-discharged{opacity:.55}
+.pc-hdr{background:linear-gradient(135deg,var(--pd) 0%,var(--p) 100%);padding:15px;color:#fff;flex-shrink:0}
+.pc-name{font-size:20px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px}
+.pc-meta{font-size:11px;opacity:.88;display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.pc-diag{margin-top:8px;font-size:12px;font-weight:700;opacity:.95;background:rgba(255,255,255,.15);border-radius:6px;padding:3px 8px;display:inline-block}
+.pc-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pc-sect{padding:10px 12px;border-bottom:1px solid var(--b)}
+.pc-sect:last-child{border-bottom:none}
+.pc-foot{padding:10px;border-top:1px solid var(--b);flex-shrink:0}
+/* Vitals row in card (compact) */
+.vt-row{display:flex;gap:5px;flex-wrap:wrap}
+.vt-chip{background:var(--s2);border:1.5px solid transparent;border-radius:var(--radsm);padding:4px 7px;text-align:center;min-width:48px;transition:all .2s}
+.vt-chip.ok{border-color:var(--grn);background:var(--gbg)}
+.vt-chip.warn{border-color:var(--org);background:var(--obg)}
+.vt-chip.alrt{border-color:var(--red);background:var(--rbg)}
+.vc-lbl2{display:block;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
+.vc-val2{display:block;font-size:13px;font-weight:800;color:var(--t)}
+.vt-chip.ok .vc-val2{color:var(--grn)}
+.vt-chip.warn .vc-val2{color:var(--org)}
+.vt-chip.alrt .vc-val2{color:var(--red)}
+.task-prog{display:flex;align-items:center;gap:9px}
+.prog-bar{flex:1;height:5px;background:var(--b);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--p);border-radius:3px;transition:width .3s}
+.prog-txt{font-size:12px;font-weight:700;color:var(--t2);white-space:nowrap}
+.alert-ban{background:var(--rbg);border-left:3px solid var(--red);padding:8px 12px;margin:8px;border-radius:var(--radsm);font-size:11px;font-weight:700;color:var(--red)}
+.nav-arr{position:absolute;top:50%;transform:translateY(-50%);z-index:50;width:42px;height:42px;border-radius:50%;background:var(--s);border:1px solid var(--b);box-shadow:var(--shm);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--t);transition:all .14s;-webkit-user-select:none;user-select:none}
+.nav-arr:active{transform:translateY(-50%) scale(.91)}
+.nav-l{left:5px}
+.nav-r{right:5px}
+.fab{position:fixed;bottom:18px;right:15px;width:50px;height:50px;border-radius:50%;background:var(--p);color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:var(--shl);display:flex;align-items:center;justify-content:center;z-index:100;transition:all .14s}
+.fab:active{transform:scale(.92);background:var(--pd)}
+
+/* ════ DETAIL SCREEN ═════════════════════════════════ */
+#s-detail{background:var(--bg)}
+.det-hdr{background:var(--s);border-bottom:1px solid var(--b);padding:10px 13px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:var(--shsm)}
+.det-name{font-size:15px;font-weight:800;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
+.tab-bar{background:var(--s);border-bottom:1px solid var(--b);display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-item{flex:0 0 auto;padding:10px 14px;text-align:center;font-size:11px;font-weight:700;color:var(--t3);border-bottom:2.5px solid transparent;cursor:pointer;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em;transition:all .15s}
+.tab-item.active{color:var(--p);border-bottom-color:var(--p)}
+.tab-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.tab-body::-webkit-scrollbar{width:2px}
+.tab-body::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.tab-pane{display:none;padding:14px}
+.tab-pane.active{display:block}
+/* Sub-tabs (cuidados, medication) */
+.subtab-bar{display:flex;background:var(--s2);border:1px solid var(--b);border-radius:var(--rads);padding:3px;gap:3px;margin-bottom:13px}
+.subtab-btn{flex:1;padding:8px 6px;border:none;background:none;font-size:12px;font-weight:700;color:var(--t2);cursor:pointer;border-radius:var(--radsm);transition:all .14s;text-align:center;text-transform:uppercase;letter-spacing:.03em}
+.subtab-btn.active{background:var(--s);color:var(--p);box-shadow:var(--shsm)}
+
+/* ── Vitals full grid ─────────── */
+.vt-full-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.vc{background:var(--s);border:1.5px solid var(--b);border-radius:var(--rad);padding:12px;transition:border-color .18s,background .18s}
+.vc.ok{border-color:var(--grn)}
+.vc.warn{border-color:var(--org);background:var(--obg)}
+.vc.alrt{border-color:var(--red);background:var(--rbg)}
+.vc-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px}
+.vc-inp{border:none;background:none;font-size:26px;font-weight:800;width:100%;padding:0;color:var(--t);font-family:inherit;letter-spacing:-.5px;outline:none}
+.vc.ok .vc-inp{color:var(--grn)}
+.vc.warn .vc-inp{color:var(--org)}
+.vc.alrt .vc-inp{color:var(--red)}
+.vc-foot{display:flex;justify-content:space-between;margin-top:4px}
+.vc-unit,.vc-range{font-size:9px;color:var(--t3)}
+
+/* ── Tasks ────────────────────── */
+.task-it{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--b)}
+.task-it:last-of-type{border-bottom:none}
+.task-chk{width:21px;height:21px;min-width:21px;border:2px solid var(--b2);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .14s;flex-shrink:0}
+.task-chk.done{background:var(--grn);border-color:var(--grn)}
+.task-lbl{font-size:13px;line-height:1.4}
+.task-lbl.done{text-decoration:line-through;color:var(--t3)}
+.task-time{font-size:10px;color:var(--t3);margin-top:2px}
+.task-add{display:flex;gap:7px;margin-top:0}
+.task-add input{font-size:13px;padding:9px 11px}
+
+/* ── ABCDE ────────────────────── */
+.abcde-item{padding:11px 14px;border-bottom:1px solid var(--b)}
+.abcde-item:last-child{border-bottom:none}
+.abcde-hdr{display:flex;align-items:flex-start;gap:10px;margin-bottom:7px}
+.abcde-key{width:26px;height:26px;background:var(--p);color:#fff;border-radius:6px;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.abcde-title{font-weight:700;font-size:13px}
+.abcde-desc{font-size:11px;color:var(--t2);margin-top:2px;line-height:1.5}
+.abcde-inp{font-size:13px;padding:8px 10px;min-height:55px}
+
+/* ── Medication ───────────────── */
+.med-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);margin-bottom:10px;overflow:hidden;box-shadow:var(--shsm)}
+.med-card.suspended{opacity:.55}
+.med-card-hdr{padding:12px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.med-name{font-weight:800;font-size:15px}
+.med-meta{font-size:11px;color:var(--t2);margin-top:3px}
+.med-suspended-label{font-size:10px;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.shifts-row{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--b)}
+.shift-col{padding:9px 8px}
+.shift-name{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.dose-row{display:flex;flex-wrap:wrap;gap:4px}
+.dose-pill{display:inline-flex;align-items:center;justify-content:center;min-width:34px;padding:4px 5px;border-radius:var(--radsm);border:1.5px solid var(--b);font-size:11px;font-weight:700;cursor:pointer;transition:all .14s;background:var(--s2);color:var(--t2)}
+.dose-pill.done{background:var(--gbg);border-color:var(--gborder);color:var(--grn)}
+.dose-pill:active{transform:scale(.93)}
+/* Med autocomplete */
+.autocomplete-wrap{position:relative}
+#med-autocomplete{position:absolute;top:100%;left:0;right:0;background:var(--s);border:1px solid var(--b);border-radius:var(--rads);z-index:50;box-shadow:var(--shm);overflow:hidden}
+.autocomplete-item{padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--b)}
+.autocomplete-item:last-child{border-bottom:none}
+.autocomplete-item:hover,.autocomplete-item:active{background:var(--pl);color:var(--pd)}
+
+/* ── Dispositivos ─────────────── */
+.dev-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--b)}
+.dev-item:last-child{border-bottom:none}
+.dev-icon{font-size:18px;flex-shrink:0}
+.dev-lbl{font-size:13px;font-weight:600}
+.dev-sub{font-size:11px;color:var(--t2);margin-top:2px}
+
+/* ── Quick actions ────────────── */
+.cat-wrap{margin-bottom:6px}
+.cat-hdr{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--s);border:1px solid var(--b);border-radius:var(--rads);cursor:pointer;transition:background .12s}
+.cat-hdr:active{background:var(--s2)}
+.cat-hdr.open{border-radius:var(--rads) var(--rads) 0 0;border-bottom-color:transparent}
+.cat-hdr-name{font-size:13px;font-weight:700}
+.cat-arr{font-size:16px;color:var(--t3);transition:transform .2s}
+.cat-hdr.open .cat-arr{transform:rotate(90deg)}
+.cat-items{display:none;flex-wrap:wrap;gap:6px;padding:8px 12px 10px;background:var(--s);border:1px solid var(--b);border-top:none;border-radius:0 0 var(--rads) var(--rads);margin-bottom:4px}
+.cat-items.open{display:flex}
+.i-chip{padding:7px 12px;border-radius:20px;border:1.5px solid var(--b);background:var(--s);font-size:12px;cursor:pointer;font-weight:600;transition:all .14s;color:var(--t);white-space:nowrap}
+.i-chip.sel{background:var(--p);border-color:var(--p);color:#fff}
+.i-chip:active{transform:scale(.94)}
+.qbuilder{background:var(--pl);border:1.5px solid var(--p);border-radius:var(--rad);padding:11px 13px;margin-bottom:10px;display:none}
+.qbuilder.vis{display:block}
+.qb-prev{font-size:13px;font-weight:700;color:var(--pd);margin-bottom:8px;word-break:break-word;line-height:1.5}
+.qb-acts{display:flex;gap:7px}
+
+/* ── Notes ────────────────────── */
+.note-it{padding:8px 0;border-bottom:1px solid var(--b);display:flex;gap:8px;align-items:flex-start}
+.note-it:last-child{border-bottom:none}
+.note-t{font-size:10px;font-weight:800;color:var(--p);white-space:nowrap;padding-top:3px;font-family:'SF Mono','Fira Code',monospace}
+.note-txt{font-size:13px;line-height:1.5;color:var(--t)}
+
+/* ── ISBAR tab ────────────────── */
+.isbar-card{display:flex;align-items:center;gap:12px;background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:14px;margin-bottom:10px;cursor:pointer;box-shadow:var(--shsm);transition:all .15s}
+.isbar-card:active{transform:scale(.98);background:var(--s2)}
+.isbar-card-ai{border-color:var(--pm);background:var(--pl)}
+.isbar-card-icon{font-size:24px;flex-shrink:0}
+.isbar-card-title{font-weight:700;font-size:14px}
+.isbar-card-sub{font-size:12px;color:var(--t2);margin-top:3px}
+.isbar-arr{font-size:22px;color:var(--t3);margin-left:auto;flex-shrink:0}
+.isbar-divider{border-top:1px solid var(--b);margin:14px 0;display:flex;align-items:center;gap:10px;font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.isbar-divider::before,.isbar-divider::after{content:'';flex:1;border-top:1px solid var(--b)}
+.sbar-box{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:13px;margin-bottom:11px;font-size:12px;color:var(--t2);line-height:1.7}
+.sbar-out{background:var(--s2);border:1px solid var(--b);border-radius:var(--rad);padding:13px;margin-bottom:10px;font-size:12px;line-height:1.9;font-family:'SF Mono','Fira Code',monospace;white-space:pre-wrap;word-break:break-word;max-height:50vh;overflow-y:auto;color:var(--t)}
+
+/* ════ ABOUT SCREEN ══════════════════════════════════ */
+#s-about .wrap{max-width:500px;margin:0 auto;padding:16px 16px 40px}
+.about-hdr{background:var(--s);border-bottom:1px solid var(--b);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.about-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:0;margin-bottom:12px;overflow:hidden;box-shadow:var(--shsm)}
+.about-card-body{padding:14px 16px}
+.about-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--b);font-size:13px}
+.about-row:last-child{border-bottom:none}
+.about-val{color:var(--t2);font-size:12px}
+.about-logo-box{display:flex;align-items:center;gap:14px;padding:16px}
+.about-logo-big{width:54px;height:54px;border-radius:14px;flex-shrink:0}
+.apikey-note{font-size:11px;color:var(--t3);margin-top:6px;line-height:1.6}
+.about-hdr-title{font-weight:800;font-size:16px;flex:1;text-align:center}
+
+/* ════ MODALS ════════════════════════════════════════ */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .2s;pointer-events:none}
+.modal-ov.open{opacity:1;pointer-events:all}
+.modal-sheet{background:var(--s);border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:92vh;display:flex;flex-direction:column;transform:translateY(20px);transition:transform .22s}
+.modal-ov.open .modal-sheet{transform:translateY(0)}
+.modal-hdr{padding:14px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-size:16px;font-weight:800;letter-spacing:-.2px}
+.modal-body{padding:16px;overflow-y:auto;flex:1}
+.modal-foot{padding:13px 16px;border-top:1px solid var(--b);flex-shrink:0}
+.close-btn{width:28px;height:28px;border-radius:50%;background:var(--s2);border:1px solid var(--b);font-size:15px;cursor:pointer;color:var(--t2);display:flex;align-items:center;justify-content:center}
+
+/* ── Misc ─────────────────────── */
+.empty-st{text-align:center;padding:24px 14px;color:var(--t3);font-size:13px}
+#capture-preview-wrap{display:none;margin-bottom:12px;text-align:center}
+#capture-preview-wrap img{max-width:100%;border-radius:var(--rads);border:1.5px solid var(--b);max-height:200px;object-fit:cover}
+#photo-input{display:none}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SETUP SCREEN ═══════════════ -->
+<div id="s-setup" class="screen">
+  <div class="scroll-y">
+    <div class="wrap">
+      <div class="setup-hero">
+        <div class="logo-row">
+          <div class="logo-mark" style="width:54px;height:54px;border-radius:14px">
+            <!-- ShiftCare SVG logo: heart-pulse cross -->
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="19" y="6" width="10" height="36" rx="5" fill="white" opacity="0.9"/>
+              <rect x="6" y="19" width="36" height="10" rx="5" fill="white" opacity="0.9"/>
+              <path d="M14 24 L18 17 L22 28 L25 20 L28 24 L34 24" stroke="#0D9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="app-name" style="font-size:28px">Shift<em>Care</em></div>
+        </div>
+        <h2>Novo Turno</h2>
+        <p>Adicione os doentes e inicie o turno</p>
+      </div>
+      <div id="pt-list"></div>
+      <div class="add-form">
+        <div class="add-form-title">Adicionar Doente</div>
+        <div class="form-row" style="margin-bottom:11px">
+          <div><label>Nome / Alias</label><input id="f-name" type="text" placeholder="Ex: Doente A"></div>
+          <div><label>Cama</label><input id="f-bed" type="text" placeholder="Ex: 3"></div>
+        </div>
+        <div style="margin-bottom:11px">
+          <label>Idade</label>
+          <div class="age-row">
+            <input id="f-age" type="number" min="0" placeholder="Ex: 28">
+            <div class="unit-tog">
+              <button class="unit-btn active" data-unit="dias" onclick="setAgeUnit('dias','main')">Dias</button>
+              <button class="unit-btn" data-unit="meses" onclick="setAgeUnit('meses','main')">Meses</button>
+              <button class="unit-btn" data-unit="anos" onclick="setAgeUnit('anos','main')">Anos</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-row" style="margin-bottom:11px">
+          <div><label>Peso (kg)</label><input id="f-weight" type="number" step="0.1" min="0" placeholder="Ex: 3.4"></div>
+          <div></div>
+        </div>
+        <div style="margin-bottom:11px"><label>Diagnóstico Principal</label><input id="f-diag" type="text" placeholder="Ex: Bronquiolite VRS grave"></div>
+        <div style="margin-bottom:14px">
+          <label>Diagnósticos Secundários</label>
+          <div class="diag-tags" id="f-dtags"></div>
+          <div class="diag2-row"><input id="f-diag2" type="text" placeholder="Adicionar diagnóstico..."><button class="btn btn-o btn-sm" onclick="addSD('f-diag2','f-dtags','tmpDiags')">+</button></div>
+        </div>
+        <button class="btn btn-p" style="width:100%" onclick="addPatient('main')">Adicionar Doente</button>
+      </div>
+      <div id="start-area" style="display:none;padding-bottom:32px">
+        <button class="btn btn-p" style="width:100%;font-size:15px;padding:14px" onclick="startShift()">
+          Iniciar Turno →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ DASHBOARD ═══════════════ -->
+<div id="s-dashboard" class="screen hidden">
+  <div class="dash-header">
+    <div class="dash-hdr-left" style="flex:1">
+      <div class="dash-logo">
+        <div class="logo-mark" style="width:28px;height:28px;border-radius:7px">
+          <svg viewBox="0 0 48 48" fill="none"><rect x="19" y="6" width="10" height="36" rx="5" fill="white" opacity=".9"/><rect x="6" y="19" width="36" height="10" rx="5" fill="white" opacity=".9"/><path d="M12 24 L18 16 L22 28 L26 18 L30 24 L36 24" stroke="#0D9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="dash-app-name">Shift<em>Care</em></div>
+      </div>
+      <div class="dash-sub" id="dash-sub">A carregar...</div>
+    </div>
+    <div class="dash-right">
+      <div class="clock-display" id="clock-display">--:--</div>
+      <button class="btn-ic" onclick="showAbout()" title="Sobre">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r=".5" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="cards-wrap">
+    <button class="nav-arr nav-l" onclick="navPrev()">&#8249;</button>
+    <div class="cards-track" id="cards-track"></div>
+    <button class="nav-arr nav-r" onclick="navNext()">&#8250;</button>
+  </div>
+  <button class="fab" onclick="openAddPtModal()">+</button>
+</div>
+
+<!-- ═══════════════ DETAIL ═══════════════ -->
+<div id="s-detail" class="screen hidden">
+  <div class="det-hdr">
+    <button class="btn btn-g" onclick="goBack()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="det-name" id="det-name"></div>
+    <div id="det-badge"></div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab-item active" onclick="switchTab('vitais')">Sinais Vitais</div>
+    <div class="tab-item" onclick="switchTab('cuidados')">Cuidados</div>
+    <div class="tab-item" onclick="switchTab('medicacao')">Medicação</div>
+    <div class="tab-item" onclick="switchTab('isbar')">Antec./ISBAR</div>
+    <div class="tab-item" onclick="switchTab('notas')">Notas</div>
+  </div>
+  <div class="tab-body">
+
+    <!-- TAB VITAIS -->
+    <div id="tab-vitais" class="tab-pane active">
+      <div style="display:flex;gap:7px;margin-bottom:12px">
+        <button id="cam-btn" class="btn btn-o btn-sm" style="flex:1;font-size:13px" onclick="openCamera()">📷 Capturar Ecrã do Monitor</button>
+        <button class="btn btn-o btn-sm" onclick="clearVitals()">Limpar</button>
+      </div>
+      <div id="capture-preview-wrap"><img id="capture-img" src="" alt=""><div style="font-size:11px;color:var(--t3);margin-top:5px">A interpretar os valores...</div></div>
+      <div class="vt-full-grid" id="vitals-grid"></div>
+      <div id="vitals-alert"></div>
+    </div>
+
+    <!-- TAB CUIDADOS -->
+    <div id="tab-cuidados" class="tab-pane">
+      <div class="subtab-bar">
+        <button class="subtab-btn active" id="ctab-enfermagem" onclick="setCuidadosSection('enfermagem')">Enfermagem</button>
+        <button class="subtab-btn" id="ctab-dispositivos" onclick="setCuidadosSection('dispositivos')">Dispositivos</button>
+        <button class="subtab-btn" id="ctab-todo" onclick="setCuidadosSection('todo')">To-Do</button>
+      </div>
+      <div id="csect-enfermagem"></div>
+      <div id="csect-dispositivos" style="display:none"></div>
+      <div id="csect-todo" style="display:none"></div>
+    </div>
+
+    <!-- TAB MEDICAÇÃO -->
+    <div id="tab-medicacao" class="tab-pane">
+      <div class="subtab-bar">
+        <button class="subtab-btn active" id="mtab-horaria" onclick="setMedSection('horaria')">Medicação Horária</button>
+        <button class="subtab-btn" id="mtab-perfusoes" onclick="setMedSection('perfusoes')">Perfusões</button>
+      </div>
+      <div id="med-content"></div>
+    </div>
+
+    <!-- TAB ANTECEDENTES / ISBAR -->
+    <div id="tab-isbar" class="tab-pane"></div>
+
+    <!-- TAB NOTAS -->
+    <div id="tab-notas" class="tab-pane">
+      <div style="display:flex;gap:7px;margin-bottom:13px">
+        <input id="note-inp" type="text" placeholder="Nota rápida..." style="font-size:13px">
+        <button class="btn btn-p btn-sm" onclick="addNote()">+</button>
+      </div>
+      <div style="margin-bottom:13px">
+        <div class="sect-lbl" style="margin-bottom:8px">Registo Rápido</div>
+        <input type="text" id="quick-search" placeholder="Pesquisar..." oninput="filterQuick(this.value)" style="font-size:13px;padding:8px 11px;margin-bottom:9px">
+        <div id="qbuilder" class="qbuilder">
+          <div class="qb-prev" id="qb-prev"></div>
+          <div class="qb-acts">
+            <button class="btn btn-p btn-sm" onclick="confirmQuick()">Registar</button>
+            <button class="btn btn-o btn-sm" onclick="clearQuick()">Limpar</button>
+          </div>
+        </div>
+        <div id="quick-cats"></div>
+      </div>
+      <div class="sect-lbl" style="margin-bottom:9px">Registo do Turno</div>
+      <div id="notes-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<div id="s-about" class="screen hidden">
+  <div class="about-hdr">
+    <button class="btn btn-g" onclick="goBack()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="about-hdr-title">Sobre</div>
+    <div style="width:36px"></div>
+  </div>
+  <div class="scroll-y">
+    <div class="wrap">
+      <div class="about-card">
+        <div class="about-logo-box">
+          <div class="about-logo-big logo-mark">
+            <svg viewBox="0 0 48 48" fill="none"><rect x="19" y="6" width="10" height="36" rx="5" fill="white" opacity=".9"/><rect x="6" y="19" width="36" height="10" rx="5" fill="white" opacity=".9"/><path d="M12 24 L18 16 L22 28 L26 18 L30 24 L36 24" stroke="#0D9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="app-name" style="font-size:22px">Shift<em>Care</em></div>
+            <div style="font-size:12px;color:var(--t2);margin-top:3px">Gestão de Turno de Enfermagem</div>
+          </div>
+        </div>
+        <div style="padding:0 16px 16px">
+          <div class="about-row"><span>Versão</span><span class="about-val">2.0.0</span></div>
+          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v2.0</span></div>
+          <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first</span></div>
+          <div class="about-row"><span>IA</span><span class="about-val">Groq LLaMA via Worker</span></div>
+          <div class="about-row"><span>Idioma</span><span class="about-val">Português (PT)</span></div>
+          <div class="about-row"><span>Compilação</span><span class="about-val" id="build-date"></span></div>
+        </div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-body">
+          <div style="font-size:13px;font-weight:800;margin-bottom:13px;color:var(--t)">Configuração de IA</div>
+          <div style="margin-bottom:11px">
+            <label>Cloudflare Worker URL</label>
+            <input type="url" id="worker-url-inp" placeholder="https://shiftcare-worker.xxxxx.workers.dev" oninput="saveWorkerUrl(this.value)">
+            <div class="apikey-note">Recomendado. Implante o <code>worker.js</code> no Cloudflare Workers. Inclui suporte Groq + privacidade.</div>
+          </div>
+          <div>
+            <label>Chave API Groq (alternativa)</label>
+            <input type="password" id="apikey-inp" placeholder="gsk_..." oninput="saveApiKey(this.value)">
+            <div class="apikey-note">Alternativa ao Worker. Chave Groq guardada localmente. Nunca partilhada com terceiros.</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-body" style="font-size:13px;color:var(--t2);line-height:1.8">
+          <div style="margin-bottom:10px"><strong style="color:var(--t)">Funcionalidades offline</strong><br>Gestão de doentes, sinais vitais, medicação, cuidados, dispositivos e notas funcionam sem internet.</div>
+          <div style="margin-bottom:10px"><strong style="color:var(--t)">IA (requer ligação)</strong><br>Captura de ecrã de monitor e geração de relatório ISBAR usam Groq LLaMA via Cloudflare Worker.</div>
+          <div><strong style="color:var(--t)">Privacidade</strong><br>Dados do doente nunca abandonam o dispositivo. O módulo de aprendizagem armazena apenas padrões anónimos (medicações, procedimentos) — nunca dados identificativos.</div>
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <button class="btn btn-o" style="width:100%;font-size:13px" onclick="resetLearning()">Resetar Módulo de Aprendizagem</button>
+      </div>
+      <div style="text-align:center;padding:12px 0;font-size:11px;color:var(--t3)">ShiftCare v2.0 © 2025 · Todos os direitos reservados</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MODAL: Add Patient ═══════════════ -->
+<div id="modal-addpt" class="modal-ov">
+  <div class="modal-sheet">
+    <div class="modal-hdr"><div class="modal-title">Adicionar Doente</div><button class="close-btn" onclick="closeModal('modal-addpt')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row" style="margin-bottom:11px">
+        <div><label>Nome / Alias</label><input id="m-name" type="text" placeholder="Ex: Doente A"></div>
+        <div><label>Cama</label><input id="m-bed" type="text" placeholder="Ex: 3"></div>
+      </div>
+      <div style="margin-bottom:11px">
+        <label>Idade</label>
+        <div class="age-row">
+          <input id="m-age" type="number" min="0" placeholder="Ex: 28">
+          <div class="unit-tog">
+            <button class="unit-btn active" data-unit="dias" onclick="setAgeUnit('dias','modal')">Dias</button>
+            <button class="unit-btn" data-unit="meses" onclick="setAgeUnit('meses','modal')">Meses</button>
+            <button class="unit-btn" data-unit="anos" onclick="setAgeUnit('anos','modal')">Anos</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom:11px">
+        <div><label>Peso (kg)</label><input id="m-weight" type="number" step="0.1" min="0" placeholder="Ex: 3.4"></div>
+        <div></div>
+      </div>
+      <div style="margin-bottom:11px"><label>Diagnóstico Principal</label><input id="m-diag" type="text" placeholder="Ex: Bronquiolite VRS"></div>
+      <div style="margin-bottom:6px">
+        <label>Diagnósticos Secundários</label>
+        <div class="diag-tags" id="m-dtags"></div>
+        <div class="diag2-row" style="margin-top:8px"><input id="m-diag2" type="text" placeholder="Adicionar..."><button class="btn btn-o btn-sm" onclick="addSD('m-diag2','m-dtags','tmpDiagsM')">+</button></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-p" style="width:100%" onclick="addPatient('modal')">Adicionar Doente</button></div>
+  </div>
+</div>
+
+<!-- ═══════════════ MODAL: Discharge ═══════════════ -->
+<div id="modal-discharge" class="modal-ov">
+  <div class="modal-sheet">
+    <div class="modal-hdr"><div class="modal-title">Alta / Transferência</div><button class="close-btn" onclick="closeModal('modal-discharge')">✕</button></div>
+    <div class="modal-body">
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px" id="discharge-pt-name"></div>
+      <div style="margin-bottom:14px"><label>Nota (opcional)</label><textarea id="discharge-note" rows="3" placeholder="Ex: Alta para domicílio. Família informada."></textarea></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-p" style="flex:1;background:var(--grn)" onclick="confirmDischarge('alta')">✓ Alta</button>
+        <button class="btn btn-o" style="flex:1" onclick="confirmDischarge('transferido')">↗ Transferência</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MODAL: Add Med ═══════════════ -->
+<div id="modal-addmed" class="modal-ov">
+  <div class="modal-sheet">
+    <div class="modal-hdr"><div class="modal-title" id="add-med-modal-title">Adicionar Medicação</div><button class="close-btn" onclick="closeModal('modal-addmed')">✕</button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:11px">
+        <label>Nome do Fármaco</label>
+        <div class="autocomplete-wrap">
+          <input id="med-name-inp" type="text" placeholder="Ex: Morfina" oninput="onMedNameInput(this.value)">
+          <div id="med-autocomplete"></div>
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom:11px">
+        <div><label>Dose</label><input id="med-dose-inp" type="text" placeholder="Ex: 0.1"></div>
+        <div><label>Unidade</label>
+          <select id="med-unit-sel">
+            <option>mg</option><option>mcg</option><option>g</option><option>UI</option><option>mEq</option><option>mL</option><option>mmol</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:11px"><label>Via de Administração</label>
+        <select id="med-route-sel">
+          <option>Oral</option><option>Gástrica (SNG/SOG)</option><option>EV</option><option>Inalatória</option><option>Perineural</option><option>Epidural</option><option>Retal</option><option>Subcutânea</option><option>Intramuscular</option>
+        </select>
+      </div>
+      <div id="med-freq-row" style="margin-bottom:11px"><label>Frequência</label>
+        <select id="med-freq-sel">
+          <option>1/1h</option><option>2/2h</option><option>4/4h</option><option>6/6h</option><option>8/8h</option><option>12/12h</option><option>24/24h</option><option>36/36h</option><option>SOS</option>
+        </select>
+      </div>
+      <div id="med-notes-row" style="margin-bottom:11px;display:none"><label>Notas (perfusão)</label>
+        <input id="med-notes-inp" type="text" placeholder="Ex: Velocidade 2mL/h. Diluição: ...">
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-p" style="width:100%" onclick="confirmAddMed()">Adicionar</button></div>
+  </div>
+</div>
+
+<!-- ═══════════════ MODAL: Add Device ═══════════════ -->
+<div id="modal-device" class="modal-ov">
+  <div class="modal-sheet">
+    <div class="modal-hdr"><div class="modal-title">Adicionar Dispositivo</div><button class="close-btn" onclick="closeModal('modal-device')">✕</button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:11px"><label>Tipo de Dispositivo</label><select id="dev-type-sel"></select></div>
+      <div class="form-row" style="margin-bottom:11px">
+        <div><label>Calibre / Tamanho</label><select id="dev-gauge-sel"></select></div>
+        <div><label>Lateralidade</label><input id="dev-side-inp" type="text" placeholder="Ex: Direito, MSE..."></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-p" style="width:100%" onclick="confirmAddDevice()">Adicionar</button></div>
+  </div>
+</div>
+
+<input type="file" id="photo-input" accept="image/*" capture="environment" onchange="handlePhoto(event)">
+
+<!-- ═══════════════ SCRIPTS (load order matters) ═══════════════ -->
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/learning.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/screen-setup-dash.js"></script>
+<script src="js/tabs.js"></script>
+<script>
+// ── APP INIT ────────────────────────────────────────────────────
+function showAbout() {
+  SC_STATE.set('prevScreen', SC_STATE.get('screen'));
+  const ki = el('apikey-inp');    if (ki) ki.value = SC_STATE.get('apiKey') || '';
+  const wi = el('worker-url-inp'); if (wi) wi.value = SC_STATE.get('workerUrl') || '';
+  showScreen('s-about');
+}
+function saveApiKey(v)   { SC_STATE.set('apiKey', v.trim()); SC_STATE.save(); }
+function saveWorkerUrl(v){ SC_STATE.set('workerUrl', v.trim()); SC_STATE.save(); }
+function resetLearning() { if(confirm('Resetar todos os dados de aprendizagem?')) { SC_LEARN.reset(); alert('Dados de aprendizagem eliminados.'); } }
+
+// Modals close on backdrop click
+document.querySelectorAll('.modal-ov').forEach(e => {
+  e.addEventListener('click', ev => { if (ev.target === e) closeModal(e.id); });
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const id = document.activeElement?.id;
+  if (id === 'f-diag2') addSD('f-diag2','f-dtags','tmpDiags');
+  if (id === 'm-diag2') addSD('m-diag2','m-dtags','tmpDiagsM');
+  if (id === 'note-inp') addNote();
+  if (id === 'new-task-inp') addCustomTask();
+  if (id === 'todo-inp') addTodoCustom();
+  if (id === 'med-name-inp') { el('med-autocomplete').innerHTML = ''; }
+});
+
+// Close med autocomplete on outside click
+document.addEventListener('click', e => {
+  if (!e.target.closest('#modal-addmed')) el('med-autocomplete') && (el('med-autocomplete').innerHTML = '');
+});
+
+// Build date
+const bd = el('build-date');
+if (bd) bd.textContent = new Date().toLocaleDateString('pt-PT', { year:'numeric', month:'long' });
+
+// Live clock
+function updateClock() {
+  const c = el('clock-display');
+  if (c) c.textContent = new Date().toLocaleTimeString('pt-PT', { hour:'2-digit', minute:'2-digit' });
+}
+updateClock();
+setInterval(updateClock, 1000);
+// Also refresh dash sub every 60s
+setInterval(() => { if (SC_STATE.get('screen') === 's-dashboard') renderDash(); }, 60000);
+
+// ── BOOT ────────────────────────────────────────────────────────
+SC_STATE.load();
+if (SC_STATE.get('patients').length && SC_STATE.get('shiftStart')) {
+  renderDash(); showScreen('s-dashboard');
+} else {
+  renderSetup(); showScreen('s-setup');
+}
+</script>
+</body>
+</html>
