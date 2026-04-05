@@ -4,258 +4,279 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0D9488">
+<meta name="theme-color" content="#0F766E">
 <title>ShiftCare</title>
 <style>
-:root{--p:#0D9488;--pd:#0F766E;--pl:#CCFBF1;--pm:#99F6E4;--bg:#F1F5F9;--s:#FFFFFF;--s2:#F8FAFC;--b:#E2E8F0;--b2:#CBD5E1;--t:#0F172A;--t2:#475569;--t3:#94A3B8;--red:#DC2626;--rbg:#FEF2F2;--org:#D97706;--obg:#FFFBEB;--grn:#059669;--gbg:#ECFDF5;--gborder:#A7F3D0;--rad:14px;--rads:8px;--shsm:0 1px 3px rgba(0,0,0,.07);--sh:0 2px 8px rgba(0,0,0,.09);--shm:0 4px 16px rgba(0,0,0,.11);--shl:0 10px 32px rgba(0,0,0,.14)}
+:root{--p:#0D9488;--pd:#0F766E;--pl:#CCFBF1;--pm:#5EEAD4;--bg:#F0FDFA;--s:#FFFFFF;--s2:#F8FAFC;--b:#CBD5E1;--b2:#94A3B8;--t:#0F172A;--t2:#334155;--t3:#94A3B8;--red:#DC2626;--rbg:#FEF2F2;--org:#D97706;--obg:#FFFBEB;--grn:#059669;--gbg:#ECFDF5;--gborder:#6EE7B7;--vio:#7C3AED;--viobg:#EDE9FE;--rad:14px;--rads:8px;--shsm:0 1px 3px rgba(0,0,0,.07);--sh:0 2px 8px rgba(0,0,0,.09);--shm:0 4px 16px rgba(0,0,0,.12);--shl:0 12px 32px rgba(0,0,0,.15)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);font-size:16px;line-height:1.5}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);font-size:15px;line-height:1.5}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;transition:opacity .18s,transform .18s}
-.screen.hidden{opacity:0;pointer-events:none;transform:translateX(12px)}
-input,textarea,select{font-family:inherit;font-size:15px;color:var(--t);background:var(--s2);border:1.5px solid var(--b);border-radius:var(--rads);padding:10px 12px;width:100%;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
+.screen.hidden{opacity:0;pointer-events:none;transform:translateX(14px)}
+input,textarea,select{font-family:inherit;font-size:14px;color:var(--t);background:var(--s2);border:1.5px solid var(--b);border-radius:var(--rads);padding:9px 11px;width:100%;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
 input:focus,textarea:focus,select:focus{border-color:var(--p);background:var(--s)}
-textarea{resize:vertical;min-height:80px}
-label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--rads);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .14s;-webkit-user-select:none;user-select:none}
-.btn-p{background:var(--p);color:#fff;padding:12px 20px;border-radius:var(--rad)}
+textarea{resize:vertical;min-height:75px}
+label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:none;border-radius:var(--rads);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .14s;-webkit-user-select:none;user-select:none}
+.btn-p{background:var(--p);color:#fff;padding:11px 20px;border-radius:var(--rad)}
 .btn-p:active{background:var(--pd);transform:scale(.97)}
-.btn-o{background:var(--s);border:1.5px solid var(--b);color:var(--t);padding:10px 16px}
-.btn-o:active{background:var(--s2);transform:scale(.97)}
-.btn-g{background:transparent;color:var(--t2);padding:8px 6px;border:none;cursor:pointer}
-.btn-ic{width:36px;height:36px;border-radius:50%;background:var(--s);border:1px solid var(--b);color:var(--t2);padding:0;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .14s}
-.btn-sm{padding:8px 12px;font-size:13px}
-.rm-btn{width:28px;height:28px;border-radius:50%;background:var(--rbg);border:1px solid #FECACA;color:var(--red);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700}
-.badge-r{background:var(--rbg);color:var(--red);border:1px solid #FECACA}
-.badge-g{background:var(--gbg);color:var(--grn);border:1px solid var(--gborder)}
-.dtag{display:inline-flex;align-items:center;gap:5px;background:var(--pl);color:var(--pd);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600}
-.dtag button{background:none;border:none;color:var(--pd);cursor:pointer;font-size:14px;line-height:1;padding:0}
-.alert-pill{background:var(--red);color:#fff;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:800}
-.sub-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);margin-bottom:12px;overflow:hidden}
-.sub-card-hdr{padding:11px 14px;font-weight:700;font-size:12px;border-bottom:1px solid var(--b);background:var(--s2);color:var(--t2);text-transform:uppercase;letter-spacing:.05em}
+.btn-o{background:var(--s);border:1.5px solid var(--b);color:var(--t);padding:9px 14px}
+.btn-o:active{background:var(--s2)}
+.btn-g{background:transparent;color:rgba(255,255,255,.85);padding:6px 4px;border:none;cursor:pointer;display:flex;align-items:center}
+.btn-ic{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;padding:0;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.btn-sm{padding:7px 11px;font-size:12px}
+.rm-btn{width:26px;height:26px;border-radius:50%;background:var(--rbg);border:1px solid #FECACA;color:var(--red);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700}
+.badge-r{background:var(--rbg);color:var(--red)}
+.badge-g{background:var(--gbg);color:var(--grn)}
+.dtag{display:inline-flex;align-items:center;gap:4px;background:var(--pl);color:var(--pd);border-radius:20px;padding:3px 9px;font-size:12px;font-weight:600}
+.dtag button{background:none;border:none;color:var(--pd);cursor:pointer;font-size:13px;line-height:1;padding:0}
+.alert-pill{background:var(--red);color:#fff;padding:1px 6px;border-radius:10px;font-size:9px;font-weight:800}
+.sub-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);margin-bottom:11px;overflow:hidden}
+.sub-card-hdr{padding:10px 13px;font-weight:700;font-size:11px;border-bottom:1px solid var(--b);background:var(--s2);color:var(--t2);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between}
 .scroll-y{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.sect-lbl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
-.logo-mark{background:var(--p);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.app-name{font-weight:800;letter-spacing:-.5px}
-.app-name em{color:var(--p);font-style:normal}
-.age-row{display:flex;gap:8px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.sect-lbl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+.age-row{display:flex;gap:7px}
 .age-row input{flex:1}
-.unit-tog{display:flex;background:var(--b);border-radius:var(--rads);overflow:hidden;padding:2px;gap:2px;flex-shrink:0;height:44px;border:none}
-.unit-btn{padding:0 9px;border:none;background:none;font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;border-radius:4px;transition:all .14s;white-space:nowrap}
+.unit-tog{display:flex;background:rgba(0,0,0,.1);border-radius:var(--rads);overflow:hidden;padding:2px;gap:2px;flex-shrink:0;border:none}
+.unit-btn{padding:5px 8px;border:none;background:none;font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;border-radius:4px;transition:all .14s;white-space:nowrap}
 .unit-btn.active{background:var(--s);color:var(--p);box-shadow:var(--shsm)}
-.diag-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;min-height:8px}
-.diag2-row{display:flex;gap:8px}
-.diag2-row input{font-size:13px;padding:8px 11px}
-.empty-st{text-align:center;padding:24px;color:var(--t3);font-size:13px}
+.diag-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px;min-height:8px}
+.diag2-row{display:flex;gap:7px}
+.diag2-row input{font-size:12px;padding:7px 10px}
+.empty-st{text-align:center;padding:20px;color:var(--t3);font-size:13px}
+/* Patient info bar */
+.pt-info-bar{background:linear-gradient(135deg,var(--pd),var(--p));color:#fff;padding:9px 13px;flex-shrink:0}
+.pt-info-name{font-size:15px;font-weight:800;letter-spacing:-.2px;margin-bottom:4px}
+.pt-info-meta{display:flex;flex-wrap:wrap;gap:5px}
+.pt-info-pill{background:rgba(255,255,255,.18);border-radius:7px;padding:2px 8px;font-size:10px;font-weight:600}
+.pt-info-pill.alrg{background:rgba(220,38,38,.35);font-weight:800}
 /* Setup */
-#s-setup .wrap{max-width:500px;margin:0 auto;padding:16px 16px 40px}
-.setup-hero{text-align:center;padding:24px 0 20px}
-.logo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px}
-.pt-item{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:var(--shsm)}
+#s-setup .wrap{max-width:500px;margin:0 auto;padding:14px 14px 40px}
+.setup-hero{text-align:center;padding:18px 0 16px}
+.pt-item{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;gap:11px;box-shadow:var(--shsm)}
 .pti{flex:1;min-width:0}
-.pti-name{font-weight:700;font-size:15px}
-.pti-sub{font-size:12px;color:var(--t2);margin-top:2px}
-.add-form{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:16px;margin-bottom:12px;box-shadow:var(--shsm)}
-.add-form-title{font-size:12px;font-weight:700;margin-bottom:14px;color:var(--t2);text-transform:uppercase;letter-spacing:.05em}
+.pti-name{font-weight:700;font-size:14px}
+.pti-sub{font-size:11px;color:var(--t2);margin-top:2px}
+.add-form{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:15px;margin-bottom:11px;box-shadow:var(--shsm)}
+.add-form-title{font-size:11px;font-weight:700;margin-bottom:13px;color:var(--t2);text-transform:uppercase;letter-spacing:.06em}
 /* Dashboard */
 #s-dashboard{background:var(--bg)}
-.dash-header{background:var(--s);border-bottom:1px solid var(--b);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:var(--shsm)}
-.dash-logo{display:flex;align-items:center;gap:9px}
-.dash-sub{font-size:10px;color:var(--t3);margin-top:1px}
-.clock-display{font-family:'SF Mono','Fira Code',monospace;font-size:13px;font-weight:700;color:var(--pd);background:var(--pl);padding:5px 9px;border-radius:var(--rads);border:1px solid var(--pm)}
-.dash-right{display:flex;align-items:center;gap:8px}
+.dash-header{background:linear-gradient(135deg,var(--pd),var(--p));flex-shrink:0;box-shadow:var(--shm)}
+.dash-top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 0}
+.dash-center{text-align:center;padding:2px 14px 10px}
+.clock-big{font-family:'SF Mono','Fira Code',monospace;font-size:44px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1}
+.date-big{font-size:15px;font-weight:600;color:rgba(255,255,255,.85);margin-top:3px;letter-spacing:.01em;text-transform:capitalize}
+.dash-app-name{font-size:16px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.dash-app-sub{font-size:10px;color:rgba(255,255,255,.65);margin-top:1px}
+.dash-right-btns{display:flex;gap:6px;align-items:center}
+/* Patient cards */
 .cards-wrap{position:relative;flex:1;overflow:hidden}
-.cards-track{display:flex;gap:14px;height:100%;padding:12px 50px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;align-items:stretch}
+.cards-track{display:flex;gap:13px;height:100%;padding:11px 46px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;align-items:stretch}
 .cards-track::-webkit-scrollbar{display:none}
-.pt-card{flex:0 0 min(calc(100vw - 100px),380px);scroll-snap-align:center;background:var(--s);border-radius:var(--rad);border:1px solid var(--b);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shm)}
-.pt-card.has-alert{border-color:var(--red);border-width:2px}
-.pt-card.is-discharged{opacity:.55}
-.pc-hdr{background:linear-gradient(135deg,var(--pd),var(--p));padding:15px;color:#fff;flex-shrink:0}
-.pc-name{font-size:19px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px}
-.pc-meta{font-size:11px;opacity:.88;display:flex;flex-wrap:wrap;gap:7px;align-items:center}
-.pc-diag{margin-top:8px;font-size:12px;font-weight:700;opacity:.95;background:rgba(255,255,255,.15);border-radius:6px;padding:3px 8px;display:inline-block}
+.pt-card{flex:0 0 min(calc(100vw - 92px),380px);scroll-snap-align:center;background:var(--s);border-radius:var(--rad);border:1px solid var(--b);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shm)}
+.pt-card.has-alert{border:2px solid var(--red)}
+.pc-hdr{background:linear-gradient(135deg,var(--pd),var(--p));padding:13px 14px;color:#fff;flex-shrink:0}
+.pc-name{font-size:18px;font-weight:800;letter-spacing:-.3px;margin-bottom:5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.pc-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:5px}
+.pc-meta-item{font-size:10px;opacity:.88}
+.pc-meta-item strong{opacity:1;font-weight:700}
+.pc-alrg{margin-top:6px;background:rgba(220,38,38,.3);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;display:inline-block}
+.pc-diag{margin-top:6px;background:rgba(255,255,255,.15);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;display:inline-block}
 .pc-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.pc-sect{padding:10px 12px;border-bottom:1px solid var(--b)}
+.pc-sect{padding:9px 11px;border-bottom:1px solid var(--b)}
 .pc-sect:last-child{border-bottom:none}
-.pc-foot{padding:10px;border-top:1px solid var(--b);flex-shrink:0}
-.vt-row{display:flex;gap:5px;flex-wrap:wrap}
-.vt-chip{background:var(--s2);border:1.5px solid transparent;border-radius:var(--rads);padding:4px 7px;text-align:center;min-width:48px;transition:all .2s}
+.pc-foot{padding:9px;border-top:1px solid var(--b);flex-shrink:0;display:flex;gap:7px}
+.vt-row{display:flex;gap:4px;flex-wrap:wrap}
+.vt-chip{background:var(--s2);border:1.5px solid transparent;border-radius:6px;padding:3px 6px;text-align:center;min-width:44px}
 .vt-chip.ok{border-color:var(--grn);background:var(--gbg)}
 .vt-chip.warn{border-color:var(--org);background:var(--obg)}
 .vt-chip.alrt{border-color:var(--red);background:var(--rbg)}
-.vc-lbl2{display:block;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase}
-.vc-val2{display:block;font-size:13px;font-weight:800;color:var(--t)}
-.vt-chip.ok .vc-val2{color:var(--grn)}
-.vt-chip.warn .vc-val2{color:var(--org)}
-.vt-chip.alrt .vc-val2{color:var(--red)}
-.task-prog{display:flex;align-items:center;gap:9px}
-.prog-bar{flex:1;height:5px;background:var(--b);border-radius:3px;overflow:hidden}
-.prog-fill{height:100%;background:var(--p);border-radius:3px;transition:width .3s}
-.prog-txt{font-size:12px;font-weight:700;color:var(--t2);white-space:nowrap}
-.alert-ban{background:var(--rbg);border-left:3px solid var(--red);padding:8px 12px;margin:8px;border-radius:var(--rads);font-size:11px;font-weight:700;color:var(--red)}
-.nav-arr{position:absolute;top:50%;transform:translateY(-50%);z-index:50;width:40px;height:40px;border-radius:50%;background:var(--s);border:1px solid var(--b);box-shadow:var(--shm);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--t);-webkit-user-select:none;user-select:none;border:none}
+.vc-lbl2{display:block;font-size:8px;font-weight:700;color:var(--t3);text-transform:uppercase}
+.vc-val2{display:block;font-size:12px;font-weight:800;color:var(--t)}
+.vt-chip.ok .vc-val2{color:var(--grn)}.vt-chip.warn .vc-val2{color:var(--org)}.vt-chip.alrt .vc-val2{color:var(--red)}
+.task-prog{display:flex;align-items:center;gap:8px}
+.prog-bar{flex:1;height:4px;background:var(--b);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--p);border-radius:3px}
+.prog-txt{font-size:11px;font-weight:700;color:var(--t2);white-space:nowrap}
+.alert-ban{background:var(--rbg);border-left:3px solid var(--red);padding:7px 11px;margin:7px;border-radius:var(--rads);font-size:11px;font-weight:700;color:var(--red)}
+.nav-arr{position:absolute;top:50%;transform:translateY(-50%);z-index:50;width:38px;height:38px;border-radius:50%;background:var(--s);border:none;box-shadow:var(--shm);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--t);-webkit-user-select:none;user-select:none}
 .nav-arr:active{transform:translateY(-50%) scale(.9)}
-.nav-l{left:5px}
-.nav-r{right:5px}
-.fab{position:fixed;bottom:18px;right:15px;width:50px;height:50px;border-radius:50%;background:var(--p);color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:var(--shl);display:flex;align-items:center;justify-content:center;z-index:100;transition:all .14s}
-.fab:active{transform:scale(.92);background:var(--pd)}
-.btn-discharge{background:none;border:none;font-size:18px;cursor:pointer;padding:4px;border-radius:var(--rads);flex-shrink:0}
+.nav-l{left:4px}.nav-r{right:4px}
+.fab{position:fixed;bottom:16px;right:14px;width:48px;height:48px;border-radius:50%;background:var(--p);color:#fff;border:none;font-size:22px;cursor:pointer;box-shadow:var(--shl);display:flex;align-items:center;justify-content:center;z-index:100}
+.btn-discharge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:var(--rads);font-size:10px;font-weight:700;cursor:pointer;padding:3px 7px;color:#fff;white-space:nowrap}
 /* Detail */
 #s-detail{background:var(--bg)}
-.det-hdr{background:var(--s);border-bottom:1px solid var(--b);padding:10px 13px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:var(--shsm)}
-.det-name{font-size:14px;font-weight:800;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.det-hdr{background:linear-gradient(135deg,var(--pd),var(--p));padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.det-title{font-size:14px;font-weight:800;color:#fff;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tab-bar{background:var(--s);border-bottom:1px solid var(--b);display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
 .tab-bar::-webkit-scrollbar{display:none}
-.tab-item{flex:0 0 auto;padding:10px 13px;font-size:10px;font-weight:700;color:var(--t3);border-bottom:2.5px solid transparent;cursor:pointer;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em;transition:all .15s}
+.tab-item{flex:0 0 auto;padding:9px 12px;font-size:10px;font-weight:700;color:var(--t3);border-bottom:2.5px solid transparent;cursor:pointer;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em}
 .tab-item.active{color:var(--p);border-bottom-color:var(--p)}
 .tab-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.tab-pane{display:none;padding:14px}
+.tab-pane{display:none;padding:13px}
 .tab-pane.active{display:block}
-.subtab-bar{display:flex;background:var(--s2);border:1px solid var(--b);border-radius:var(--rads);padding:3px;gap:3px;margin-bottom:13px}
-.subtab-btn{flex:1;padding:8px 4px;border:none;background:none;font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;border-radius:var(--rads);transition:all .14s;text-transform:uppercase;letter-spacing:.03em}
+.subtab-bar{display:flex;background:var(--s2);border:1px solid var(--b);border-radius:var(--rads);padding:2px;gap:2px;margin-bottom:12px}
+.subtab-btn{flex:1;padding:7px 4px;border:none;background:none;font-size:10px;font-weight:700;color:var(--t2);cursor:pointer;border-radius:6px;text-transform:uppercase;letter-spacing:.03em}
 .subtab-btn.active{background:var(--s);color:var(--p);box-shadow:var(--shsm)}
 /* Vitals */
-.vt-full-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.vc{background:var(--s);border:1.5px solid var(--b);border-radius:var(--rad);padding:12px;transition:border-color .18s,background .18s}
-.vc.ok{border-color:var(--grn)}
-.vc.warn{border-color:var(--org);background:var(--obg)}
-.vc.alrt{border-color:var(--red);background:var(--rbg)}
-.vc-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px}
-.vc-inp{border:none;background:none;font-size:26px;font-weight:800;width:100%;padding:0;color:var(--t);font-family:inherit;letter-spacing:-.5px;outline:none}
-.vc.ok .vc-inp{color:var(--grn)}
-.vc.warn .vc-inp{color:var(--org)}
-.vc.alrt .vc-inp{color:var(--red)}
-.vc-foot{display:flex;justify-content:space-between;margin-top:4px}
+.vt-full-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.vc{background:var(--s);border:1.5px solid var(--b);border-radius:var(--rad);padding:11px;transition:border-color .18s,background .18s}
+.vc.ok{border-color:var(--grn)}.vc.warn{border-color:var(--org);background:var(--obg)}.vc.alrt{border-color:var(--red);background:var(--rbg)}
+.vc-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px}
+.vc-inp{border:none;background:none;font-size:24px;font-weight:800;width:100%;padding:0;color:var(--t);font-family:inherit;outline:none}
+.vc.ok .vc-inp{color:var(--grn)}.vc.warn .vc-inp{color:var(--org)}.vc.alrt .vc-inp{color:var(--red)}
+.vc-foot{display:flex;justify-content:space-between;margin-top:3px}
 .vc-unit,.vc-range{font-size:9px;color:var(--t3)}
 /* Tasks */
-.task-it{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-bottom:1px solid var(--b)}
+.task-it{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-bottom:1px solid var(--b)}
 .task-it:last-of-type{border-bottom:none}
-.task-chk{width:21px;height:21px;min-width:21px;border:2px solid var(--b2);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .14s;flex-shrink:0}
+.task-chk{width:20px;height:20px;min-width:20px;border:2px solid var(--b2);border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;flex-shrink:0}
 .task-chk.done{background:var(--grn);border-color:var(--grn)}
-.task-lbl{font-size:13px;line-height:1.4}
-.task-lbl.done{text-decoration:line-through;color:var(--t3)}
+.task-lbl{font-size:13px;line-height:1.4}.task-lbl.done{text-decoration:line-through;color:var(--t3)}
 .task-time{font-size:10px;color:var(--t3);margin-top:2px}
-.task-add{display:flex;gap:7px;padding:10px 14px;border-top:1px solid var(--b)}
-.task-add input{font-size:13px;padding:9px 11px}
+.task-add{display:flex;gap:6px;padding:9px 13px;border-top:1px solid var(--b)}
+.task-add input{font-size:12px;padding:7px 10px}
 /* ABCDE */
-.abcde-item{padding:11px 14px;border-bottom:1px solid var(--b)}
-.abcde-item:last-child{border-bottom:none}
-.abcde-hdr{display:flex;align-items:flex-start;gap:10px;margin-bottom:7px}
-.abcde-key{width:26px;height:26px;background:var(--p);color:#fff;border-radius:6px;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.abcde-item{padding:10px 13px;border-bottom:1px solid var(--b)}.abcde-item:last-child{border-bottom:none}
+.abcde-hdr{display:flex;gap:9px;margin-bottom:6px;align-items:flex-start}
+.abcde-key{width:24px;height:24px;background:var(--p);color:#fff;border-radius:6px;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .abcde-title{font-weight:700;font-size:13px}
-.abcde-desc{font-size:11px;color:var(--t2);margin-top:2px;line-height:1.5}
-.abcde-inp{font-size:13px;padding:8px 10px;min-height:55px;margin-top:2px}
-/* Devices */
-.dev-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--b)}
-.dev-item:last-child{border-bottom:none}
-.dev-icon{font-size:18px;flex-shrink:0}
-.dev-lbl{font-size:13px;font-weight:600}
-.dev-sub{font-size:11px;color:var(--t2);margin-top:2px}
-/* Medication */
-.med-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);margin-bottom:10px;overflow:hidden;box-shadow:var(--shsm)}
-.med-card.suspended{opacity:.55}
-.med-card-hdr{padding:12px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-.med-name{font-weight:800;font-size:15px}
-.med-meta{font-size:11px;color:var(--t2);margin-top:3px}
-.med-susp-lbl{font-size:10px;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
-.shifts-row{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--b)}
-.shift-col{padding:9px 8px}
-.shift-name{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.dose-row{display:flex;flex-wrap:wrap;gap:4px}
-.dose-pill{display:inline-flex;align-items:center;justify-content:center;min-width:34px;padding:4px 5px;border-radius:var(--rads);border:1.5px solid var(--b);font-size:11px;font-weight:700;cursor:pointer;transition:all .14s;background:var(--s2);color:var(--t2)}
-.dose-pill.done{background:var(--gbg);border-color:var(--gborder);color:var(--grn)}
-.med-first-row{padding:6px 12px;border-top:1px solid var(--b);display:flex;align-items:center;gap:8px;font-size:11px;color:var(--t3)}
-.med-first-row select{width:auto;font-size:12px;padding:3px 6px;border:1px solid var(--b);border-radius:5px}
-.autocomplete-wrap{position:relative}
-#med-autocomplete{position:absolute;top:100%;left:0;right:0;background:var(--s);border:1px solid var(--b);border-radius:var(--rads);z-index:50;box-shadow:var(--shm);overflow:hidden;max-height:200px;overflow-y:auto}
-.ac-item{padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--b)}
-.ac-item:last-child{border-bottom:none}
-.ac-item:active{background:var(--pl);color:var(--pd)}
+.abcde-desc{font-size:10px;color:var(--t2);margin-top:2px;line-height:1.5}
+.abcde-inp{font-size:12px;padding:7px 9px;min-height:48px;margin-top:2px}
+/* Notes */
+.note-it{padding:8px 0;border-bottom:1px solid var(--b);display:flex;gap:8px}.note-it:last-child{border-bottom:none}
+.note-t{font-size:10px;font-weight:800;color:var(--p);white-space:nowrap;padding-top:2px;font-family:monospace}
+.note-txt{font-size:13px;line-height:1.5}
 /* Quick notes */
-.cat-wrap{margin-bottom:5px}
-.cat-hdr{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--s);border:1px solid var(--b);border-radius:var(--rads);cursor:pointer}
+.cat-wrap{margin-bottom:4px}
+.cat-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 11px;background:var(--s);border:1px solid var(--b);border-radius:var(--rads);cursor:pointer}
 .cat-hdr.open{border-radius:var(--rads) var(--rads) 0 0;border-bottom:none}
 .cat-hdr-name{font-size:13px;font-weight:700}
-.cat-arr{font-size:16px;color:var(--t3);transition:transform .2s}
+.cat-arr{font-size:15px;color:var(--t3);transition:transform .2s}
 .cat-hdr.open .cat-arr{transform:rotate(90deg)}
-.cat-items{display:none;flex-wrap:wrap;gap:6px;padding:8px 12px 10px;background:var(--s);border:1px solid var(--b);border-top:none;border-radius:0 0 var(--rads) var(--rads);margin-bottom:4px}
+.cat-items{display:none;flex-wrap:wrap;gap:5px;padding:7px 11px 9px;background:var(--s);border:1px solid var(--b);border-top:none;border-radius:0 0 var(--rads) var(--rads);margin-bottom:3px}
 .cat-items.open{display:flex}
-.i-chip{padding:7px 12px;border-radius:20px;border:1.5px solid var(--b);background:var(--s);font-size:12px;cursor:pointer;font-weight:600;transition:all .14s;color:var(--t);white-space:nowrap}
+.i-chip{padding:6px 11px;border-radius:20px;border:1.5px solid var(--b);background:var(--s);font-size:12px;cursor:pointer;font-weight:600;color:var(--t);white-space:nowrap}
 .i-chip.sel{background:var(--p);border-color:var(--p);color:#fff}
-.i-chip:active{transform:scale(.94)}
-.qbuilder{background:var(--pl);border:1.5px solid var(--p);border-radius:var(--rad);padding:11px 13px;margin-bottom:10px;display:none}
+.qbuilder{background:var(--pl);border:1.5px solid var(--p);border-radius:var(--rad);padding:10px 12px;margin-bottom:9px;display:none}
 .qbuilder.vis{display:block}
-.qb-prev{font-size:13px;font-weight:700;color:var(--pd);margin-bottom:8px;word-break:break-word;line-height:1.5}
-.qb-acts{display:flex;gap:7px}
-/* Notes */
-.note-it{padding:8px 0;border-bottom:1px solid var(--b);display:flex;gap:8px;align-items:flex-start}
-.note-it:last-child{border-bottom:none}
-.note-t{font-size:10px;font-weight:800;color:var(--p);white-space:nowrap;padding-top:3px;font-family:monospace}
-.note-txt{font-size:13px;line-height:1.5}
+.qb-prev{font-size:13px;font-weight:700;color:var(--pd);margin-bottom:7px;word-break:break-word;line-height:1.5}
+.qb-acts{display:flex;gap:6px}
+/* Devices */
+.dev-item{display:flex;align-items:center;gap:9px;padding:9px 13px;border-bottom:1px solid var(--b)}.dev-item:last-child{border-bottom:none}
+.dev-icon{font-size:16px;flex-shrink:0}
+.dev-lbl{font-size:13px;font-weight:600}
+.dev-sub{font-size:11px;color:var(--t2);margin-top:1px}
+.dev-removed-lbl{font-size:10px;color:var(--red);font-weight:700;margin-top:2px}
+/* Medication */
+.med-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);margin-bottom:9px;overflow:hidden;box-shadow:var(--shsm)}
+.med-card.suspended{opacity:.5}
+.med-card-hdr{padding:11px 13px;display:flex;align-items:flex-start;justify-content:space-between;gap:7px}
+.med-name{font-weight:800;font-size:14px}
+.med-meta{font-size:11px;color:var(--t2);margin-top:2px}
+.med-susp-lbl{font-size:9px;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.shifts-row{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--b)}
+.shift-col{padding:8px 7px}
+.shift-name{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.dose-row{display:flex;flex-wrap:wrap;gap:3px}
+.dose-pill{display:inline-flex;align-items:center;justify-content:center;min-width:32px;padding:3px 4px;border-radius:6px;border:1.5px solid var(--b);font-size:10px;font-weight:700;cursor:pointer;background:var(--s2);color:var(--t2)}
+.dose-pill.done{background:var(--gbg);border-color:var(--gborder);color:var(--grn)}
+.med-first-row{padding:5px 11px;border-top:1px solid var(--b);display:flex;align-items:center;gap:7px;font-size:11px;color:var(--t3)}
+.med-first-row select{width:auto;font-size:11px;padding:2px 5px;border:1px solid var(--b);border-radius:5px}
+.perf-card-ev{border-left:4px solid var(--p)}
+.perf-card-epi{border-left:4px solid var(--vio)}
+.perf-badge-ev{background:var(--pl);color:var(--pd);padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.perf-badge-epi{background:var(--viobg);color:var(--vio);padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.autocomplete-wrap{position:relative}
+#med-autocomplete{position:absolute;top:100%;left:0;right:0;background:var(--s);border:1px solid var(--b);border-radius:var(--rads);z-index:50;box-shadow:var(--shm);overflow:hidden;max-height:180px;overflow-y:auto}
+.ac-item{padding:9px 11px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--b)}.ac-item:last-child{border-bottom:none}.ac-item:active{background:var(--pl)}
+.med-hist-item{padding:10px 13px;border-bottom:1px solid var(--b);display:flex;justify-content:space-between;align-items:flex-start}.med-hist-item:last-child{border-bottom:none}
+.med-hist-name{font-weight:700;font-size:13px}.med-hist-sub{font-size:11px;color:var(--t2);margin-top:2px}.med-hist-dates{font-size:10px;color:var(--t3);margin-top:3px}
 /* ISBAR */
-.isbar-card{display:flex;align-items:center;gap:12px;background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:14px;margin-bottom:10px;cursor:pointer;box-shadow:var(--shsm);transition:all .15s}
+.isbar-card{display:flex;align-items:center;gap:11px;background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:13px;margin-bottom:9px;cursor:pointer;box-shadow:var(--shsm)}
 .isbar-card:active{transform:scale(.98)}
 .isbar-card-ai{border-color:var(--pm);background:var(--pl)}
-.isbar-card-icon{font-size:22px;flex-shrink:0}
+.isbar-card-icon{font-size:20px;flex-shrink:0}
 .isbar-card-title{font-weight:700;font-size:14px}
-.isbar-card-sub{font-size:12px;color:var(--t2);margin-top:3px}
-.isbar-arr{font-size:22px;color:var(--t3);margin-left:auto;flex-shrink:0}
-.isbar-divider{border-top:1px solid var(--b);margin:14px 0}
-.sbar-out{background:var(--s2);border:1px solid var(--b);border-radius:var(--rad);padding:13px;margin-bottom:10px;font-size:12px;line-height:1.9;font-family:monospace;white-space:pre-wrap;word-break:break-word;max-height:50vh;overflow-y:auto}
+.isbar-card-sub{font-size:11px;color:var(--t2);margin-top:2px}
+.isbar-arr{font-size:20px;color:var(--t3);margin-left:auto;flex-shrink:0}
+.isbar-divider{border-top:1px solid var(--b);margin:13px 0}
+.sbar-out{background:var(--s2);border:1px solid var(--b);border-radius:var(--rad);padding:12px;margin-bottom:9px;font-size:12px;line-height:1.9;font-family:monospace;white-space:pre-wrap;word-break:break-word;max-height:48vh;overflow-y:auto}
+/* Nutrition */
+.nutr-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.nutr-btn{padding:11px 10px;border-radius:var(--rads);border:2px solid var(--b);background:var(--s);font-size:13px;cursor:pointer;font-weight:700;color:var(--t);text-align:center}
+.nutr-btn.active{background:var(--p);border-color:var(--p);color:#fff}
+.sub-nutr-btn{padding:8px 11px;border-radius:var(--rads);border:1.5px solid var(--b);background:var(--s);font-size:12px;cursor:pointer;font-weight:600;color:var(--t)}
+.sub-nutr-btn.active{background:var(--pl);border-color:var(--p);color:var(--pd)}
 /* About */
-#s-about .wrap{max-width:500px;margin:0 auto;padding:16px 16px 40px}
-.about-hdr{background:var(--s);border-bottom:1px solid var(--b);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
-.about-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);margin-bottom:12px;overflow:hidden;box-shadow:var(--shsm)}
-.about-body{padding:14px 16px}
-.about-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--b);font-size:13px}
-.about-row:last-child{border-bottom:none}
+#s-about .wrap{max-width:500px;margin:0 auto;padding:14px 14px 40px}
+.about-hdr{background:linear-gradient(135deg,var(--pd),var(--p));padding:10px 13px;display:flex;align-items:center;gap:9px;flex-shrink:0}
+.about-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);margin-bottom:11px;overflow:hidden;box-shadow:var(--shsm)}
+.about-body{padding:13px 15px}
+.about-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--b);font-size:13px}.about-row:last-child{border-bottom:none}
 .about-val{color:var(--t2);font-size:12px}
-.api-note{font-size:11px;color:var(--t3);margin-top:6px;line-height:1.6}
+.api-note{font-size:11px;color:var(--t3);margin-top:5px;line-height:1.6}
+/* Histórico */
+#s-historico{background:var(--bg)}
+.hist-hdr{background:linear-gradient(135deg,var(--pd),var(--p));padding:10px 13px;display:flex;align-items:center;gap:9px;flex-shrink:0}
+.hist-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);margin-bottom:9px;overflow:hidden;box-shadow:var(--shsm)}
+.hist-status{padding:3px 9px;border-radius:10px;font-size:10px;font-weight:800;text-transform:uppercase}
+.hist-status.alta{background:var(--gbg);color:var(--grn)}
+.hist-status.transferido{background:var(--pl);color:var(--pd)}
 /* Modals */
 .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .2s;pointer-events:none}
 .modal-ov.open{opacity:1;pointer-events:all}
 .modal-sheet{background:var(--s);border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:92vh;display:flex;flex-direction:column;transform:translateY(20px);transition:transform .22s}
 .modal-ov.open .modal-sheet{transform:translateY(0)}
-.modal-hdr{padding:14px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.modal-title{font-size:16px;font-weight:800}
-.modal-body{padding:16px;overflow-y:auto;flex:1}
-.modal-foot{padding:13px 16px;border-top:1px solid var(--b);flex-shrink:0}
-.close-btn{width:28px;height:28px;border-radius:50%;background:var(--s2);border:1px solid var(--b);font-size:15px;cursor:pointer;color:var(--t2);display:flex;align-items:center;justify-content:center}
-#capture-preview-wrap{display:none;margin-bottom:12px;text-align:center}
-#capture-preview-wrap img{max-width:100%;border-radius:var(--rads);max-height:180px;object-fit:cover}
+.modal-hdr{padding:13px 15px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-size:15px;font-weight:800}
+.modal-body{padding:15px;overflow-y:auto;flex:1}
+.modal-foot{padding:12px 15px;border-top:1px solid var(--b);flex-shrink:0}
+.close-btn{width:26px;height:26px;border-radius:50%;background:var(--s2);border:1px solid var(--b);font-size:14px;cursor:pointer;color:var(--t2);display:flex;align-items:center;justify-content:center}
+#capture-preview-wrap{display:none;margin-bottom:11px;text-align:center}
+#capture-preview-wrap img{max-width:100%;border-radius:var(--rads);max-height:160px;object-fit:cover}
 #photo-input{display:none}
 </style>
 </head>
 <body>
 
-<!-- SETUP -->
+<!-- ═══ SETUP ═══ -->
 <div id="s-setup" class="screen">
   <div class="scroll-y">
     <div class="wrap">
       <div class="setup-hero">
-        <div class="logo-row">
-          <div class="logo-mark" style="width:54px;height:54px;border-radius:14px">
-            <svg viewBox="0 0 48 48" fill="none" width="28" height="28">
-              <rect x="19" y="6" width="10" height="36" rx="5" fill="white" opacity=".9"/>
-              <rect x="6" y="19" width="36" height="10" rx="5" fill="white" opacity=".9"/>
-              <path d="M10 24L18 14L22 29L26 17L30 24L38 24" stroke="#0D9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px">
+          <div style="width:52px;height:52px;background:var(--p);border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg viewBox="0 0 512 512" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+              <path fill="white" opacity=".9" d="M83.7,345.5H103v81c2.3-.5,4.6-.7,7-.7s4.8.3,7,.7v-81h24.9v40.3c0,3.9,3.1,7,7,7s7-3.1,7-7v-40.3h152.5v81c2.3-.5,4.6-.7,7-.7s4.7.3,7,.7v-81h19.3v-30.2H83.7Z"/>
+              <path fill="white" opacity=".9" d="M142.7,452.2c.5,2.3.7,4.6.7,7s-.3,4.8-.7,7h140.1c-.5-2.3-.7-4.6-.7-7s.3-4.7.7-7Z"/>
+              <circle fill="#5EEAD4" cx="110" cy="459.2" r="19.4"/>
+              <circle fill="#5EEAD4" cx="315.5" cy="459.2" r="19.4"/>
+              <path fill="white" opacity=".9" d="M290.8,186.3H191c-7.3,0-13.3,5.9-13.3,13.3v4.3H88.9v-6.2c0-3.7-1.5-7-3.9-9.4-2.4-2.4-5.7-3.9-9.4-3.9-7.3,0-13.3,5.9-13.3,13.3v25.4h228.4Z"/>
+              <path fill="white" opacity=".9" d="M222.2,74.3h24.2v26.2c0,3.6,2.9,6.6,6.6,6.6h10.6v65.3h14v-65.3h10.6c3.6,0,6.6-2.9,6.6-6.6V49.8c0-3.6-2.9-6.6-6.6-6.6H253c-3.6,0-6.6,2.9-6.6,6.6v10.5h-24.2V40.4c0-3.9-3.1-7-7-7s-7,3.1-7,7v131.9h14Z"/>
+              <path fill="#5EEAD4" d="M416.7,160.7l-76.4,76.4H49.9v25h75.8c3.9,0,7,3.1,7,7s-3.1,7-7,7H49.9v25.2h317l95.2-95.2Z"/>
+              <ellipse fill="white" opacity=".9" cx="335.8" cy="164.2" rx="25.7" ry="27.2"/>
             </svg>
           </div>
-          <div class="app-name" style="font-size:28px">Shift<em>Care</em></div>
+          <div>
+            <div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
+            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v2.1</div>
+          </div>
         </div>
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:5px">Novo Turno</h2>
+        <h2 style="font-size:17px;font-weight:700;margin-bottom:4px">Novo Turno</h2>
         <p style="font-size:13px;color:var(--t2)">Adicione os doentes e inicie o turno</p>
       </div>
       <div id="pt-list"></div>
       <div class="add-form">
         <div class="add-form-title">Adicionar Doente</div>
-        <div class="form-row" style="margin-bottom:11px">
+        <div class="form-row" style="margin-bottom:10px">
           <div><label>Nome / Alias</label><input id="f-name" type="text" placeholder="Ex: Doente A"></div>
           <div><label>Cama</label><input id="f-bed" type="text" placeholder="Ex: 3"></div>
         </div>
-        <div style="margin-bottom:11px">
+        <div style="margin-bottom:10px">
           <label>Idade</label>
           <div class="age-row">
             <input id="f-age" type="number" min="0" placeholder="Ex: 28">
@@ -266,42 +287,59 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
             </div>
           </div>
         </div>
-        <div class="form-row" style="margin-bottom:11px">
-          <div><label>Peso (kg)</label><input id="f-wt" type="number" step="0.1" min="0" placeholder="Ex: 3.4"></div>
-          <div></div>
+        <div class="form-row" style="margin-bottom:10px">
+          <div><label>Peso (kg)</label><input id="f-wt" type="number" step="0.001" min="0" placeholder="Ex: 1.650"></div>
+          <div><label>Alergias</label><input id="f-alrg" type="text" placeholder="Ex: Penicilina"></div>
         </div>
-        <div style="margin-bottom:11px"><label>Diagnóstico Principal</label><input id="f-diag" type="text" placeholder="Ex: Bronquiolite VRS grave"></div>
-        <div style="margin-bottom:14px">
+        <!-- Gestational age (neonatology) -->
+        <div style="background:var(--pl);border-radius:var(--rads);padding:10px;margin-bottom:10px;border:1px solid var(--pm)">
+          <div style="font-size:11px;font-weight:700;color:var(--pd);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">🍼 Neonatologia (opcional)</div>
+          <div class="form-row" style="margin-bottom:8px">
+            <div><label>Idade Gestacional (semanas)</label><input id="f-ig-w" type="number" min="22" max="44" placeholder="Ex: 28"></div>
+            <div><label>+ dias</label><input id="f-ig-d" type="number" min="0" max="6" placeholder="0-6"></div>
+          </div>
+          <div><label>Data de Nascimento</label><input id="f-dnasc" type="date"></div>
+        </div>
+        <div style="margin-bottom:10px"><label>Diagnóstico Principal</label><input id="f-diag" type="text" placeholder="Ex: Bronquiolite VRS grave"></div>
+        <div style="margin-bottom:13px">
           <label>Diagnósticos Secundários</label>
           <div class="diag-tags" id="f-dtags"></div>
-          <div class="diag2-row"><input id="f-diag2" type="text" placeholder="Adicionar diagnóstico..."><button class="btn btn-o btn-sm" onclick="addSD('f-diag2','f-dtags','sd')">+</button></div>
+          <div class="diag2-row"><input id="f-diag2" type="text" placeholder="Adicionar..."><button class="btn btn-o btn-sm" onclick="addSD('f-diag2','f-dtags','sd')">+</button></div>
         </div>
         <button class="btn btn-p" style="width:100%" onclick="addPt('s')">Adicionar Doente</button>
       </div>
       <div id="start-area" style="display:none;padding-bottom:32px">
-        <button class="btn btn-p" style="width:100%;font-size:15px;padding:14px" onclick="startShift()">Iniciar Turno →</button>
+        <button class="btn btn-p" style="width:100%;font-size:15px;padding:13px" onclick="startShift()">Iniciar Turno →</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
+<!-- ═══ DASHBOARD ═══ -->
 <div id="s-dashboard" class="screen hidden">
   <div class="dash-header">
-    <div style="flex:1">
-      <div class="dash-logo">
-        <div class="logo-mark" style="width:28px;height:28px;border-radius:7px">
-          <svg viewBox="0 0 48 48" fill="none" width="16" height="16"><rect x="19" y="6" width="10" height="36" rx="5" fill="white" opacity=".9"/><rect x="6" y="19" width="36" height="10" rx="5" fill="white" opacity=".9"/><path d="M10 24L18 14L22 29L26 17L30 24L38 24" stroke="#0D9488" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="dash-top">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:26px;height:26px;background:rgba(255,255,255,.25);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg viewBox="0 0 512 512" width="16" height="16"><path fill="white" opacity=".9" d="M83.7,345.5H103v81c2.3-.5,4.6-.7,7-.7s4.8.3,7,.7v-81h24.9v40.3c0,3.9,3.1,7,7,7s7-3.1,7-7v-40.3h152.5v81c2.3-.5,4.6-.7,7-.7s4.7.3,7,.7v-81h19.3v-30.2H83.7Z"/><path fill="#5EEAD4" d="M416.7,160.7l-76.4,76.4H49.9v25h75.8c3.9,0,7,3.1,7,7s-3.1,7-7,7H49.9v25.2h317l95.2-95.2Z"/><ellipse fill="white" opacity=".9" cx="335.8" cy="164.2" rx="25.7" ry="27.2"/></svg>
+          </div>
+          <div class="dash-app-name">Shift<em style="color:var(--pm);font-style:normal">Care</em></div>
         </div>
-        <div class="app-name" style="font-size:17px;margin-left:8px">Shift<em>Care</em></div>
+        <div class="dash-app-sub" id="dash-sub">A carregar...</div>
       </div>
-      <div class="dash-sub" id="dash-sub">A carregar...</div>
+      <div class="dash-right-btns">
+        <button class="btn-ic" onclick="goHistorico()" title="Histórico">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+        </button>
+        <button class="btn-ic" onclick="goAbout()" title="Sobre">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r=".5" fill="currentColor"/></svg>
+        </button>
+      </div>
     </div>
-    <div class="dash-right">
-      <div class="clock-display" id="clock-display">--:--</div>
-      <button class="btn-ic" onclick="goAbout()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r=".5" fill="currentColor"/></svg>
-      </button>
+    <div class="dash-center">
+      <div class="clock-big" id="clock-big">--:--</div>
+      <div class="date-big" id="date-big">--</div>
     </div>
   </div>
   <div class="cards-wrap">
@@ -312,30 +350,44 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
   <button class="fab" onclick="openAddModal()">+</button>
 </div>
 
-<!-- DETAIL -->
+<!-- ═══ HISTÓRICO ═══ -->
+<div id="s-historico" class="screen hidden">
+  <div class="hist-hdr">
+    <button class="btn-g" onclick="goBack()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div style="font-size:15px;font-weight:800;color:#fff;flex:1">Histórico</div>
+  </div>
+  <div class="scroll-y" style="padding:13px">
+    <div id="historico-list"></div>
+  </div>
+</div>
+
+<!-- ═══ DETAIL ═══ -->
 <div id="s-detail" class="screen hidden">
   <div class="det-hdr">
-    <button class="btn btn-g" onclick="goBack()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-    <div class="det-name" id="det-name"></div>
+    <button class="btn-g" onclick="goBack()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="det-title" id="det-title">—</div>
     <div id="det-badge"></div>
   </div>
+  <div class="pt-info-bar" id="pt-info-bar"></div>
   <div class="tab-bar">
     <div class="tab-item active" onclick="swTab('vitais')">Sinais Vitais</div>
     <div class="tab-item" onclick="swTab('cuidados')">Cuidados</div>
     <div class="tab-item" onclick="swTab('medicacao')">Medicação</div>
+    <div class="tab-item" onclick="swTab('alimentacao')">Alimentação</div>
     <div class="tab-item" onclick="swTab('isbar')">Antec./ISBAR</div>
-    <div class="tab-item" onclick="swTab('notas')">Notas</div>
   </div>
   <div class="tab-body">
+    <!-- VITAIS -->
     <div id="tab-vitais" class="tab-pane active">
-      <div style="display:flex;gap:7px;margin-bottom:12px">
-        <button id="cam-btn" class="btn btn-o btn-sm" style="flex:1;font-size:13px" onclick="openCam()">📷 Capturar Ecrã</button>
+      <div style="display:flex;gap:7px;margin-bottom:11px">
+        <button id="cam-btn" class="btn btn-o btn-sm" style="flex:1;font-size:12px" onclick="openCam()">📷 Capturar Ecrã</button>
         <button class="btn btn-o btn-sm" onclick="clearVit()">Limpar</button>
       </div>
       <div id="capture-preview-wrap"><img id="capture-img" src="" alt=""></div>
       <div class="vt-full-grid" id="vitals-grid"></div>
       <div id="vitals-alert"></div>
     </div>
+    <!-- CUIDADOS -->
     <div id="tab-cuidados" class="tab-pane">
       <div class="subtab-bar">
         <button class="subtab-btn active" id="ct-enf" onclick="setCsec('enf')">Enfermagem</button>
@@ -346,58 +398,45 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
       <div id="csec-dev" style="display:none"></div>
       <div id="csec-todo" style="display:none"></div>
     </div>
+    <!-- MEDICAÇÃO -->
     <div id="tab-medicacao" class="tab-pane">
       <div class="subtab-bar">
         <button class="subtab-btn active" id="mt-hor" onclick="setMsec('hor')">Horária</button>
         <button class="subtab-btn" id="mt-perf" onclick="setMsec('perf')">Perfusões</button>
+        <button class="subtab-btn" id="mt-hist" onclick="setMsec('hist')">Histórico</button>
       </div>
       <div id="med-content"></div>
     </div>
+    <!-- ALIMENTAÇÃO -->
+    <div id="tab-alimentacao" class="tab-pane"></div>
+    <!-- ANTEC/ISBAR -->
     <div id="tab-isbar" class="tab-pane"></div>
-    <div id="tab-notas" class="tab-pane">
-      <div style="display:flex;gap:7px;margin-bottom:13px">
-        <input id="note-inp" type="text" placeholder="Nota rápida..." style="font-size:13px">
-        <button class="btn btn-p btn-sm" onclick="addNote()">+</button>
-      </div>
-      <div class="sect-lbl" style="margin-bottom:8px">Registo Rápido</div>
-      <input type="text" id="quick-search" placeholder="Pesquisar..." oninput="filtQ(this.value)" style="font-size:13px;padding:8px 11px;margin-bottom:9px">
-      <div id="qbuilder" class="qbuilder">
-        <div class="qb-prev" id="qb-prev"></div>
-        <div class="qb-acts">
-          <button class="btn btn-p btn-sm" onclick="confQ()">Registar</button>
-          <button class="btn btn-o btn-sm" onclick="clrQ()">Limpar</button>
-        </div>
-      </div>
-      <div id="quick-cats"></div>
-      <div class="sect-lbl" style="margin-top:14px;margin-bottom:9px">Registo do Turno</div>
-      <div id="notes-list"></div>
-    </div>
   </div>
 </div>
 
-<!-- ABOUT -->
+<!-- ═══ ABOUT ═══ -->
 <div id="s-about" class="screen hidden">
   <div class="about-hdr">
-    <button class="btn btn-g" onclick="goBack()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-    <div style="font-weight:800;font-size:16px;flex:1;text-align:center">Sobre</div>
-    <div style="width:36px"></div>
+    <button class="btn-g" onclick="goBack()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div style="font-size:15px;font-weight:800;color:#fff;flex:1;text-align:center">Sobre</div>
+    <div style="width:26px"></div>
   </div>
   <div class="scroll-y">
     <div class="wrap">
       <div class="about-card">
-        <div style="display:flex;align-items:center;gap:14px;padding:16px">
-          <div class="logo-mark" style="width:50px;height:50px;border-radius:13px">
-            <svg viewBox="0 0 48 48" fill="none" width="26" height="26"><rect x="19" y="6" width="10" height="36" rx="5" fill="white" opacity=".9"/><rect x="6" y="19" width="36" height="10" rx="5" fill="white" opacity=".9"/><path d="M10 24L18 14L22 29L26 17L30 24L38 24" stroke="#0D9488" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div style="display:flex;align-items:center;gap:13px;padding:15px">
+          <div style="width:48px;height:48px;background:var(--p);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg viewBox="0 0 512 512" width="28" height="28"><path fill="white" opacity=".9" d="M83.7,345.5H103v81c2.3-.5,4.6-.7,7-.7s4.8.3,7,.7v-81h24.9v40.3c0,3.9,3.1,7,7,7s7-3.1,7-7v-40.3h152.5v81c2.3-.5,4.6-.7,7-.7s4.7.3,7,.7v-81h19.3v-30.2H83.7Z"/><path fill="#5EEAD4" d="M416.7,160.7l-76.4,76.4H49.9v25h75.8c3.9,0,7,3.1,7,7s-3.1,7-7,7H49.9v25.2h317l95.2-95.2Z"/><ellipse fill="white" opacity=".9" cx="335.8" cy="164.2" rx="25.7" ry="27.2"/></svg>
           </div>
           <div>
-            <div class="app-name" style="font-size:22px">Shift<em>Care</em></div>
-            <div style="font-size:12px;color:var(--t2);margin-top:3px">Gestão de Turno de Enfermagem</div>
+            <div style="font-size:20px;font-weight:800;letter-spacing:-.4px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
+            <div style="font-size:11px;color:var(--t2);margin-top:2px">Gestão de Turno de Enfermagem Pediátrica</div>
           </div>
         </div>
-        <div style="padding:0 16px 16px">
-          <div class="about-row"><span>Versão</span><span class="about-val">2.0.0</span></div>
-          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v2.0</span></div>
-          <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first</span></div>
+        <div style="padding:0 15px 15px">
+          <div class="about-row"><span>Versão</span><span class="about-val">2.1.0</span></div>
+          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v2.1</span></div>
+          <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
           <div class="about-row"><span>IA</span><span class="about-val">Groq LLaMA via Cloudflare Worker</span></div>
           <div class="about-row"><span>Idioma</span><span class="about-val">Português (PT)</span></div>
           <div class="about-row"><span>Compilação</span><span class="about-val" id="build-date"></span></div>
@@ -405,40 +444,41 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
       </div>
       <div class="about-card">
         <div class="about-body">
-          <div style="font-weight:700;font-size:13px;margin-bottom:13px">Configuração de IA</div>
-          <div style="margin-bottom:12px">
+          <div style="font-weight:700;font-size:13px;margin-bottom:12px">Configuração de IA</div>
+          <div style="margin-bottom:11px">
             <label>Cloudflare Worker URL</label>
             <input type="url" id="worker-inp" placeholder="https://shiftcare.workers.dev" oninput="ST.wurl=this.value.trim();save()">
-            <div class="api-note">Implante o worker.js no Cloudflare Workers com a GROQ_API_KEY. Recomendado para privacidade.</div>
+            <div class="api-note">Worker pré-configurado: __shiftcare.pedicode-app.workers.dev — adicione a chave GROQ_API_KEY nas variáveis de ambiente do Worker.</div>
           </div>
           <div>
-            <label>Chave API Groq (alternativa)</label>
+            <label>Chave API Groq (alternativa directa)</label>
             <input type="password" id="apikey-inp" placeholder="gsk_..." oninput="ST.apiKey=this.value.trim();save()">
-            <div class="api-note">Guardada localmente. Nunca partilhada. Alternativa ao Worker.</div>
+            <div class="api-note">Guardada localmente no dispositivo. Nunca partilhada.</div>
           </div>
         </div>
       </div>
       <div class="about-card">
         <div class="about-body" style="font-size:13px;color:var(--t2);line-height:1.8">
-          <strong style="color:var(--t)">Privacidade</strong><br>Dados do doente nunca saem do dispositivo. O módulo de aprendizagem armazena apenas padrões anónimos (nomes de medicamentos, procedimentos).
+          <strong style="color:var(--t)">Privacidade</strong><br>Dados do doente nunca saem do dispositivo. O módulo de aprendizagem armazena apenas padrões anónimos (nomes de fármacos, procedimentos).
         </div>
       </div>
-      <button class="btn btn-o" style="width:100%;font-size:13px;margin-bottom:12px" onclick="resetLearn()">Resetar Módulo de Aprendizagem</button>
-      <div style="text-align:center;font-size:11px;color:var(--t3);padding:8px 0">ShiftCare v2.0 © 2025 · Todos os direitos reservados</div>
+      <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:11px" onclick="resetLearn()">Resetar Módulo de Aprendizagem</button>
+      <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v2.1 © 2025 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Add Patient -->
+<!-- MODALS -->
+<!-- Add Patient -->
 <div id="modal-addpt" class="modal-ov">
   <div class="modal-sheet">
     <div class="modal-hdr"><div class="modal-title">Adicionar Doente</div><button class="close-btn" onclick="closeM('modal-addpt')">✕</button></div>
     <div class="modal-body">
-      <div class="form-row" style="margin-bottom:11px">
+      <div class="form-row" style="margin-bottom:10px">
         <div><label>Nome / Alias</label><input id="m-name" type="text" placeholder="Ex: Doente A"></div>
         <div><label>Cama</label><input id="m-bed" type="text" placeholder="Ex: 3"></div>
       </div>
-      <div style="margin-bottom:11px">
+      <div style="margin-bottom:10px">
         <label>Idade</label>
         <div class="age-row">
           <input id="m-age" type="number" min="0" placeholder="Ex: 28">
@@ -449,28 +489,35 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
         </div>
       </div>
-      <div class="form-row" style="margin-bottom:11px">
-        <div><label>Peso (kg)</label><input id="m-wt" type="number" step="0.1" min="0" placeholder="3.4"></div>
-        <div></div>
+      <div class="form-row" style="margin-bottom:10px">
+        <div><label>Peso (kg)</label><input id="m-wt" type="number" step="0.001" min="0" placeholder="Ex: 1.650"></div>
+        <div><label>Alergias</label><input id="m-alrg" type="text" placeholder="Ex: Penicilina"></div>
       </div>
-      <div style="margin-bottom:11px"><label>Diagnóstico Principal</label><input id="m-diag" type="text" placeholder="Ex: Bronquiolite VRS"></div>
+      <div style="background:var(--pl);border-radius:var(--rads);padding:10px;margin-bottom:10px;border:1px solid var(--pm)">
+        <div style="font-size:11px;font-weight:700;color:var(--pd);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">🍼 Neonatologia (opcional)</div>
+        <div class="form-row" style="margin-bottom:8px">
+          <div><label>Idade Gestacional (sem.)</label><input id="m-ig-w" type="number" min="22" max="44" placeholder="Ex: 28"></div>
+          <div><label>+ dias</label><input id="m-ig-d" type="number" min="0" max="6" placeholder="0-6"></div>
+        </div>
+        <div><label>Data de Nascimento</label><input id="m-dnasc" type="date"></div>
+      </div>
+      <div style="margin-bottom:10px"><label>Diagnóstico Principal</label><input id="m-diag" type="text" placeholder="Ex: Bronquiolite VRS"></div>
       <div>
         <label>Diagnósticos Secundários</label>
         <div class="diag-tags" id="m-dtags"></div>
-        <div class="diag2-row" style="margin-top:8px"><input id="m-diag2" type="text" placeholder="Adicionar..."><button class="btn btn-o btn-sm" onclick="addSD('m-diag2','m-dtags','sdm')">+</button></div>
+        <div class="diag2-row" style="margin-top:7px"><input id="m-diag2" type="text" placeholder="Adicionar..."><button class="btn btn-o btn-sm" onclick="addSD('m-diag2','m-dtags','sdm')">+</button></div>
       </div>
     </div>
     <div class="modal-foot"><button class="btn btn-p" style="width:100%" onclick="addPt('m')">Adicionar Doente</button></div>
   </div>
 </div>
-
-<!-- MODAL: Discharge -->
+<!-- Discharge -->
 <div id="modal-disc" class="modal-ov">
   <div class="modal-sheet">
     <div class="modal-hdr"><div class="modal-title">Alta / Transferência</div><button class="close-btn" onclick="closeM('modal-disc')">✕</button></div>
     <div class="modal-body">
       <div style="font-size:15px;font-weight:700;margin-bottom:12px" id="disc-name"></div>
-      <div style="margin-bottom:14px"><label>Nota (opcional)</label><textarea id="disc-note" rows="3" placeholder="Ex: Alta para domicílio. Família informada."></textarea></div>
+      <div style="margin-bottom:13px"><label>Nota (opcional)</label><textarea id="disc-note" rows="3" placeholder="Ex: Alta para domicílio. Família informada."></textarea></div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-p" style="flex:1;background:var(--grn)" onclick="confDisc('alta')">✓ Alta</button>
         <button class="btn btn-o" style="flex:1" onclick="confDisc('transferido')">↗ Transferência</button>
@@ -478,47 +525,53 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
     </div>
   </div>
 </div>
-
-<!-- MODAL: Add Med -->
+<!-- Add Med -->
 <div id="modal-med" class="modal-ov">
   <div class="modal-sheet">
     <div class="modal-hdr"><div class="modal-title" id="med-modal-title">Adicionar Medicação</div><button class="close-btn" onclick="closeM('modal-med')">✕</button></div>
     <div class="modal-body">
-      <div style="margin-bottom:11px">
+      <div style="margin-bottom:10px">
         <label>Nome do Fármaco</label>
         <div class="autocomplete-wrap">
           <input id="med-name" type="text" placeholder="Ex: Morfina" oninput="onMedName(this.value)">
           <div id="med-autocomplete"></div>
         </div>
       </div>
-      <div class="form-row" style="margin-bottom:11px">
+      <div class="form-row3" style="margin-bottom:10px">
         <div><label>Dose</label><input id="med-dose" type="text" placeholder="Ex: 0.1"></div>
-        <div><label>Unidade</label>
-          <select id="med-unit"><option>mg</option><option>mcg</option><option>g</option><option>UI</option><option>mEq</option><option>mL</option></select>
-        </div>
+        <div><label>Unidade</label><select id="med-unit"><option>mg</option><option>mcg</option><option>g</option><option>UI</option><option>mEq</option><option>mL</option><option>mg/kg</option><option>mcg/kg</option></select></div>
+        <div id="med-vel-wrap" style="display:none"><label>Velocidade</label><input id="med-vel" type="text" placeholder="Ex: 2 mL/h"></div>
       </div>
-      <div style="margin-bottom:11px"><label>Via de Administração</label>
-        <select id="med-route"><option>Oral</option><option>Gástrica (SNG/SOG)</option><option>EV</option><option>Inalatória</option><option>Perineural</option><option>Epidural</option><option>Retal</option><option>Subcutânea</option><option>Intramuscular</option></select>
+      <div style="margin-bottom:10px" id="med-route-wrap"><label>Via de Administração</label>
+        <select id="med-route"><option>EV</option><option>Oral</option><option>Gástrica (SNG/SOG)</option><option>Epidural</option><option>Inalatória</option><option>Perineural</option><option>Retal</option><option>Subcutânea</option><option>Intramuscular</option></select>
       </div>
-      <div id="med-freq-row" style="margin-bottom:11px"><label>Frequência</label>
+      <div id="med-freq-row" style="margin-bottom:10px"><label>Frequência</label>
         <select id="med-freq"><option>1/1h</option><option>2/2h</option><option>4/4h</option><option>6/6h</option><option selected>8/8h</option><option>12/12h</option><option>24/24h</option><option>36/36h</option><option>SOS</option></select>
       </div>
-      <div id="med-notes-row" style="display:none;margin-bottom:11px"><label>Notas (perfusão)</label>
-        <input id="med-notes" type="text" placeholder="Ex: 2mL/h. Diluição: ...">
+      <div id="med-notes-row" style="display:none;margin-bottom:10px">
+        <label>Notas / Diluição</label>
+        <input id="med-notes" type="text" placeholder="Ex: 50mg em 50mL NaCl 0.9%">
+      </div>
+      <div style="margin-bottom:10px">
+        <label>Data de início</label>
+        <input id="med-start" type="datetime-local">
       </div>
     </div>
     <div class="modal-foot"><button class="btn btn-p" style="width:100%" onclick="confMed()">Adicionar</button></div>
   </div>
 </div>
-
-<!-- MODAL: Add Device -->
+<!-- Add Device -->
 <div id="modal-dev" class="modal-ov">
   <div class="modal-sheet">
     <div class="modal-hdr"><div class="modal-title">Adicionar Dispositivo</div><button class="close-btn" onclick="closeM('modal-dev')">✕</button></div>
     <div class="modal-body">
-      <div style="margin-bottom:11px"><label>Tipo de Dispositivo</label><select id="dev-type"></select></div>
+      <div style="margin-bottom:10px"><label>Tipo de Dispositivo</label><select id="dev-type" onchange="onDevTypeChange()"></select></div>
+      <div id="dev-location-wrap" style="display:none;margin-bottom:10px">
+        <label>Localização / Acesso</label>
+        <select id="dev-location"></select>
+      </div>
       <div class="form-row">
-        <div><label>Calibre / Tamanho</label><select id="dev-gauge"><option>24G</option><option>22G</option><option>20G</option><option>18G</option><option>16G</option><option>Fr 5</option><option>Fr 6</option><option>Fr 8</option><option>Fr 10</option><option>Fr 12</option><option>N/A</option></select></div>
+        <div><label>Calibre / Tamanho</label><select id="dev-gauge"><option>24G</option><option>22G</option><option>20G</option><option>18G</option><option>16G</option><option>Fr 5</option><option>Fr 6</option><option>Fr 8</option><option>Fr 10</option><option>Fr 12</option><option>Fr 14</option><option>N/A</option></select></div>
         <div><label>Lateralidade</label><input id="dev-side" type="text" placeholder="Ex: MSD, Esq..."></div>
       </div>
     </div>
@@ -530,219 +583,597 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 
 <script>
 'use strict';
-
 // ══════════════════════════════════════════════
-// DATA
+// MODULE: DATA
 // ══════════════════════════════════════════════
 const VITALS_DEF=[{k:'hr',label:'FC',unit:'bpm',ph:'140'},{k:'spo2',label:'SpO₂',unit:'%',ph:'98'},{k:'rr',label:'FR',unit:'rpm',ph:'40'},{k:'temp',label:'Temp',unit:'°C',ph:'36.8'},{k:'sbp',label:'TAS',unit:'mmHg',ph:'80'},{k:'gluc',label:'Glicemia',unit:'mg/dL',ph:'80'}];
 const DEF_TASKS=['Avaliação ABCDE completa','Controlo de sinais vitais','Administração de medicação','Balanço hídrico','Higiene e conforto','Estado da unidade','Comunicação à família'];
-const ABCDE=[{key:'A',title:'Airway — Via Aérea',desc:'Permeabilidade, secreções, dispositivos (ETT, máscara)'},{key:'B',title:'Breathing — Respiração',desc:'FR, SpO₂, padrão respiratório, trabalho ventilatório'},{key:'C',title:'Circulation — Circulação',desc:'FC, TAS, perfusão periférica, tempo de repreenchimento capilar'},{key:'D',title:'Disability — Neurológico',desc:'Consciência (AVPU/GCS), pupilas, tónus, convulsões'},{key:'E',title:'Exposure — Exposição',desc:'Temperatura, pele, lesões, edema, drenos, feridas'}];
+const ABCDE_DEF=[{key:'A',title:'Airway — Via Aérea',desc:'Permeabilidade, secreções, dispositivos (ETT, máscara, O₂)'},{key:'B',title:'Breathing — Respiração',desc:'FR, SpO₂, padrão respiratório, trabalho ventilatório, auscultação'},{key:'C',title:'Circulation — Circulação',desc:'FC, TAS, perfusão periférica, TRC, cor da pele, diurese'},{key:'D',title:'Disability — Neurológico',desc:'Consciência (AVPU/GCS), pupilas, tónus, convulsões, dor'},{key:'E',title:'Exposure — Exposição',desc:'Temperatura, pele, lesões, edema, drenos, feridas, cateteres'}];
 const UNIT_CHECK=['Insuflador manual presente e funcional','Aspiração funcionante (teste)','Sondas de aspiração disponíveis','Débito-metro de O₂ (≥15 L/min)','Unidade organizada e limpa','Medicação de urgência acessível'];
-const TODO_ITEMS=[{cat:'Análises',items:['Sangue','Urina','Secreções','LCR','Exsudado']},{cat:'Gasimetria',items:['Capilar','Venosa','Arterial']},{cat:'Outros',items:['Balanço hídrico','Mudar drenos','Aspirar secreções','Pesar doente','ECG']}];
-const DEV_TYPES=[{id:'piv-r',label:'Acesso Venoso Periférico Direito',x:78,y:44,icon:'💉'},{id:'piv-l',label:'Acesso Venoso Periférico Esquerdo',x:22,y:44,icon:'💉'},{id:'cvc-r',label:'Cateter Venoso Central Direito',x:64,y:21,icon:'🔵'},{id:'cvc-l',label:'Cateter Venoso Central Esquerdo',x:36,y:21,icon:'🔵'},{id:'art-r',label:'Linha Arterial Direita',x:82,y:52,icon:'🔴'},{id:'art-l',label:'Linha Arterial Esquerda',x:18,y:52,icon:'🔴'},{id:'uvc',label:'Cateter Umbilical Venoso',x:50,y:59,icon:'⚪',neo:true},{id:'uac',label:'Cateter Umbilical Arterial',x:50,y:62,icon:'🔴',neo:true},{id:'ett',label:'Tubo Endotraqueal',x:50,y:17,icon:'🟢'},{id:'sng',label:'Sonda Nasogástrica',x:44,y:14,icon:'🟡'},{id:'sog',label:'Sonda Orogástrica',x:50,y:15,icon:'🟡'},{id:'alg',label:'Algália',x:50,y:70,icon:'🟤'},{id:'drain-r',label:'Dreno Torácico Direito',x:65,y:34,icon:'⬛'},{id:'drain-l',label:'Dreno Torácico Esquerdo',x:35,y:34,icon:'⬛'}];
+const TODO_ITEMS=[{cat:'Análises',items:['Sangue','Urina','Secreções','LCR','Exsudado']},{cat:'Gasimetria',items:['Capilar','Venosa','Arterial']},{cat:'Outros',items:['Balanço hídrico','Mudar drenos','Aspirar secreções','Pesar doente','ECG','Rx Tórax']}];
+const DEV_TYPES=[
+  {id:'piv-r', label:'Acesso Venoso Periférico Direito',  x:77,y:44,icon:'💉',locs:null},
+  {id:'piv-l', label:'Acesso Venoso Periférico Esquerdo', x:23,y:44,icon:'💉',locs:null},
+  {id:'cvc',   label:'Cateter Venoso Central',            x:52,y:20,icon:'🔵',locs:['Jugular Interna Direita','Jugular Interna Esquerda','Subclávia Direita','Subclávia Esquerda','Femoral Direita','Femoral Esquerda','Tronco Braquiocefálico']},
+  {id:'picc',  label:'PICC',                              x:20,y:40,icon:'🔵',locs:['Membro Superior Direito','Membro Superior Esquerdo']},
+  {id:'art-r', label:'Linha Arterial Direita',            x:82,y:52,icon:'🔴',locs:null},
+  {id:'art-l', label:'Linha Arterial Esquerda',           x:18,y:52,icon:'🔴',locs:null},
+  {id:'uvc',   label:'Cateter Umbilical Venoso',          x:50,y:58,icon:'⚪',locs:null,neo:true},
+  {id:'uac',   label:'Cateter Umbilical Arterial',        x:50,y:62,icon:'🔴',locs:null,neo:true},
+  {id:'ett',   label:'Tubo Endotraqueal',                 x:50,y:17,icon:'🟢',locs:['Oral','Nasal']},
+  {id:'sng',   label:'Sonda Nasogástrica',                x:44,y:14,icon:'🟡',locs:null},
+  {id:'sog',   label:'Sonda Orogástrica',                 x:50,y:15,icon:'🟡',locs:null},
+  {id:'sjej',  label:'Sonda Jejunal',                     x:56,y:14,icon:'🟠',locs:null},
+  {id:'alg',   label:'Algália',                           x:50,y:70,icon:'🟤',locs:null},
+  {id:'drain-r',label:'Dreno Torácico Direito',           x:65,y:33,icon:'⬛',locs:null},
+  {id:'drain-l',label:'Dreno Torácico Esquerdo',          x:35,y:33,icon:'⬛',locs:null},
+  {id:'epi',   label:'Cateter Epidural',                  x:50,y:45,icon:'🟣',locs:['Lombar','Torácico','Cervical']},
+  {id:'peri',  label:'Cateter Perineural',                x:35,y:65,icon:'🟣',locs:['Femoral','Ciático','Braquial','Ilioinguinal']},
+  {id:'capno', label:'Capnógrafo',                        x:48,y:13,icon:'💨',locs:null},
+  {id:'bis',   label:'BIS / Monitor profundidade anest.', x:50,y:8, icon:'📡',locs:null},
+];
 const QCATS=[{cat:'Colheita',items:['Sangue','Secreções','Urina','LCR']},{cat:'Lateralidade',items:['Esquerda','Direita','Bilateral']},{cat:'Acesso Venoso',items:['Periférico','Central','PICC']},{cat:'Sonda',items:['Nasogástrica','Orogástrica','Jejunal']},{cat:'Procedimento',items:['Algaliação','Entubação Orotraqueal','Aspiração Gástrica','Aspiração de Secreções']},{cat:'Aviso',items:['Médico avisado','Família contactada','Anestesia avisada']},{cat:'Intercorrência',items:['Agitação','Convulsão','Dessaturação','Bradicardia','Hipertermia']}];
-const COMMON_MEDS=['Morfina','Fentanil','Midazolam','Propofol','Ketamina','Adrenalina','Noradrenalina','Dopamina','Dobutamina','Furosemida','Heparina','Insulina','Dextrose 10%','Amoxicilina','Ampicilina','Gentamicina','Meropenem','Vancomicina','Paracetamol','Ibuprofeno','Dexametasona','Hidrocortisona','Surfactante','Cafeína','Fenobarbital','Levetiracetam','Albumina','Vitamina K'];
-const SHIFTS=[{name:'Manhã',start:8,end:15,color:'#FEF3C7',accent:'#D97706'},{name:'Tarde',start:15,end:22,color:'#EDE9FE',accent:'#7C3AED'},{name:'Noite',start:22,end:8,color:'#E0F2FE',accent:'#0369A1'}];
+const COMMON_MEDS=['Morfina','Fentanil','Midazolam','Propofol','Ketamina','Adrenalina','Noradrenalina','Dopamina','Dobutamina','Furosemida','Heparina','Insulina','Dextrose 10%','Amoxicilina','Ampicilina','Gentamicina','Meropenem','Vancomicina','Paracetamol','Ibuprofeno','Dexametasona','Hidrocortisona','Surfactante','Cafeína','Fenobarbital','Levetiracetam','Albumina','Vitamina K','NaCl 0.9%','Ringer Lactato','Bicarbonato de Sódio'];
+const SHIFTS=[{name:'Manhã',start:8,end:15,accent:'#D97706'},{name:'Tarde',start:15,end:22,accent:'#7C3AED'},{name:'Noite',start:22,end:8,accent:'#0369A1'}];
+const FREQ_MAP={'1/1h':1,'2/2h':2,'4/4h':4,'6/6h':6,'8/8h':8,'12/12h':12,'24/24h':24,'36/36h':36,'SOS':0};
+const NUTR_TYPES=['Leite Materno','Leite Artificial','Leite Específico','Adequada à Idade'];
+const NUTR_SPECIFIC=['PeptiJunior','Leite Fortificado','MCT-Oil','Neocate','Nutramigen'];
 
 function vRanges(d){d=parseInt(d)||0;if(d<=28)return{hr:[100,180],rr:[40,60],sbp:[45,80],spo2:[88,100],temp:[36.3,37.5],gluc:[45,120]};if(d<=90)return{hr:[100,180],rr:[35,55],sbp:[60,95],spo2:[95,100],temp:[36.3,37.5],gluc:[50,120]};if(d<=365)return{hr:[100,160],rr:[30,50],sbp:[65,100],spo2:[95,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=730)return{hr:[90,150],rr:[24,40],sbp:[70,110],spo2:[95,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=1825)return{hr:[80,140],rr:[22,34],sbp:[80,112],spo2:[96,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=4380)return{hr:[70,120],rr:[18,30],sbp:[85,118],spo2:[96,100],temp:[36.5,37.5],gluc:[60,120]};return{hr:[55,100],rr:[12,20],sbp:[90,130],spo2:[96,100],temp:[36.5,37.5],gluc:[70,120]};}
 function vSt(v,r){if(v===''||v===null||v===undefined)return'';const n=parseFloat(v);if(isNaN(n))return'';if(n<r[0]||n>r[1])return'alrt';const s=r[1]-r[0];if(n<r[0]+s*.12||n>r[1]-s*.12)return'warn';return'ok';}
 function alrtCnt(p){const R=vRanges(p.ageDays);return VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&R[v.k]&&vSt(val,R[v.k])==='alrt';}).length;}
-function ageLabel(p){const d=p.ageDays||0;if(d<=60)return d+' dias';const m=Math.floor(d/30.4);if(m<24)return m+' meses';const y=Math.floor(d/365),rm=Math.floor((d%365)/30.4);return y+'a'+(rm?' '+rm+'m':'');}
-function ageToDays(v,u){const n=parseInt(v)||0;if(u==='dias')return n;if(u==='meses')return Math.round(n*30.4);return Math.round(n*365);}
+function ageToDays(v,u){const n=parseInt(v)||0;if(u==='dias')return n;if(u==='meses')return Math.round(n*30.44);return Math.round(n*365.25);}
 function ageCat(p){const d=p.ageDays||0;if(d<=28)return'neo';if(d<=730)return'lac';return'cri';}
 
+// Age label
+function ageLabel(p){
+  const d=p.ageDays||0;
+  if(d<=60)return d+' dias';
+  const m=Math.floor(d/30.44);
+  if(m<24)return m+' meses';
+  const y=Math.floor(d/365.25),rm=Math.round((d%365.25)/30.44);
+  return y+'a'+(rm?' '+rm+'m':'');
+}
+
+// Corrected age calculation: corr = chrono - (40 - IG) weeks
+function correctedAge(p){
+  if(!p.gestWeeks||!p.birthDate)return null;
+  const termDeficit=(40-parseInt(p.gestWeeks))*7+(parseInt(p.gestDays)||0); // days premature
+  const chronoDays=Math.floor((Date.now()-new Date(p.birthDate))/(86400000));
+  const corrDays=Math.max(0,chronoDays-termDeficit);
+  if(corrDays<0)return '0 dias';
+  if(corrDays<=60)return corrDays+' dias (IC)';
+  const m=Math.floor(corrDays/30.44);
+  if(m<24)return m+' meses (IC)';
+  return Math.floor(corrDays/365.25)+'a (IC)';
+}
+
+function ptInfoPills(p){
+  const pills=[];
+  if(p.weightKg)pills.push(p.weightKg+'kg');
+  pills.push('Cama '+p.bed);
+  pills.push(ageLabel(p));
+  if(p.gestWeeks){
+    pills.push('IG: '+p.gestWeeks+'s'+(p.gestDays?'+'+p.gestDays+'d':''));
+    const ca=correctedAge(p);if(ca)pills.push(ca);
+  }
+  if(p.allergies)return {pills,alrg:p.allergies};
+  return {pills,alrg:null};
+}
+
 // ══════════════════════════════════════════════
-// STATE
+// MODULE: STATE
 // ══════════════════════════════════════════════
 let ST={patients:[],shiftStart:null,idx:0,screen:'s-setup',prevScreen:null,detTab:'vitais',csec:'enf',msec:'hor',isbarSec:null,ageU:'dias',ageUM:'dias',sd:[],sdm:[],qSel:[],apiKey:'',wurl:'__shiftcare.pedicode-app.workers.dev',medModalType:'hor',discIdx:null};
-// Learning data (anonymous patterns only)
-let LEARN={meds:{},tasks:{},todos:{},devs:{}};
+let LEARN={meds:{},tasks:{},todos:{}};
 
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
-function el(id){return document.getElementById(id);}
-function ft(d){return(d?new Date(d):new Date()).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});}
-function mkPt(o){return{id:uid(),name:o.name||'Doente',bed:o.bed||'—',ageDays:parseInt(o.ageDays)||0,weightKg:o.wt||null,diagMain:o.diag||'',diagSec:[...(o.diagSec||[])],antecedentes:'',hda:'',vitals:{hr:'',spo2:'',rr:'',temp:'',sbp:'',gluc:'',lastUp:null},tasks:DEF_TASKS.map((t,i)=>({id:i,text:t,done:false,doneAt:null})),abcde:{A:'',B:'',C:'',D:'',E:''},unitCheck:{},devices:[],medications:[],notes:[],todos:[],status:'internado',dischargeAt:null};}
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const el=id=>document.getElementById(id);
+const ft=d=>(d?new Date(d):new Date()).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+const fd=d=>(d?new Date(d):new Date()).toLocaleDateString('pt-PT',{day:'2-digit',month:'2-digit',year:'numeric'});
+const fdt=d=>fd(d)+' '+ft(d);
 
-function save(){try{localStorage.setItem('sc_v2',JSON.stringify({p:ST.patients,ss:ST.shiftStart,ak:ST.apiKey,wu:ST.wurl}));localStorage.setItem('sc_learn',JSON.stringify(LEARN));}catch(e){}}
-function loadData(){try{const d=JSON.parse(localStorage.getItem('sc_v2')||'{}');if(d.p)ST.patients=d.p;if(d.ss)ST.shiftStart=d.ss;if(d.ak)ST.apiKey=d.ak;if(d.wu)ST.wurl=d.wu;const l=JSON.parse(localStorage.getItem('sc_learn')||'{}');if(l.meds)LEARN=l;}catch(e){}}
+function mkPt(o){
+  return{id:uid(),name:o.name||'Doente',bed:o.bed||'—',ageDays:parseInt(o.ageDays)||0,
+    weightKg:o.wt||null,allergies:o.alrg||'',diagMain:o.diag||'',diagSec:[...(o.diagSec||[])],
+    gestWeeks:o.gestWeeks||null,gestDays:o.gestDays||0,birthDate:o.birthDate||null,
+    antecedentes:'',hda:'',
+    vitals:{hr:'',spo2:'',rr:'',temp:'',sbp:'',gluc:'',lastUp:null},
+    tasks:DEF_TASKS.map((t,i)=>({id:i,text:t,done:false,doneAt:null})),
+    abcde:{A:'',B:'',C:'',D:'',E:''},unitCheck:{},
+    devices:[],devInactive:[],
+    medications:[],medHistory:[],
+    notes:[],todos:[],
+    nutrition:{type:'',specificType:'',diet:''},
+    status:'internado',dischargeAt:null,dischargeNote:''};
+}
+
+function save(){try{localStorage.setItem('sc_v21',JSON.stringify({p:ST.patients,ss:ST.shiftStart,ak:ST.apiKey,wu:ST.wurl}));localStorage.setItem('sc_learn',JSON.stringify(LEARN));}catch(e){}}
+function loadData(){try{const d=JSON.parse(localStorage.getItem('sc_v21')||'{}');if(d.p)ST.patients=d.p;if(d.ss)ST.shiftStart=d.ss;if(d.ak)ST.apiKey=d.ak;if(d.wu)ST.wurl=d.wu;const l=JSON.parse(localStorage.getItem('sc_learn')||'{}');if(l.meds)LEARN=l;}catch(e){}}
 function learnMed(n){if(!n)return;LEARN.meds[n.toLowerCase()]=(LEARN.meds[n.toLowerCase()]||0)+1;save();}
 function learnTask(t){LEARN.tasks[t]=(LEARN.tasks[t]||0)+1;save();}
-function learnTodo(t){LEARN.todos[t]=(LEARN.todos[t]||0)+1;save();}
 function medSugg(q){if(!q)return[];q=q.toLowerCase();const learned=Object.entries(LEARN.meds||{}).filter(([k])=>k.includes(q)).sort(([,a],[,b])=>b-a).slice(0,4).map(([k])=>COMMON_MEDS.find(m=>m.toLowerCase()===k)||k);const stat=COMMON_MEDS.filter(m=>m.toLowerCase().includes(q)).slice(0,5);return[...new Set([...learned,...stat])].slice(0,6);}
-function resetLearn(){if(!confirm('Resetar dados de aprendizagem?'))return;LEARN={meds:{},tasks:{},todos:{},devs:{}};save();alert('Dados eliminados.');}
+function resetLearn(){if(!confirm('Resetar dados de aprendizagem?'))return;LEARN={meds:{},tasks:{},todos:{}};save();alert('Dados eliminados.');}
 
 // ══════════════════════════════════════════════
-// NAVIGATION
+// MODULE: NAVIGATION
 // ══════════════════════════════════════════════
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));const e=el(id);if(e){e.classList.remove('hidden');ST.screen=id;}}
 function openM(id){const e=el(id);if(e)e.classList.add('open');}
 function closeM(id){const e=el(id);if(e)e.classList.remove('open');}
-function goBack(){if(ST.screen==='s-detail'){renderDash();showScreen('s-dashboard');}else if(ST.screen==='s-about'){showScreen(ST.prevScreen||'s-dashboard');}else{showScreen('s-setup');}}
+function goBack(){
+  if(ST.screen==='s-detail'){renderDash();showScreen('s-dashboard');}
+  else if(ST.screen==='s-historico'){showScreen('s-dashboard');}
+  else if(ST.screen==='s-about'){showScreen(ST.prevScreen||'s-dashboard');}
+  else{showScreen('s-setup');}
+}
 function goAbout(){ST.prevScreen=ST.screen;if(el('apikey-inp'))el('apikey-inp').value=ST.apiKey;if(el('worker-inp'))el('worker-inp').value=ST.wurl;showScreen('s-about');}
+function goHistorico(){renderHistorico();showScreen('s-historico');}
 document.querySelectorAll('.modal-ov').forEach(e=>{e.addEventListener('click',ev=>{if(ev.target===e)closeM(e.id);});});
 
 // ══════════════════════════════════════════════
-// SETUP
+// MODULE: SETUP
 // ══════════════════════════════════════════════
-function setU(u,sc){if(sc==='s'){ST.ageU=u;['u-dias','u-meses','u-anos'].forEach(id=>{const b=el(id);if(b)b.classList.toggle('active',b.id==='u-'+u);});}else{ST.ageUM=u;['mu-dias','mu-meses','mu-anos'].forEach(id=>{const b=el(id);if(b)b.classList.toggle('active',b.id==='mu-'+u);});}}
+function setU(u,sc){
+  const isM=sc==='m';
+  if(isM)ST.ageUM=u;else ST.ageU=u;
+  const pfx=isM?'mu-':'u-';
+  ['dias','meses','anos'].forEach(k=>{const b=el(pfx+k);if(b)b.classList.toggle('active',k===u);});
+}
 function addSD(inpId,tagId,arrKey){const inp=el(inpId),v=inp.value.trim();if(!v)return;ST[arrKey].push(v);inp.value='';renderTags(tagId,arrKey);}
 function renderTags(tagId,arrKey){const e=el(tagId);if(!e)return;e.innerHTML=ST[arrKey].map((d,i)=>`<span class="dtag">${d}<button onclick="rmTag('${arrKey}',${i},'${tagId}')">×</button></span>`).join('');}
 function rmTag(arrKey,i,tagId){ST[arrKey].splice(i,1);renderTags(tagId,arrKey);}
-function addPt(sc){const m=sc==='m';const name=(el(m?'m-name':'f-name')||{}).value?.trim();const bed=(el(m?'m-bed':'f-bed')||{}).value?.trim();const age=(el(m?'m-age':'f-age')||{}).value?.trim();const wt=parseFloat((el(m?'m-wt':'f-wt')||{}).value)||null;const diag=(el(m?'m-diag':'f-diag')||{}).value?.trim();if(!name||!age){alert('Preencha o nome e a idade.');return;}const u=m?ST.ageUM:ST.ageU;const arr=m?'sdm':'sd';ST.patients.push(mkPt({name,bed,ageDays:ageToDays(age,u),wt,diag,diagSec:[...ST[arr]]}));ST[arr]=[];[m?'m-name':'f-name',m?'m-bed':'f-bed',m?'m-age':'f-age',m?'m-wt':'f-wt',m?'m-diag':'f-diag'].forEach(id=>{const e=el(id);if(e)e.value='';});el(m?'m-dtags':'f-dtags').innerHTML='';if(m){closeM('modal-addpt');renderDash();}else{renderSetup();}save();}
+
+function addPt(sc){
+  const isM=sc==='m';
+  const g=id=>el(isM?'m-'+id:'f-'+id)?.value;
+  const name=(g('name')||'').trim(),bed=(g('bed')||'').trim(),age=(g('age')||'').trim(),wt=parseFloat(g('wt'))||null,alrg=(g('alrg')||'').trim(),diag=(g('diag')||'').trim();
+  const igW=parseInt(g('ig-w'))||null,igD=parseInt(g('ig-d'))||0,dnasc=g('dnasc')||null;
+  if(!name||!age){alert('Preencha o nome e a idade.');return;}
+  const u=isM?ST.ageUM:ST.ageU,arrKey=isM?'sdm':'sd';
+  ST.patients.push(mkPt({name,bed,ageDays:ageToDays(age,u),wt,alrg,diag,diagSec:[...ST[arrKey]],gestWeeks:igW,gestDays:igD,birthDate:dnasc}));
+  ST[arrKey]=[];
+  const ids=isM?['m-name','m-bed','m-age','m-wt','m-alrg','m-diag','m-ig-w','m-ig-d','m-dnasc']:['f-name','f-bed','f-age','f-wt','f-alrg','f-diag','f-ig-w','f-ig-d','f-dnasc'];
+  ids.forEach(id=>{const e=el(id);if(e)e.value='';});
+  el(isM?'m-dtags':'f-dtags').innerHTML='';
+  if(isM){closeM('modal-addpt');renderDash();}else renderSetup();
+  save();
+}
 function rmSetupPt(i){ST.patients.splice(i,1);renderSetup();save();}
-function renderSetup(){const pts=ST.patients;el('pt-list').innerHTML=pts.map((p,i)=>`<div class="pt-item"><div class="pti"><div class="pti-name">${p.name}</div><div class="pti-sub">Cama ${p.bed} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}${p.diagMain?' · '+p.diagMain:''}</div></div><button class="rm-btn" onclick="rmSetupPt(${i})">×</button></div>`).join('');el('start-area').style.display=pts.length?'block':'none';}
-function startShift(){if(!ST.patients.length)return;if(!ST.shiftStart)ST.shiftStart=new Date().toISOString();save();renderDash();showScreen('s-dashboard');}
+function renderSetup(){
+  const pts=ST.patients.filter(p=>p.status==='internado');
+  el('pt-list').innerHTML=pts.map((p,pi)=>{const ri=ST.patients.indexOf(p);return`<div class="pt-item"><div class="pti"><div class="pti-name">${p.name}</div><div class="pti-sub">Cama ${p.bed} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}${p.diagMain?' · '+p.diagMain:''}</div></div><button class="rm-btn" onclick="rmSetupPt(${ri})">×</button></div>`;}).join('');
+  el('start-area').style.display=pts.length?'block':'none';
+}
+function startShift(){if(!ST.patients.filter(p=>p.status==='internado').length)return;if(!ST.shiftStart)ST.shiftStart=new Date().toISOString();save();renderDash();showScreen('s-dashboard');}
 
 // ══════════════════════════════════════════════
-// DASHBOARD
+// MODULE: DASHBOARD
 // ══════════════════════════════════════════════
-function renderDash(){const pts=ST.patients;const ss=ST.shiftStart;if(ss){const mins=Math.round((Date.now()-new Date(ss))/60000);const dur=mins<60?mins+' min':Math.floor(mins/60)+'h '+(mins%60)+'min';el('dash-sub').textContent=`Turno: ${ft(ss)} · ${dur} · ${pts.filter(p=>p.status==='internado').length} doente(s)`;}const track=el('cards-track');if(!track)return;track.innerHTML=pts.map((p,i)=>dashCard(p,i)).join('');track.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openDetail(parseInt(b.dataset.open))));track.querySelectorAll('[data-disc]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openDisc(parseInt(b.dataset.disc));}));}
-function dashCard(p,i){const R=vRanges(p.ageDays);const ac=alrtCnt(p);const td=p.tasks.filter(t=>t.done).length;const pct=Math.round(td/p.tasks.length*100);const pend=(p.todos||[]).filter(t=>!t.done).length;const vRow=VITALS_DEF.slice(0,4).map(v=>{const val=p.vitals[v.k];const st=val&&R[v.k]?vSt(val,R[v.k]):'';return`<div class="vt-chip ${st}"><span class="vc-lbl2">${v.label}</span><span class="vc-val2">${val||'—'}</span></div>`;}).join('');const stBadge=p.status!=='internado'?`<span class="badge badge-g" style="margin-left:6px;font-size:10px">${p.status==='alta'?'Alta':'Transferido'}</span>`:'';return`<div class="pt-card${ac>0&&p.status==='internado'?' has-alert':''}${p.status!=='internado'?' is-discharged':''}"><div class="pc-hdr"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px"><div style="flex:1;min-width:0"><div class="pc-name">${p.name}${stBadge}</div><div class="pc-meta"><span>🛏 ${p.bed}</span><span>📅 ${ageLabel(p)}</span>${p.weightKg?`<span>⚖ ${p.weightKg}kg</span>`:''} ${ac>0&&p.status==='internado'?`<span class="alert-pill">⚠ ${ac}</span>`:''}</div>${p.diagMain?`<div class="pc-diag">${p.diagMain}</div>`:''}</div>${p.status==='internado'?`<button class="btn-discharge" data-disc="${i}" title="Alta/Transferência">🚪</button>`:''}</div></div><div class="pc-body">${ac>0&&p.status==='internado'?`<div class="alert-ban">⚠ ${ac} constante(s) fora do intervalo pediátrico</div>`:''}<div class="pc-sect"><div class="sect-lbl">Sinais Vitais</div><div class="vt-row">${vRow}</div>${p.vitals.lastUp?`<div style="font-size:10px;color:var(--t3);margin-top:4px">Atualizado: ${ft(p.vitals.lastUp)}</div>`:''}</div><div class="pc-sect"><div class="sect-lbl">Cuidados</div><div class="task-prog"><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div><span class="prog-txt">${td}/${p.tasks.length}</span></div>${pend?`<div style="font-size:11px;color:var(--org);margin-top:5px">📋 ${pend} to-do pendente(s)</div>`:''}</div>${p.notes.length?`<div class="pc-sect"><div class="sect-lbl">Última Nota</div><div style="font-size:11px;color:var(--t2)">[${ft(p.notes[0].timestamp)}] ${p.notes[0].text}</div></div>`:''}</div><div class="pc-foot"><button class="btn btn-p" style="width:100%" data-open="${i}">Ver Detalhes →</button></div></div>`;}
+function renderDash(){
+  const active=ST.patients.filter(p=>p.status==='internado');
+  const ss=ST.shiftStart;
+  if(ss){const mins=Math.round((Date.now()-new Date(ss))/60000);const dur=mins<60?mins+' min':Math.floor(mins/60)+'h '+(mins%60)+'min';el('dash-sub').textContent=`Turno: ${ft(ss)} · ${dur} · ${active.length} doente(s) activo(s)`;}
+  const track=el('cards-track');if(!track)return;
+  track.innerHTML=active.map((p,i)=>dashCard(p,ST.patients.indexOf(p))).join('');
+  track.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openDetail(parseInt(b.dataset.open))));
+  track.querySelectorAll('[data-disc]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openDisc(parseInt(b.dataset.disc));}));
+}
+
+function dashCard(p,ri){
+  const R=vRanges(p.ageDays);const ac=alrtCnt(p);
+  const td=p.tasks.filter(t=>t.done).length,pct=Math.round(td/p.tasks.length*100);
+  const pend=(p.todos||[]).filter(t=>!t.done).length;
+  const {pills,alrg}=ptInfoPills(p);
+  const ca=correctedAge(p);
+  const vRow=VITALS_DEF.slice(0,4).map(v=>{const val=p.vitals[v.k];const st=val&&R[v.k]?vSt(val,R[v.k]):'';return`<div class="vt-chip ${st}"><span class="vc-lbl2">${v.label}</span><span class="vc-val2">${val||'—'}</span></div>`;}).join('');
+  return`<div class="pt-card${ac>0?' has-alert':''}">
+    <div class="pc-hdr">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:7px">
+        <div style="flex:1;min-width:0">
+          <div class="pc-name">${p.name}${ac>0?`<span class="alert-pill">⚠ ${ac}</span>`:''}
+            <button class="btn-discharge" data-disc="${ri}">Alta/Transf.</button>
+          </div>
+          <div class="pc-meta-grid">
+            <div class="pc-meta-item">🛏 <strong>Cama ${p.bed}</strong></div>
+            <div class="pc-meta-item">📅 <strong>${ageLabel(p)}</strong></div>
+            ${p.weightKg?`<div class="pc-meta-item">⚖ <strong>${p.weightKg}kg</strong></div>`:''}
+            ${p.gestWeeks?`<div class="pc-meta-item">🍼 <strong>IG ${p.gestWeeks}s${p.gestDays?'+'+p.gestDays+'d':''}</strong></div>`:''}
+            ${ca?`<div class="pc-meta-item">📊 <strong>${ca}</strong></div>`:''}
+          </div>
+          ${p.diagMain?`<div class="pc-diag">${p.diagMain}</div>`:''}
+          ${alrg?`<div class="pc-alrg">⚠ Alergia: ${alrg}</div>`:''}
+        </div>
+      </div>
+    </div>
+    <div class="pc-body">
+      ${ac>0?`<div class="alert-ban">⚠ ${ac} constante(s) fora do intervalo pediátrico</div>`:''}
+      <div class="pc-sect"><div class="sect-lbl">Sinais Vitais</div><div class="vt-row">${vRow}</div>${p.vitals.lastUp?`<div style="font-size:10px;color:var(--t3);margin-top:3px">Atualizado: ${ft(p.vitals.lastUp)}</div>`:''}</div>
+      <div class="pc-sect"><div class="sect-lbl">Cuidados</div><div class="task-prog"><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div><span class="prog-txt">${td}/${p.tasks.length}</span></div>${pend?`<div style="font-size:10px;color:var(--org);margin-top:4px">📋 ${pend} to-do pendente(s)</div>`:''}</div>
+      ${p.notes.length?`<div class="pc-sect"><div class="sect-lbl">Última Nota</div><div style="font-size:11px;color:var(--t2)">[${ft(p.notes[0].timestamp)}] ${p.notes[0].text}</div></div>`:''}
+    </div>
+    <div class="pc-foot"><button class="btn btn-p" style="flex:1" data-open="${ri}">Ver Detalhes →</button></div>
+  </div>`;
+}
+
 let _ci=0;
-function navN(){if(!ST.patients.length)return;_ci=(_ci+1)%ST.patients.length;const t=el('cards-track');if(t&&t.children[_ci])t.children[_ci].scrollIntoView({behavior:'smooth',inline:'center'});}
-function navP(){if(!ST.patients.length)return;_ci=(_ci-1+ST.patients.length)%ST.patients.length;const t=el('cards-track');if(t&&t.children[_ci])t.children[_ci].scrollIntoView({behavior:'smooth',inline:'center'});}
-function openAddModal(){ST.sdm=[];['m-name','m-bed','m-age','m-wt','m-diag'].forEach(id=>{const e=el(id);if(e)e.value='';});el('m-dtags').innerHTML='';openM('modal-addpt');}
-function openDisc(i){ST.discIdx=i;el('disc-name').textContent=ST.patients[i]?.name||'';el('disc-note').value='';openM('modal-disc');}
+function navN(){const a=ST.patients.filter(p=>p.status==='internado');if(!a.length)return;_ci=(_ci+1)%a.length;const t=el('cards-track');if(t&&t.children[_ci])t.children[_ci].scrollIntoView({behavior:'smooth',inline:'center'});}
+function navP(){const a=ST.patients.filter(p=>p.status==='internado');if(!a.length)return;_ci=(_ci-1+a.length)%a.length;const t=el('cards-track');if(t&&t.children[_ci])t.children[_ci].scrollIntoView({behavior:'smooth',inline:'center'});}
+function openAddModal(){ST.sdm=[];['m-name','m-bed','m-age','m-wt','m-alrg','m-diag','m-ig-w','m-ig-d','m-dnasc'].forEach(id=>{const e=el(id);if(e)e.value='';});el('m-dtags').innerHTML='';openM('modal-addpt');}
+function openDisc(ri){ST.discIdx=ri;el('disc-name').textContent=ST.patients[ri]?.name||'';el('disc-note').value='';openM('modal-disc');}
 function confDisc(type){const p=ST.patients[ST.discIdx];if(!p)return;p.status=type;p.dischargeAt=new Date().toISOString();p.dischargeNote=el('disc-note').value.trim();closeM('modal-disc');renderDash();save();}
 
 // ══════════════════════════════════════════════
-// DETAIL
+// MODULE: HISTÓRICO
 // ══════════════════════════════════════════════
-function openDetail(i){ST.idx=i;const p=ST.patients[i];if(!p)return;el('det-name').textContent=`${p.name} — Cama ${p.bed}`;updBadge();swTab(ST.detTab||'vitais');showScreen('s-detail');}
-function updBadge(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);el('det-badge').innerHTML=ac>0?`<span class="badge badge-r">⚠ ${ac}</span>`:'';}
-const TABS=['vitais','cuidados','medicacao','isbar','notas'];
-function swTab(tab){ST.detTab=tab;document.querySelectorAll('.tab-item').forEach((e,i)=>e.classList.toggle('active',TABS[i]===tab));document.querySelectorAll('.tab-pane').forEach(e=>e.classList.remove('active'));const pane=el('tab-'+tab);if(pane)pane.classList.add('active');if(tab==='vitais')renVitals();if(tab==='cuidados')renCsec(ST.csec||'enf');if(tab==='medicacao')renMsec(ST.msec||'hor');if(tab==='isbar')renISBAR();if(tab==='notas'){renNotes();renQCats('');};}
+function renderHistorico(){
+  const disc=ST.patients.filter(p=>p.status!=='internado');
+  const e=el('historico-list');if(!e)return;
+  if(!disc.length){e.innerHTML='<div class="empty-st">Sem doentes no histórico</div>';return;}
+  e.innerHTML=disc.map((p,i)=>{const ri=ST.patients.indexOf(p);return`<div class="hist-card">
+    <div style="padding:12px 13px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:14px">${p.name}</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:3px">Cama ${p.bed} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}</div>
+        ${p.diagMain?`<div style="font-size:11px;color:var(--t2);margin-top:2px">${p.diagMain}</div>`:''}
+        ${p.gestWeeks?`<div style="font-size:10px;color:var(--t3);margin-top:2px">IG: ${p.gestWeeks}s${p.gestDays?'+'+p.gestDays+'d':''}</div>`:''}
+        <div style="margin-top:6px;display:flex;gap:6px;align-items:center">
+          <span class="hist-status ${p.status}">${p.status==='alta'?'Alta':'Transferido'}</span>
+          <span style="font-size:10px;color:var(--t3)">${p.dischargeAt?fd(p.dischargeAt):''}</span>
+        </div>
+        ${p.dischargeNote?`<div style="font-size:11px;color:var(--t2);margin-top:4px;font-style:italic">${p.dischargeNote}</div>`:''}
+      </div>
+      <button class="rm-btn" onclick="deleteHist(${ri})" title="Eliminar definitivamente">🗑</button>
+    </div>
+  </div>`;}).join('');
+}
+function deleteHist(ri){if(!confirm('Eliminar definitivamente este registo?'))return;ST.patients.splice(ri,1);save();renderHistorico();}
 
 // ══════════════════════════════════════════════
-// TAB: VITAIS
+// MODULE: DETAIL
 // ══════════════════════════════════════════════
-function renVitals(){const p=ST.patients[ST.idx];if(!p)return;const R=vRanges(p.ageDays);el('vitals-grid').innerHTML=VITALS_DEF.map(v=>{const val=p.vitals[v.k];const st=val&&R[v.k]?vSt(val,R[v.k]):'';const rng=R[v.k]?`${R[v.k][0]}–${R[v.k][1]} ${v.unit}`:'';return`<div class="vc ${st}" id="vc-${v.k}"><div class="vc-lbl">${v.label}</div><input class="vc-inp" type="number" value="${val||''}" placeholder="${v.ph}" oninput="onVI('${v.k}',this.value)" step="any"><div class="vc-foot"><span class="vc-unit">${v.unit}</span><span class="vc-range">${rng}</span></div></div>`;}).join('');renVAlert();}
+function openDetail(ri){
+  ST.idx=ri;const p=ST.patients[ri];if(!p)return;
+  el('det-title').textContent=p.name+' — Cama '+p.bed;
+  renInfoBar();updBadge();swTab(ST.detTab||'vitais');
+  showScreen('s-detail');
+}
+function renInfoBar(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const {pills,alrg}=ptInfoPills(p);
+  const e=el('pt-info-bar');if(!e)return;
+  e.innerHTML=`<div class="pt-info-name">${p.name}</div><div class="pt-info-meta">${pills.map(x=>`<span class="pt-info-pill">${x}</span>`).join('')}${alrg?`<span class="pt-info-pill alrg">⚠ ${alrg}</span>`:''}</div>`;
+}
+function updBadge(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);el('det-badge').innerHTML=ac>0?`<span class="badge badge-r">⚠ ${ac}</span>`:''}
+
+const TABS=['vitais','cuidados','medicacao','alimentacao','isbar'];
+function swTab(tab){
+  ST.detTab=tab;
+  document.querySelectorAll('.tab-item').forEach((e,i)=>e.classList.toggle('active',TABS[i]===tab));
+  document.querySelectorAll('.tab-pane').forEach(e=>e.classList.remove('active'));
+  const pane=el('tab-'+tab);if(pane)pane.classList.add('active');
+  if(tab==='vitais')renVitals();
+  if(tab==='cuidados')renCsec(ST.csec||'enf');
+  if(tab==='medicacao')renMsec(ST.msec||'hor');
+  if(tab==='alimentacao')renAlim();
+  if(tab==='isbar')renISBAR();
+}
+
+// ══════════════════════════════════════════════
+// MODULE: VITAIS
+// ══════════════════════════════════════════════
+function renVitals(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const R=vRanges(p.ageDays);
+  el('vitals-grid').innerHTML=VITALS_DEF.map(v=>{
+    const val=p.vitals[v.k],st=val&&R[v.k]?vSt(val,R[v.k]):'';
+    const rng=R[v.k]?`${R[v.k][0]}–${R[v.k][1]} ${v.unit}`:'';
+    return`<div class="vc ${st}" id="vc-${v.k}"><div class="vc-lbl">${v.label}</div><input class="vc-inp" type="number" value="${val||''}" placeholder="${v.ph}" oninput="onVI('${v.k}',this.value)" step="any"><div class="vc-foot"><span class="vc-unit">${v.unit}</span><span class="vc-range">${rng}</span></div></div>`;
+  }).join('');
+  renVAlert();
+}
 function onVI(k,v){const p=ST.patients[ST.idx];if(!p)return;p.vitals[k]=v;p.vitals.lastUp=new Date().toISOString();const R=vRanges(p.ageDays);const st=v&&R[k]?vSt(v,R[k]):'';const vc=el('vc-'+k);if(vc)vc.className='vc '+st;renVAlert();updBadge();save();}
-function renVAlert(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);const e=el('vitals-alert');if(e)e.innerHTML=ac>0?`<div class="alert-ban">⚠ ${ac} constante(s) fora do intervalo pediátrico normal</div>`:'';;}
+function renVAlert(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);const e=el('vitals-alert');if(e)e.innerHTML=ac>0?`<div class="alert-ban">⚠ ${ac} constante(s) fora do intervalo pediátrico normal</div>`:'';}
 function clearVit(){const p=ST.patients[ST.idx];if(!p||!confirm('Limpar sinais vitais?'))return;VITALS_DEF.forEach(v=>p.vitals[v.k]='');save();renVitals();}
 function openCam(){if(!ST.wurl&&!ST.apiKey){alert('Configure o Worker URL ou Chave Groq em "Sobre".');return;}el('photo-input').click();}
 async function onPhoto(evt){const file=evt.target.files[0];if(!file)return;const r=new FileReader();r.onload=async e=>{const b64=e.target.result.split(',')[1],mt=file.type||'image/jpeg';el('capture-img').src=e.target.result;el('capture-preview-wrap').style.display='block';const btn=el('cam-btn');if(btn){btn.textContent='⏳ A interpretar...';btn.disabled=true;}try{const res=await callAI({type:'vitals_image',b64,mt});const vals=JSON.parse((res.text||'{}').replace(/```json|```/g,'').trim());const p=ST.patients[ST.idx];if(!p)return;VITALS_DEF.forEach(v=>{if(vals[v.k]!==undefined)p.vitals[v.k]=String(vals[v.k]);});p.vitals.lastUp=new Date().toISOString();save();renVitals();alert(`✅ ${Object.keys(vals).length} valor(es) interpretado(s). Verifique!`);}catch(err){alert('Erro ao interpretar: '+err.message);}finally{el('capture-preview-wrap').style.display='none';if(btn){btn.textContent='📷 Capturar Ecrã';btn.disabled=false;}}};r.readAsDataURL(file);evt.target.value='';}
 
 // ══════════════════════════════════════════════
-// TAB: CUIDADOS
+// MODULE: CUIDADOS
 // ══════════════════════════════════════════════
-function setCsec(s){ST.csec=s;['enf','dev','todo'].forEach(k=>{const sb=el('ct-'+k);if(sb)sb.classList.toggle('active',k===s);const sec=el('csec-'+k);if(sec)sec.style.display=k===s?'block':'none';});renCsec(s);}
+function setCsec(s){ST.csec=s;['enf','dev','todo'].forEach(k=>{const b=el('ct-'+k);if(b)b.classList.toggle('active',k===s);const sec=el('csec-'+k);if(sec)sec.style.display=k===s?'block':'none';});renCsec(s);}
 function renCsec(s){if(s==='enf')renEnf();if(s==='dev')renDev();if(s==='todo')renTodo();}
 
-function renEnf(){const p=ST.patients[ST.idx];if(!p)return;const abcde=ABCDE.map(a=>`<div class="abcde-item"><div class="abcde-hdr"><div class="abcde-key">${a.key}</div><div><div class="abcde-title">${a.title}</div><div class="abcde-desc">${a.desc}</div></div></div><textarea class="abcde-inp" rows="2" placeholder="Observações..." oninput="saveABCDE('${a.key}',this.value)">${p.abcde?.[a.key]||''}</textarea></div>`).join('');
-const tasks=p.tasks.map(t=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTask('${t.id}')">${t.done?'<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${t.text}</div>${t.done&&t.doneAt?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div></div>`).join('');
-const uc=UNIT_CHECK.map((item,i)=>{const done=p.unitCheck?.[i]||false;return`<div class="task-it"><div class="task-chk ${done?'done':''}" onclick="tglUC(${i})">${done?'<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div class="task-lbl ${done?'done':''}">${item}</div></div>`;}).join('');
-el('csec-enf').innerHTML=`<div class="sub-card"><div class="sub-card-hdr">Avaliação ABCDE</div>${abcde}</div><div class="sub-card"><div class="sub-card-hdr">Lista de Cuidados</div>${tasks}<div class="task-add"><input id="new-task-inp" type="text" placeholder="Adicionar cuidado..."><button class="btn btn-o btn-sm" onclick="addCustomTask()">+</button></div></div><div class="sub-card"><div class="sub-card-hdr">Estado da Unidade</div>${uc}</div>`;}
+// ─── Enfermagem ─────────────────────────────
+function renEnf(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const chkSvg='<svg class="chk-svg" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const abcde=ABCDE_DEF.map(a=>`<div class="abcde-item"><div class="abcde-hdr"><div class="abcde-key">${a.key}</div><div><div class="abcde-title">${a.title}</div><div class="abcde-desc">${a.desc}</div></div></div><textarea class="abcde-inp" rows="2" placeholder="Observações..." oninput="saveABCDE('${a.key}',this.value)">${p.abcde?.[a.key]||''}</textarea></div>`).join('');
+  const tasks=p.tasks.map(t=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTask('${t.id}')">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${t.text}</div>${t.done&&t.doneAt?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div></div>`).join('');
+  const uc=UNIT_CHECK.map((item,i)=>{const done=p.unitCheck?.[i]||false;return`<div class="task-it"><div class="task-chk ${done?'done':''}" onclick="tglUC(${i})">${done?chkSvg:''}</div><div class="task-lbl ${done?'done':''}">${item}</div></div>`;}).join('');
+  const notes=p.notes.length?p.notes.map(n=>`<div class="note-it"><span class="note-t">${ft(n.timestamp)}</span><span class="note-txt">${n.text}</span></div>`).join(''):'<div class="empty-st">Sem notas</div>';
+  el('csec-enf').innerHTML=`
+    <div class="sub-card"><div class="sub-card-hdr">Avaliação ABCDE</div>${abcde}</div>
+    <div class="sub-card"><div class="sub-card-hdr">Lista de Cuidados</div>${tasks}<div class="task-add"><input id="new-task-inp" type="text" placeholder="Adicionar cuidado..."><button class="btn btn-o btn-sm" onclick="addCustomTask()">+</button></div></div>
+    <div class="sub-card"><div class="sub-card-hdr">Estado da Unidade</div>${uc}</div>
+    <div class="sub-card">
+      <div class="sub-card-hdr">Notas do Turno
+        <button class="btn btn-o btn-sm" onclick="focusNoteInp()">+ Nota</button>
+      </div>
+      <div style="padding:9px 13px;display:flex;gap:7px;border-bottom:1px solid var(--b)">
+        <input id="note-inp-enf" type="text" placeholder="Nota rápida..." style="font-size:12px">
+        <button class="btn btn-p btn-sm" onclick="addNoteEnf()">+</button>
+      </div>
+      <div style="padding:0 13px">${notes}</div>
+    </div>
+    <div class="sub-card"><div class="sub-card-hdr">Registo Rápido</div>
+      <div style="padding:9px 13px">
+        <input type="text" id="quick-search" placeholder="Pesquisar..." oninput="filtQ(this.value)" style="font-size:12px;margin-bottom:8px">
+        <div id="qbuilder" class="qbuilder"><div class="qb-prev" id="qb-prev"></div><div class="qb-acts"><button class="btn btn-p btn-sm" onclick="confQ()">Registar</button><button class="btn btn-o btn-sm" onclick="clrQ()">Limpar</button></div></div>
+        <div id="quick-cats"></div>
+      </div>
+    </div>`;
+  renQCats('');
+}
+function focusNoteInp(){const e=el('note-inp-enf');if(e){e.focus();e.scrollIntoView({behavior:'smooth'});}}
+function addNoteEnf(){const inp=el('note-inp-enf');if(!inp||!inp.value.trim())return;addNoteText(inp.value.trim());inp.value='';renEnf();}
+function addNoteText(txt){const p=ST.patients[ST.idx];if(!p)return;p.notes.unshift({id:uid(),text:txt,timestamp:new Date().toISOString()});save();}
 function saveABCDE(k,v){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcde)p.abcde={};p.abcde[k]=v;save();}
 function tglUC(i){const p=ST.patients[ST.idx];if(!p)return;if(!p.unitCheck)p.unitCheck={};p.unitCheck[i]=!p.unitCheck[i];save();renEnf();}
-function tglTask(tid){const p=ST.patients[ST.idx];if(!p)return;const t=p.tasks.find(x=>String(x.id)===String(tid));if(!t)return;t.done=!t.done;t.doneAt=t.done?new Date().toISOString():null;if(t.done)learnTask(t.text);save();renEnf();}
+function tglTask(tid){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const t=p.tasks.find(x=>String(x.id)===String(tid));if(!t)return;
+  t.done=!t.done;t.doneAt=t.done?new Date().toISOString():null;
+  if(t.done)learnTask(t.text);save();renEnf();
+}
 function addCustomTask(){const inp=el('new-task-inp');if(!inp||!inp.value.trim())return;const p=ST.patients[ST.idx];if(!p)return;p.tasks.push({id:uid(),text:inp.value.trim(),done:false,doneAt:null});learnTask(inp.value.trim());inp.value='';save();renEnf();}
 
-function renDev(){const p=ST.patients[ST.idx];if(!p)return;const cat=ageCat(p);const devList=p.devices.map((d,i)=>`<div class="dev-item"><span class="dev-icon">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl">${d.label}</div>${d.gauge?`<div class="dev-sub">${d.gauge}${d.side?' · '+d.side:''}</div>`:''}</div><button class="rm-btn" onclick="rmDev(${i})">×</button></div>`).join('');
-const dots=DEV_TYPES.filter(dt=>!dt.neo||cat==='neo').map(dt=>{const a=p.devices.some(d=>d.typeId===dt.id);if(!a)return'';return`<circle cx="${dt.x}" cy="${dt.y}" r="3.5" fill="${dt.id.includes('art')?'#DC2626':dt.id.includes('cvc')||dt.id.includes('uvc')?'#3B82F6':dt.id.includes('ett')?'#10B981':'#F59E0B'}" stroke="white" stroke-width="1"/>`}).join('');
-const fig=cat==='neo'?`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="12" r="10" fill="#FDE68A" stroke="#D97706"/><ellipse cx="50" cy="35" rx="14" ry="18" fill="#FDE68A" stroke="#D97706"/><path d="M36 27 Q26 32 22 44" stroke-linecap="round"/><path d="M64 27 Q74 32 78 44" stroke-linecap="round"/><path d="M43 52 Q40 65 38 78" stroke-linecap="round"/><path d="M57 52 Q60 65 62 78" stroke-linecap="round"/><circle cx="50" cy="40" r="2" fill="#E5E7EB" stroke="#9CA3AF"/></g>`:cat==='lac'?`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="11" r="9" fill="#FDE68A" stroke="#D97706"/><rect x="39" y="22" width="22" height="26" rx="4" fill="#FDE68A" stroke="#D97706"/><path d="M39 26 Q27 30 24 44" stroke-linecap="round"/><path d="M61 26 Q73 30 76 44" stroke-linecap="round"/><path d="M43 48 L40 70" stroke-linecap="round"/><path d="M57 48 L60 70" stroke-linecap="round"/></g>`:`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="10" r="8" fill="#FDE68A" stroke="#D97706"/><rect x="40" y="20" width="20" height="24" rx="3" fill="#FDE68A" stroke="#D97706"/><path d="M40 24 Q30 28 27 42" stroke-linecap="round"/><path d="M60 24 Q70 28 73 42" stroke-linecap="round"/><path d="M44 44 L41 65" stroke-linecap="round"/><path d="M56 44 L59 65" stroke-linecap="round"/></g>`;
-const chips=DEV_TYPES.filter(dt=>!dt.neo||cat==='neo').map(dt=>{const a=p.devices.some(d=>d.typeId===dt.id);return`<button class="i-chip${a?' sel':''}" onclick="tglDevQuick('${dt.id}')" style="font-size:11px;padding:5px 10px">${dt.icon} ${dt.label.split(' ').slice(-1)[0]}</button>`;}).join('');
-el('csec-dev').innerHTML=`<div class="sub-card"><div class="sub-card-hdr" style="display:flex;align-items:center;justify-content:space-between"><span>Dispositivos Activos</span><button class="btn btn-o btn-sm" onclick="openDevModal()">+ Adicionar</button></div>${p.devices.length?devList:'<div class="empty-st">Sem dispositivos</div>'}</div><div class="sub-card"><div class="sub-card-hdr">Figura do Doente</div><div style="display:flex;justify-content:center;padding:16px"><svg viewBox="0 0 100 100" width="170" height="170">${fig}${dots}</svg></div><div style="padding:0 14px 14px;display:flex;flex-wrap:wrap;gap:6px">${chips}</div></div>`;}
-function tglDevQuick(typeId){const p=ST.patients[ST.idx];if(!p)return;const idx=p.devices.findIndex(d=>d.typeId===typeId);if(idx>=0){p.devices.splice(idx,1);}else{const dt=DEV_TYPES.find(d=>d.id===typeId);if(!dt)return;p.devices.push({id:uid(),typeId,label:dt.label,icon:dt.icon,gauge:'',side:''});}save();renDev();}
-function openDevModal(){el('dev-type').innerHTML=DEV_TYPES.map(d=>`<option value="${d.id}">${d.label}</option>`).join('');el('dev-side').value='';openM('modal-dev');}
-function confDev(){const p=ST.patients[ST.idx];if(!p)return;const typeId=el('dev-type').value;const gauge=el('dev-gauge').value;const side=el('dev-side').value.trim();const dt=DEV_TYPES.find(d=>d.id===typeId);if(!dt)return;p.devices.push({id:uid(),typeId,label:dt.label,icon:dt.icon,gauge,side});save();closeM('modal-dev');renDev();}
-function rmDev(i){const p=ST.patients[ST.idx];if(!p)return;p.devices.splice(i,1);save();renDev();}
-
-function renTodo(){const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];const listH=p.todos.map((t,i)=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTodo(${i})">${t.done?'<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${t.text}</div>${t.done?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div><button class="rm-btn" onclick="rmTodo(${i})">×</button></div>`).join('')||'<div class="empty-st">Sem tarefas pendentes</div>';
-const qH=TODO_ITEMS.map(c=>`<div style="margin-bottom:10px"><div class="sect-lbl">${c.cat}</div><div style="display:flex;flex-wrap:wrap;gap:6px">${c.items.map(item=>`<button class="i-chip" onclick="addTodoQ('${item}')">${item}</button>`).join('')}</div></div>`).join('');
-el('csec-todo').innerHTML=`<div class="sub-card"><div class="sub-card-hdr">To-Do do Turno</div>${listH}<div class="task-add"><input id="todo-inp" type="text" placeholder="Adicionar tarefa..."><button class="btn btn-o btn-sm" onclick="addTodoC()">+</button></div></div><div class="sub-card"><div class="sub-card-hdr">Acesso Rápido</div><div style="padding:12px">${qH}</div></div>`;}
-function addTodoQ(text){const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];if(p.todos.find(t=>t.text===text&&!t.done))return;p.todos.push({id:uid(),text,done:false,doneAt:null});learnTodo(text);save();renTodo();}
-function addTodoC(){const inp=el('todo-inp');if(!inp||!inp.value.trim())return;addTodoQ(inp.value.trim());inp.value='';}
-function tglTodo(i){const p=ST.patients[ST.idx];if(!p)return;p.todos[i].done=!p.todos[i].done;p.todos[i].doneAt=p.todos[i].done?new Date().toISOString():null;save();renTodo();}
-function rmTodo(i){const p=ST.patients[ST.idx];if(!p)return;p.todos.splice(i,1);save();renTodo();}
-
-// ══════════════════════════════════════════════
-// TAB: MEDICAÇÃO
-// ══════════════════════════════════════════════
-function setMsec(s){ST.msec=s;['hor','perf'].forEach(k=>{const b=el('mt-'+k);if(b)b.classList.toggle('active',k===s);});renMsec(s);}
-function renMsec(s){if(s==='hor')renMedH();if(s==='perf')renPerf();}
-function shiftDoses(fh,freq){if(freq<=0)return[];const d=[];let h=parseInt(fh);for(let i=0;i<Math.ceil(24/freq)+2;i++){d.push(h%24);h+=freq;}return[...new Set(d)].sort((a,b)=>a-b);}
-function dosesInShift(doses,sh){return doses.filter(h=>{if(sh.start<sh.end)return h>=sh.start&&h<sh.end;return h>=sh.start||h<sh.end;});}
-const FREQ_MAP={'1/1h':1,'2/2h':2,'4/4h':4,'6/6h':6,'8/8h':8,'12/12h':12,'24/24h':24,'36/36h':36,'SOS':0};
-
-function renMedH(){const p=ST.patients[ST.idx];if(!p)return;const meds=(p.medications||[]).filter(m=>m.freq!=='Contínua');const h=meds.map((m,i)=>medCardH(m,i)).join('')||'<div class="empty-st">Sem medicações horárias</div>';el('med-content').innerHTML=`<button class="btn btn-p" style="width:100%;margin-bottom:14px" onclick="openMedModal('hor')">+ Adicionar Medicação</button>${h}`;}
-function renPerf(){const p=ST.patients[ST.idx];if(!p)return;const meds=(p.medications||[]).filter(m=>m.freq==='Contínua');const h=meds.map((m,i)=>perfCardH(m,i)).join('')||'<div class="empty-st">Sem perfusões</div>';el('med-content').innerHTML=`<button class="btn btn-p" style="width:100%;margin-bottom:14px" onclick="openMedModal('perf')">+ Adicionar Perfusão</button>${h}`;}
-
-function medCardH(m,i){const fh=FREQ_MAP[m.freq]||0;const allDoses=fh>0?shiftDoses(m.firstHour||8,fh):[];const sH=SHIFTS.map(sh=>{const doses=dosesInShift(allDoses,sh);const pills=doses.map(h=>{const key=`${m.id}_${h}`;const done=m.administered?.[key];return`<span class="dose-pill${done?' done':''}" onclick="tglDose('${key}',${i})">${String(h).padStart(2,'0')}h</span>`;}).join('');return`<div class="shift-col" style="border-left:3px solid ${sh.accent}"><div class="shift-name" style="color:${sh.accent}">${sh.name}</div><div class="dose-row">${pills||'<span style="font-size:10px;color:var(--t3)">—</span>'}</div></div>`;}).join('');return`<div class="med-card${m.suspended?' suspended':''}"><div class="med-card-hdr"><div><div class="med-name">${m.name}</div><div class="med-meta">${m.dose} ${m.unit} · ${m.route} · ${m.freq}</div>${m.suspended?'<div class="med-susp-lbl">SUSPENSO</div>':''}</div><div style="display:flex;gap:5px"><button class="btn btn-o btn-sm" onclick="tglSusp(${i})">${m.suspended?'Reativar':'Suspender'}</button><button class="rm-btn" onclick="rmMed(${i})">×</button></div></div><div class="shifts-row">${sH}</div><div class="med-first-row">Primeira dose: <select onchange="setFH(${i},this.value)">${Array.from({length:24},(_,h)=>`<option value="${h}"${m.firstHour==h?' selected':''}>${String(h).padStart(2,'0')}h</option>`).join('')}</select></div></div>`;}
-function perfCardH(m,i){return`<div class="med-card${m.suspended?' suspended':''}"><div class="med-card-hdr"><div><div class="med-name">${m.name}</div><div class="med-meta">${m.dose} ${m.unit}/h · ${m.route} · Perfusão Contínua</div>${m.notes?`<div style="font-size:12px;color:var(--t2);margin-top:3px">${m.notes}</div>`:''} ${m.suspended?'<div class="med-susp-lbl">SUSPENSO</div>':''}</div><div style="display:flex;gap:5px"><button class="btn btn-o btn-sm" onclick="tglSusp(${i})">${m.suspended?'Reativar':'Suspender'}</button><button class="rm-btn" onclick="rmMed(${i})">×</button></div></div><div style="padding:10px 12px;background:var(--s2);font-size:12px;color:var(--t2)">💧 Perfusão contínua a ${m.dose} ${m.unit}/h ${m.suspended?'— SUSPENSA':'— A CORRER'}</div></div>`;}
-
-function openMedModal(type){ST.medModalType=type;el('med-modal-title').textContent=type==='perf'?'Adicionar Perfusão':'Adicionar Medicação';el('med-freq-row').style.display=type==='perf'?'none':'block';el('med-notes-row').style.display=type==='perf'?'block':'none';['med-name','med-dose'].forEach(id=>{const e=el(id);if(e)e.value='';});if(el('med-notes'))el('med-notes').value='';el('med-autocomplete').innerHTML='';openM('modal-med');}
-function onMedName(v){const sugg=medSugg(v);const ac=el('med-autocomplete');if(!ac)return;ac.innerHTML=sugg.map(s=>`<div class="ac-item" onclick="selMed('${s}')">${s}</div>`).join('');}
-function selMed(n){if(el('med-name'))el('med-name').value=n;el('med-autocomplete').innerHTML='';}
-function confMed(){const p=ST.patients[ST.idx];if(!p)return;const name=el('med-name').value.trim();const dose=el('med-dose').value.trim();if(!name||!dose){alert('Preencha nome e dose.');return;}const type=ST.medModalType;const freq=type==='perf'?'Contínua':el('med-freq').value;const notes=el('med-notes')?.value.trim()||'';if(!p.medications)p.medications=[];p.medications.push({id:uid(),name,dose,unit:el('med-unit').value,route:el('med-route').value,freq,firstHour:8,administered:{},suspended:false,notes});learnMed(name);save();closeM('modal-med');renMsec(ST.msec);}
-function tglDose(key,idx){const p=ST.patients[ST.idx];if(!p)return;const m=p.medications[idx];if(!m)return;if(!m.administered)m.administered={};m.administered[key]=!m.administered[key];save();renMsec(ST.msec);}
-function tglSusp(i){const p=ST.patients[ST.idx];if(!p)return;p.medications[i].suspended=!p.medications[i].suspended;save();renMsec(ST.msec);}
-function rmMed(i){const p=ST.patients[ST.idx];if(!p||!confirm('Remover medicação?'))return;p.medications.splice(i,1);save();renMsec(ST.msec);}
-function setFH(i,h){const p=ST.patients[ST.idx];if(!p)return;p.medications[i].firstHour=parseInt(h);save();renMsec(ST.msec);}
-
-// ══════════════════════════════════════════════
-// TAB: ANTECEDENTES / ISBAR
-// ══════════════════════════════════════════════
-function renISBAR(){ST.isbarSec?renISBARDetail(ST.isbarSec):renISBARCards();}
-function renISBARCards(){const p=ST.patients[ST.idx];if(!p)return;el('tab-isbar').innerHTML=`<div><div class="isbar-card" onclick="openISBARSec('ap')"><div class="isbar-card-icon">🏥</div><div><div class="isbar-card-title">Antecedentes Pessoais</div><div class="isbar-card-sub">${p.antecedentes?p.antecedentes.slice(0,60)+'...':'Sem antecedentes registados'}</div></div><div class="isbar-arr">›</div></div><div class="isbar-card" onclick="openISBARSec('hda')"><div class="isbar-card-icon">📋</div><div><div class="isbar-card-title">História da Doença Actual</div><div class="isbar-card-sub">${p.hda?p.hda.slice(0,60)+'...':'Sem HDA registada'}</div></div><div class="isbar-arr">›</div></div><div class="isbar-divider"></div><div class="isbar-card isbar-card-ai" onclick="openISBARSec('isbar')"><div class="isbar-card-icon">🤖</div><div><div class="isbar-card-title">Relatório ISBAR</div><div class="isbar-card-sub">Gerar com IA · Requer ligação à internet</div></div><div class="isbar-arr">›</div></div></div>`;}
-function openISBARSec(s){ST.isbarSec=s;renISBARDetail(s);}
-function renISBARDetail(s){const p=ST.patients[ST.idx];if(!p)return;const back=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><button class="btn btn-g" onclick="ST.isbarSec=null;renISBAR()">← Voltar</button><div style="font-weight:700;font-size:15px">${s==='ap'?'Antecedentes Pessoais':s==='hda'?'HDA':'Relatório ISBAR'}</div></div>`;
-if(s==='ap'){el('tab-isbar').innerHTML=`<div style="padding:0">${back}<textarea id="ap-inp" rows="12" style="font-size:14px;line-height:1.7" placeholder="Antecedentes pessoais relevantes&#10;&#10;Alergias:&#10;Patologias:&#10;Cirurgias:&#10;Medicação habitual:&#10;Vacinação:">${p.antecedentes||''}</textarea><button class="btn btn-p" style="width:100%;margin-top:10px" onclick="saveAP()">Guardar</button></div>`;}
-else if(s==='hda'){el('tab-isbar').innerHTML=`<div style="padding:0">${back}<textarea id="hda-inp" rows="12" style="font-size:14px;line-height:1.7" placeholder="História da doença actual&#10;&#10;Data de início:&#10;Motivo de internamento:&#10;Evolução clínica:&#10;Exames realizados:">${p.hda||''}</textarea><button class="btn btn-p" style="width:100%;margin-top:10px" onclick="saveHDA()">Guardar</button></div>`;}
-else{el('tab-isbar').innerHTML=`<div style="padding:0">${back}<div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--rads);padding:12px;margin-bottom:13px;font-size:12px;color:var(--t2);line-height:1.7"><strong>ISBAR</strong> — Identificação · Situação · Background · Avaliação · Recomendações<br><span style="font-size:11px;color:var(--t3)">Worker: ${ST.wurl?'configurado ✓':'não configurado'}</span></div><button class="btn btn-p" style="width:100%;margin-bottom:10px" onclick="genISBAR(false)">⚡ Gerar ISBAR deste doente</button><button class="btn btn-o" style="width:100%;margin-bottom:13px" onclick="genISBAR(true)">📋 Gerar ISBAR de todos</button><div id="isbar-out" style="display:none"><div class="sbar-out" id="isbar-text"></div><button class="btn btn-o" style="width:100%;margin-top:9px" onclick="copyISBAR()">Copiar Relatório</button></div></div>`;}}
-function saveAP(){const p=ST.patients[ST.idx];if(!p)return;p.antecedentes=el('ap-inp').value;save();ST.isbarSec=null;renISBAR();}
-function saveHDA(){const p=ST.patients[ST.idx];if(!p)return;p.hda=el('hda-inp').value;save();ST.isbarSec=null;renISBAR();}
-async function genISBAR(all){if(!ST.wurl&&!ST.apiKey){alert('Configure o Worker URL ou Chave API Groq em "Sobre".');return;}const out=el('isbar-out'),txt=el('isbar-text');if(!out||!txt)return;out.style.display='block';txt.textContent='A gerar relatório ISBAR...';txt.style.opacity='.6';const pts=all?ST.patients.filter(p=>p.status==='internado'):[ST.patients[ST.idx]];const mins=ST.shiftStart?Math.round((Date.now()-new Date(ST.shiftStart))/60000):0;const sums=pts.map(p=>buildSum(p)).join('\n\n───\n\n');const msgs=[{role:'system',content:'És especialista em UCIP pediátrica. Gera relatórios ISBAR profissionais em PT-PT. Formato: I-Identificação, S-Situação, B-Background, A-Avaliação, R-Recomendações. Sê conciso e clínico. Destaca ALERTAS em maiúsculas.'},{role:'user',content:`ISBAR passagem de turno (${mins} min, ${pts.length} doente(s)):\n\n${sums}`}];try{const res=await callAI({type:'isbar',messages:msgs});txt.textContent=res.text||'Sem conteúdo.';txt.style.opacity='1';}catch(e){txt.textContent='Erro: '+e.message;txt.style.opacity='1';}}
-function copyISBAR(){navigator.clipboard?.writeText(el('isbar-text')?.textContent||'');const b=document.querySelector('[onclick="copyISBAR()"]');if(b){b.textContent='Copiado ✓';setTimeout(()=>b.textContent='Copiar Relatório',2000);}}
-function buildSum(p){const R=vRanges(p.ageDays);const vStr=VITALS_DEF.map(v=>{const val=p.vitals[v.k];const st=val&&R[v.k]?vSt(val,R[v.k]):'';return`${v.label}=${val||'NR'} ${v.unit}${st==='alrt'?' [ALERTA]':st==='warn'?' [ATENÇÃO]':''}`;}).join('|');const done=p.tasks.filter(t=>t.done).map(t=>t.text).join(';')||'nenhuma';const pend=p.tasks.filter(t=>!t.done).map(t=>t.text).join(';')||'nenhuma';const notes=p.notes.slice(0,5).map(n=>`[${ft(n.timestamp)}]${n.text}`).join('/')||'sem notas';const devs=p.devices.map(d=>d.label+(d.gauge?' '+d.gauge:'')).join(',')||'sem dispositivos';const todos=(p.todos||[]).filter(t=>!t.done).map(t=>t.text).join(';')||'nenhum';return`Cama:${p.bed}|Idade:${ageLabel(p)}${p.weightKg?'|Peso:'+p.weightKg+'kg':''}\nDX:${p.diagMain||'n/e'}|Sec:${p.diagSec.join(',')||'nenhum'}\nAP:${p.antecedentes||'n/r'}\nHDA:${p.hda||'n/r'}\nVitais:${vStr}\nDispositivos:${devs}\nMeds:${(p.medications||[]).map(m=>`${m.name} ${m.dose}${m.unit} ${m.route}`).join(';')||'n/r'}\nToDo:${todos}\nFeito:${done}\nPendente:${pend}\nNotas:${notes}`;}
-
-// ══════════════════════════════════════════════
-// TAB: NOTAS + QUICK ACTIONS
-// ══════════════════════════════════════════════
-function addNote(customTxt){const inp=el('note-inp');const txt=customTxt||(inp?inp.value.trim():'');if(!txt)return;const p=ST.patients[ST.idx];if(!p)return;p.notes.unshift({id:uid(),text:txt,timestamp:new Date().toISOString()});if(inp&&!customTxt)inp.value='';save();renNotes();}
-function renNotes(){const p=ST.patients[ST.idx];if(!p)return;const e=el('notes-list');if(!e)return;e.innerHTML=p.notes.length?p.notes.map(n=>`<div class="note-it"><span class="note-t">${ft(n.timestamp)}</span><span class="note-txt">${n.text}</span></div>`).join(''):'<div class="empty-st">Sem notas</div>';}
+// Quick notes
 let _qSel=[];
 function renQCats(filter){const e=el('quick-cats');if(!e)return;const q=filter.toLowerCase();e.innerHTML=QCATS.map(c=>{const items=q?c.items.filter(i=>i.toLowerCase().includes(q)||c.cat.toLowerCase().includes(q)):c.items;if(q&&!items.length)return'';return`<div class="cat-wrap"><div class="cat-hdr${q?' open':''}" onclick="tglCat(this)"><span class="cat-hdr-name">${c.cat}</span><span class="cat-arr">›</span></div><div class="cat-items${q?' open':''}">${items.map(item=>{const sel=_qSel.some(s=>s.cat===c.cat&&s.item===item);return`<button class="i-chip${sel?' sel':''}" onclick="selQ('${c.cat}','${item}')">${item}</button>`;}).join('')}</div></div>`;}).join('');}
 function tglCat(hdr){hdr.classList.toggle('open');const it=hdr.nextElementSibling;if(it)it.classList.toggle('open');}
 function selQ(cat,item){const i=_qSel.findIndex(s=>s.cat===cat&&s.item===item);if(i>=0)_qSel.splice(i,1);else _qSel.push({cat,item});updQB();renQCats(el('quick-search')?.value||'');}
 function updQB(){const b=el('qbuilder'),pv=el('qb-prev');if(!b||!pv)return;if(!_qSel.length){b.classList.remove('vis');return;}b.classList.add('vis');pv.textContent=_qSel.map(s=>`${s.cat} › ${s.item}`).join(' | ');}
-function confQ(){if(!_qSel.length)return;addNote(_qSel.map(s=>`${s.cat} › ${s.item}`).join(' | '));clrQ();}
+function confQ(){if(!_qSel.length)return;addNoteText(_qSel.map(s=>`${s.cat} › ${s.item}`).join(' | '));clrQ();renEnf();}
 function clrQ(){_qSel=[];updQB();renQCats(el('quick-search')?.value||'');}
 function filtQ(v){renQCats(v);}
 
+// ─── Dispositivos ────────────────────────────
+function renDev(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const cat=ageCat(p);
+  if(!p.devices)p.devices=[];if(!p.devInactive)p.devInactive=[];
+  const chkSvg='<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const activeDots=DEV_TYPES.filter(dt=>!dt.neo||cat==='neo').map(dt=>{const a=p.devices.some(d=>d.typeId===dt.id);if(!a)return'';const col=dt.id.includes('art')||dt.id==='uac'?'#DC2626':dt.id.includes('cvc')||dt.id==='picc'||dt.id==='uvc'?'#3B82F6':dt.id==='ett'||dt.id==='capno'?'#10B981':dt.id.includes('epi')||dt.id.includes('peri')||dt.id==='bis'?'#7C3AED':'#F59E0B';return`<circle cx="${dt.x}" cy="${dt.y}" r="3.5" fill="${col}" stroke="white" stroke-width="1"><title>${dt.label}</title></circle>`;}).join('');
+  const fig=cat==='neo'?`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="12" r="10" fill="#FDE68A" stroke="#D97706"/><ellipse cx="50" cy="35" rx="14" ry="18" fill="#FDE68A" stroke="#D97706"/><path d="M36 27 Q26 32 22 44" stroke-linecap="round"/><path d="M64 27 Q74 32 78 44" stroke-linecap="round"/><path d="M43 52 Q40 65 38 78" stroke-linecap="round"/><path d="M57 52 Q60 65 62 78" stroke-linecap="round"/><circle cx="50" cy="40" r="2" fill="#E5E7EB" stroke="#9CA3AF"/></g>`:cat==='lac'?`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="11" r="9" fill="#FDE68A" stroke="#D97706"/><rect x="39" y="22" width="22" height="26" rx="4" fill="#FDE68A" stroke="#D97706"/><path d="M39 26 Q27 30 24 44" stroke-linecap="round"/><path d="M61 26 Q73 30 76 44" stroke-linecap="round"/><path d="M43 48 L40 70" stroke-linecap="round"/><path d="M57 48 L60 70" stroke-linecap="round"/></g>`:`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="10" r="8" fill="#FDE68A" stroke="#D97706"/><rect x="40" y="20" width="20" height="24" rx="3" fill="#FDE68A" stroke="#D97706"/><path d="M40 24 Q30 28 27 42" stroke-linecap="round"/><path d="M60 24 Q70 28 73 42" stroke-linecap="round"/><path d="M44 44 L41 65" stroke-linecap="round"/><path d="M56 44 L59 65" stroke-linecap="round"/></g>`;
+  const devList=p.devices.map((d,i)=>`<div class="dev-item"><span class="dev-icon">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl">${d.label}</div>${d.location?`<div class="dev-sub">${d.location}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${d.gauge}${d.side?' · '+d.side:''}</div>`:''}</div><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red);border-color:#FECACA" onclick="retireDev(${i})">Retirar</button></div>`).join('')||'<div class="empty-st">Sem dispositivos activos</div>';
+  const inactList=p.devInactive.map((d,i)=>`<div class="dev-item" style="opacity:.6"><span class="dev-icon" style="opacity:.5">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl" style="text-decoration:line-through">${d.label}</div>${d.location?`<div class="dev-sub">${d.location}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${d.gauge}${d.side?' · '+d.side:''}</div>`:''}<div class="dev-removed-lbl">Retirado: ${d.removedAt?fd(d.removedAt):'—'}</div></div><button class="rm-btn" onclick="delInactiveDev(${i})" title="Eliminar">🗑</button></div>`).join('');
+  const chips=DEV_TYPES.filter(dt=>!dt.neo||cat==='neo').map(dt=>{const a=p.devices.some(d=>d.typeId===dt.id);return`<button class="i-chip${a?' sel':''}" onclick="tglDevQ('${dt.id}')" style="font-size:11px;padding:5px 9px">${dt.icon} ${dt.label.split(' ').slice(-1)[0]}</button>`;}).join('');
+  el('csec-dev').innerHTML=`
+    <div class="sub-card"><div class="sub-card-hdr">Dispositivos Activos<button class="btn btn-o btn-sm" onclick="openDevModal()">+ Adicionar</button></div>${devList}</div>
+    <div class="sub-card"><div class="sub-card-hdr">Figura do Doente</div>
+      <div style="display:flex;justify-content:center;padding:14px"><svg viewBox="0 0 100 100" width="160" height="160" style="overflow:visible">${fig}${activeDots}</svg></div>
+      <div style="padding:0 13px 13px;display:flex;flex-wrap:wrap;gap:5px">${chips}</div>
+    </div>
+    ${p.devInactive.length?`<div class="sub-card"><div class="sub-card-hdr">Dispositivos Retirados</div>${inactList}</div>`:''}`;
+}
+function tglDevQ(typeId){const p=ST.patients[ST.idx];if(!p)return;const idx=p.devices.findIndex(d=>d.typeId===typeId);if(idx>=0){retireDev(idx);}else{const dt=DEV_TYPES.find(d=>d.id===typeId);if(!dt)return;if(!p.devices)p.devices=[];p.devices.push({id:uid(),typeId,label:dt.label,icon:dt.icon,location:'',gauge:'',side:''});save();renDev();}}
+function retireDev(i){const p=ST.patients[ST.idx];if(!p)return;if(!p.devInactive)p.devInactive=[];const d={...p.devices[i],removedAt:new Date().toISOString()};p.devInactive.unshift(d);p.devices.splice(i,1);save();renDev();}
+function delInactiveDev(i){const p=ST.patients[ST.idx];if(!p||!p.devInactive)return;if(!confirm('Eliminar este registo?'))return;p.devInactive.splice(i,1);save();renDev();}
+function onDevTypeChange(){const typeId=el('dev-type')?.value;const dt=DEV_TYPES.find(d=>d.id===typeId);const locWrap=el('dev-location-wrap'),locSel=el('dev-location');if(!locWrap||!locSel)return;if(dt&&dt.locs&&dt.locs.length){locSel.innerHTML=dt.locs.map(l=>`<option>${l}</option>`).join('');locWrap.style.display='block';}else locWrap.style.display='none';}
+function openDevModal(){
+  el('dev-type').innerHTML=DEV_TYPES.map(d=>`<option value="${d.id}">${d.label}</option>`).join('');
+  el('dev-side').value='';
+  onDevTypeChange();openM('modal-dev');
+}
+function confDev(){const p=ST.patients[ST.idx];if(!p)return;const typeId=el('dev-type').value;const gauge=el('dev-gauge').value;const side=el('dev-side').value.trim();const locWrap=el('dev-location-wrap');const location=locWrap&&locWrap.style.display!=='none'?(el('dev-location')?.value||''):'';const dt=DEV_TYPES.find(d=>d.id===typeId);if(!dt)return;if(!p.devices)p.devices=[];p.devices.push({id:uid(),typeId,label:dt.label,icon:dt.icon,location,gauge,side});save();closeM('modal-dev');renDev();}
+
+// ─── To-Do ────────────────────────────────────
+function renTodo(){
+  const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];
+  const chkSvg='<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const listH=p.todos.map((t,i)=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTodo(${i})">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${t.text}</div>${t.done?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div><button class="rm-btn" onclick="rmTodo(${i})">×</button></div>`).join('')||'<div class="empty-st">Sem tarefas</div>';
+  const qH=TODO_ITEMS.map(c=>`<div style="margin-bottom:9px"><div class="sect-lbl">${c.cat}</div><div style="display:flex;flex-wrap:wrap;gap:5px">${c.items.map(item=>`<button class="i-chip" onclick="addTodoQ('${item}')">${item}</button>`).join('')}</div></div>`).join('');
+  el('csec-todo').innerHTML=`<div class="sub-card"><div class="sub-card-hdr">To-Do do Turno</div>${listH}<div class="task-add"><input id="todo-inp" type="text" placeholder="Adicionar tarefa..."><button class="btn btn-o btn-sm" onclick="addTodoC()">+</button></div></div><div class="sub-card"><div class="sub-card-hdr">Acesso Rápido</div><div style="padding:12px">${qH}</div></div>`;
+}
+function addTodoQ(text){const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];if(p.todos.find(t=>t.text===text&&!t.done))return;p.todos.push({id:uid(),text,done:false,doneAt:null});save();renTodo();}
+function addTodoC(){const inp=el('todo-inp');if(!inp||!inp.value.trim())return;addTodoQ(inp.value.trim());inp.value='';}
+function tglTodo(i){const p=ST.patients[ST.idx];if(!p)return;p.todos[i].done=!p.todos[i].done;p.todos[i].doneAt=p.todos[i].done?new Date().toISOString():null;save();renTodo();}
+function rmTodo(i){const p=ST.patients[ST.idx];if(!p)return;p.todos.splice(i,1);save();renTodo();}
+
 // ══════════════════════════════════════════════
-// AI CALL (Worker or direct Groq)
+// MODULE: MEDICAÇÃO
 // ══════════════════════════════════════════════
-const WORKER_URL='https://__shiftcare.pedicode-app.workers.dev';
+function setMsec(s){ST.msec=s;['hor','perf','hist'].forEach(k=>{const b=el('mt-'+k);if(b)b.classList.toggle('active',k===s);});renMsec(s);}
+function renMsec(s){if(s==='hor')renMedH();if(s==='perf')renPerf();if(s==='hist')renMedHist();}
+function shiftDoses(fh,freq){if(freq<=0)return[];const d=[];let h=parseInt(fh);for(let i=0;i<Math.ceil(24/freq)+2;i++){d.push(h%24);h+=freq;}return[...new Set(d)].sort((a,b)=>a-b);}
+function dosesInShift(doses,sh){return doses.filter(h=>{if(sh.start<sh.end)return h>=sh.start&&h<sh.end;return h>=sh.start||h<sh.end;});}
+
+function renMedH(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const meds=(p.medications||[]).filter(m=>m.freq!=='Contínua');
+  const h=meds.map((m,i)=>medCardH(m,i)).join('')||'<div class="empty-st">Sem medicações horárias</div>';
+  el('med-content').innerHTML=`<button class="btn btn-p" style="width:100%;margin-bottom:12px" onclick="openMedModal('hor')">+ Adicionar Medicação</button>${h}`;
+}
+function renPerf(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const meds=(p.medications||[]).filter(m=>m.freq==='Contínua');
+  const h=meds.map((m,i)=>perfCardH(m,i)).join('')||'<div class="empty-st">Sem perfusões</div>';
+  el('med-content').innerHTML=`<button class="btn btn-p" style="width:100%;margin-bottom:12px" onclick="openMedModal('perf')">+ Adicionar Perfusão</button>${h}`;
+}
+function renMedHist(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const hist=(p.medHistory||[]);
+  const h=hist.map((m,i)=>`<div class="med-hist-item"><div style="flex:1"><div class="med-hist-name">${m.name}</div><div class="med-hist-sub">${m.dose} ${m.unit} · ${m.route}${m.freq&&m.freq!=='Contínua'?' · '+m.freq:' · Perfusão'}</div>${m.vel?`<div class="med-hist-sub">${m.vel}</div>`:''}<div class="med-hist-dates">▶ ${m.startAt?fdt(m.startAt):'—'} &nbsp;⏹ ${m.stopAt?fdt(m.stopAt):'A decorrer'}</div></div><button class="rm-btn" onclick="delMedHist(${i})">🗑</button></div>`).join('')||'<div class="empty-st">Sem histórico de medicações</div>';
+  el('med-content').innerHTML=h;
+}
+function delMedHist(i){const p=ST.patients[ST.idx];if(!p)return;if(!confirm('Eliminar registo?'))return;p.medHistory.splice(i,1);save();renMedHist();}
+
+function medCardH(m,i){
+  const fh=FREQ_MAP[m.freq]||0;
+  const allDoses=fh>0?shiftDoses(m.firstHour||8,fh):[];
+  const sH=SHIFTS.map(sh=>{const doses=dosesInShift(allDoses,sh);const pills=doses.map(h=>{const key=`${m.id}_${h}`;const done=m.administered?.[key];return`<span class="dose-pill${done?' done':''}" onclick="tglDose('${key}',${i})">${String(h).padStart(2,'0')}h</span>`;}).join('');return`<div class="shift-col" style="border-left:3px solid ${sh.accent}"><div class="shift-name" style="color:${sh.accent}">${sh.name}</div><div class="dose-row">${pills||'<span style="font-size:9px;color:var(--t3)">—</span>'}</div></div>`;}).join('');
+  return`<div class="med-card${m.suspended?' suspended':''}"><div class="med-card-hdr"><div><div class="med-name">${m.name}</div><div class="med-meta">${m.dose} ${m.unit} · ${m.route} · ${m.freq}</div>${m.suspended?'<div class="med-susp-lbl">SUSPENSO</div>':''}</div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-o btn-sm" style="font-size:11px" onclick="tglSusp(${i})">${m.suspended?'Reativar':'Suspender'}</button><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red)" onclick="archiveMed(${i})">▣</button><button class="rm-btn" onclick="rmMed(${i})">×</button></div></div><div class="shifts-row">${sH}</div><div class="med-first-row">Primeira dose: <select onchange="setFH(${i},this.value)">${Array.from({length:24},(_,h)=>`<option value="${h}"${m.firstHour==h?' selected':''}>${String(h).padStart(2,'0')}h</option>`).join('')}</select></div></div>`;
+}
+function perfCardH(m,i){
+  const isEpi=m.route==='Epidural';
+  const badge=isEpi?`<span class="perf-badge-epi">Epidural</span>`:`<span class="perf-badge-ev">EV</span>`;
+  return`<div class="med-card ${isEpi?'perf-card-epi':'perf-card-ev'}${m.suspended?' suspended':''}"><div class="med-card-hdr"><div><div class="med-name">${m.name} ${badge}</div><div class="med-meta">${m.dose} ${m.unit}/h${m.vel?' · '+m.vel:''} · ${m.route}</div>${m.notes?`<div class="med-meta">${m.notes}</div>`:''} ${m.suspended?'<div class="med-susp-lbl">SUSPENSO</div>':''}</div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-o btn-sm" style="font-size:11px" onclick="tglSusp(${i})">${m.suspended?'Reativar':'Suspender'}</button><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red)" onclick="archiveMed(${i})">▣ Parar</button><button class="rm-btn" onclick="rmMed(${i})">×</button></div></div><div style="padding:8px 12px;background:${isEpi?'var(--viobg)':'var(--pl)'};font-size:12px;color:${isEpi?'var(--vio)':'var(--pd)'}">💧 Perfusão contínua a ${m.dose} ${m.unit}/h ${m.vel?'· '+m.vel:''} ${m.suspended?'— SUSPENSA':'— A CORRER'}</div></div>`;
+}
+
+function openMedModal(type){
+  ST.medModalType=type;
+  el('med-modal-title').textContent=type==='perf'?'Adicionar Perfusão':'Adicionar Medicação';
+  el('med-freq-row').style.display=type==='perf'?'none':'block';
+  el('med-notes-row').style.display=type==='perf'?'block':'none';
+  el('med-vel-wrap').style.display=type==='perf'?'block':'none';
+  // Perfusion routes: EV or Epidural only
+  if(type==='perf'){el('med-route').innerHTML='<option>EV</option><option>Epidural</option>';}
+  else{el('med-route').innerHTML='<option>EV</option><option>Oral</option><option>Gástrica (SNG/SOG)</option><option>Epidural</option><option>Inalatória</option><option>Perineural</option><option>Retal</option><option>Subcutânea</option><option>Intramuscular</option>';}
+  ['med-name','med-dose','med-notes','med-vel'].forEach(id=>{const e=el(id);if(e)e.value='';});
+  el('med-autocomplete').innerHTML='';
+  const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());
+  if(el('med-start'))el('med-start').value=now.toISOString().slice(0,16);
+  openM('modal-med');
+}
+function onMedName(v){const sugg=medSugg(v);const ac=el('med-autocomplete');if(!ac)return;ac.innerHTML=sugg.map(s=>`<div class="ac-item" onclick="selMed('${s}')">${s}</div>`).join('');}
+function selMed(n){if(el('med-name'))el('med-name').value=n;el('med-autocomplete').innerHTML='';}
+function confMed(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const name=el('med-name').value.trim(),dose=el('med-dose').value.trim();
+  if(!name||!dose){alert('Preencha nome e dose.');return;}
+  const type=ST.medModalType;const freq=type==='perf'?'Contínua':el('med-freq').value;
+  const notes=el('med-notes')?.value.trim()||'',vel=el('med-vel')?.value.trim()||'';
+  const startAt=el('med-start')?.value||new Date().toISOString();
+  if(!p.medications)p.medications=[];
+  p.medications.push({id:uid(),name,dose,unit:el('med-unit').value,route:el('med-route').value,freq,firstHour:8,administered:{},suspended:false,notes,vel,startAt});
+  learnMed(name);save();closeM('modal-med');renMsec(ST.msec);
+}
+function tglDose(key,idx){const p=ST.patients[ST.idx];if(!p)return;const m=p.medications[idx];if(!m)return;if(!m.administered)m.administered={};m.administered[key]=!m.administered[key];save();renMsec(ST.msec);}
+function tglSusp(i){const p=ST.patients[ST.idx];if(!p)return;p.medications[i].suspended=!p.medications[i].suspended;save();renMsec(ST.msec);}
+function rmMed(i){const p=ST.patients[ST.idx];if(!p||!confirm('Remover medicação?'))return;p.medications.splice(i,1);save();renMsec(ST.msec);}
+function archiveMed(i){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const m=p.medications[i];if(!m)return;
+  if(!p.medHistory)p.medHistory=[];
+  p.medHistory.unshift({...m,stopAt:new Date().toISOString()});
+  p.medications.splice(i,1);save();renMsec(ST.msec);
+}
+function setFH(i,h){const p=ST.patients[ST.idx];if(!p)return;p.medications[i].firstHour=parseInt(h);save();renMsec(ST.msec);}
+
+// ══════════════════════════════════════════════
+// MODULE: ALIMENTAÇÃO
+// ══════════════════════════════════════════════
+function renAlim(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  if(!p.nutrition)p.nutrition={type:'',specificType:'',diet:''};
+  const n=p.nutrition;
+  const mainBtns=NUTR_TYPES.map(t=>`<button class="nutr-btn${n.type===t?' active':''}" onclick="setNutrType('${t}')">${t}</button>`).join('');
+  const specShow=n.type==='Leite Específico';
+  const specBtns=specShow?`<div style="margin-bottom:12px"><div class="sect-lbl">Tipo específico</div><div style="display:flex;flex-wrap:wrap;gap:7px">${NUTR_SPECIFIC.map(s=>`<button class="sub-nutr-btn${n.specificType===s?' active':''}" onclick="setNutrSpec('${s}')">${s}</button>`).join('')}</div></div>`:'';
+  el('tab-alimentacao').innerHTML=`
+    <div class="sub-card">
+      <div class="sub-card-hdr">Tipo de Alimentação</div>
+      <div style="padding:13px">
+        <div class="nutr-grid">${mainBtns}</div>
+        ${specBtns}
+        <div>
+          <label>Dieta específica / Notas</label>
+          <textarea id="nutr-diet" rows="4" placeholder="Ex: 60mL cada 3h por SNG. Volume total: 480mL/dia..." oninput="saveNutrDiet(this.value)">${n.diet||''}</textarea>
+        </div>
+      </div>
+    </div>`;
+}
+function setNutrType(t){const p=ST.patients[ST.idx];if(!p)return;if(!p.nutrition)p.nutrition={};p.nutrition.type=t;if(t!=='Leite Específico')p.nutrition.specificType='';save();renAlim();}
+function setNutrSpec(s){const p=ST.patients[ST.idx];if(!p)return;if(!p.nutrition)p.nutrition={};p.nutrition.specificType=s;save();renAlim();}
+function saveNutrDiet(v){const p=ST.patients[ST.idx];if(!p)return;if(!p.nutrition)p.nutrition={};p.nutrition.diet=v;save();}
+
+// ══════════════════════════════════════════════
+// MODULE: ANTECEDENTES / ISBAR
+// ══════════════════════════════════════════════
+function renISBAR(){ST.isbarSec?renISBARDetail(ST.isbarSec):renISBARCards();}
+function renISBARCards(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  el('tab-isbar').innerHTML=`
+    <div class="isbar-card" onclick="openISBARSec('ap')"><div class="isbar-card-icon">🏥</div><div><div class="isbar-card-title">Antecedentes Pessoais</div><div class="isbar-card-sub">${p.antecedentes?p.antecedentes.slice(0,60)+'...':'Sem antecedentes registados'}</div></div><div class="isbar-arr">›</div></div>
+    <div class="isbar-card" onclick="openISBARSec('hda')"><div class="isbar-card-icon">📋</div><div><div class="isbar-card-title">História da Doença Actual</div><div class="isbar-card-sub">${p.hda?p.hda.slice(0,60)+'...':'Sem HDA registada'}</div></div><div class="isbar-arr">›</div></div>
+    <div class="isbar-divider"></div>
+    <div class="isbar-card isbar-card-ai" onclick="openISBARSec('isbar')"><div class="isbar-card-icon">🤖</div><div><div class="isbar-card-title">Relatório ISBAR</div><div class="isbar-card-sub">Gerar com IA · Requer ligação à internet</div></div><div class="isbar-arr">›</div></div>`;
+}
+function openISBARSec(s){ST.isbarSec=s;renISBARDetail(s);}
+function renISBARDetail(s){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const back=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:13px"><button class="btn btn-o btn-sm" onclick="ST.isbarSec=null;renISBAR()">← Voltar</button><div style="font-weight:700;font-size:14px">${s==='ap'?'Antecedentes Pessoais':s==='hda'?'HDA':'Relatório ISBAR'}</div></div>`;
+  if(s==='ap'){el('tab-isbar').innerHTML=`${back}<textarea id="ap-inp" rows="14" style="font-size:13px;line-height:1.7" placeholder="Alergias:&#10;Patologias crónicas:&#10;Cirurgias:&#10;Medicação habitual:&#10;Vacinação:&#10;Antecedentes familiares:">${p.antecedentes||''}</textarea><button class="btn btn-p" style="width:100%;margin-top:9px" onclick="saveAP()">Guardar</button>`;}
+  else if(s==='hda'){el('tab-isbar').innerHTML=`${back}<textarea id="hda-inp" rows="14" style="font-size:13px;line-height:1.7" placeholder="Data de início dos sintomas:&#10;Motivo de internamento:&#10;Evolução clínica:&#10;Exames realizados:&#10;Intervenções efectuadas:">${p.hda||''}</textarea><button class="btn btn-p" style="width:100%;margin-top:9px" onclick="saveHDA()">Guardar</button>`;}
+  else{el('tab-isbar').innerHTML=`${back}<div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--rads);padding:11px;margin-bottom:12px;font-size:12px;color:var(--t2);line-height:1.7"><strong>ISBAR</strong> — I·S·B·A·R<br><span style="font-size:11px;color:var(--t3)">Worker: ${ST.wurl?'configurado ✓':'não configurado ⚠'}</span></div><button class="btn btn-p" style="width:100%;margin-bottom:9px" onclick="genISBAR(false)">⚡ ISBAR deste doente</button><button class="btn btn-o" style="width:100%;margin-bottom:12px" onclick="genISBAR(true)">📋 ISBAR de todos os doentes</button><div id="isbar-out" style="display:none"><div class="sbar-out" id="isbar-text"></div><button class="btn btn-o" style="width:100%;margin-top:8px" onclick="copyISBAR()">Copiar Relatório</button></div>`;}
+}
+function saveAP(){const p=ST.patients[ST.idx];if(!p)return;p.antecedentes=el('ap-inp').value;save();ST.isbarSec=null;renISBAR();}
+function saveHDA(){const p=ST.patients[ST.idx];if(!p)return;p.hda=el('hda-inp').value;save();ST.isbarSec=null;renISBAR();}
+function buildSum(p){
+  const R=vRanges(p.ageDays);
+  const ca=correctedAge(p);
+  const vStr=VITALS_DEF.map(v=>{const val=p.vitals[v.k];const st=val&&R[v.k]?vSt(val,R[v.k]):'';return`${v.label}=${val||'NR'} ${v.unit}${st==='alrt'?' [ALERTA]':st==='warn'?' [ATENÇÃO]':''}`;}).join('|');
+  const done=p.tasks.filter(t=>t.done).map(t=>t.text).join(';')||'nenhuma';
+  const pend=p.tasks.filter(t=>!t.done).map(t=>t.text).join(';')||'nenhuma';
+  const notes=p.notes.slice(0,5).map(n=>`[${ft(n.timestamp)}]${n.text}`).join('/')||'sem notas';
+  const devs=(p.devices||[]).map(d=>d.label+(d.location?' '+d.location:'')+(d.gauge?' '+d.gauge:'')).join(',')||'sem dispositivos';
+  const meds=(p.medications||[]).map(m=>`${m.name} ${m.dose}${m.unit}${m.freq==='Contínua'?' contínuo':' '+m.freq}`).join(';')||'n/r';
+  const nutr=p.nutrition?.type||'n/r';
+  const alrg=p.allergies||'sem alergias conhecidas';
+  return`Cama:${p.bed}|Idade:${ageLabel(p)}${p.weightKg?'|Peso:'+p.weightKg+'kg':''}${p.gestWeeks?'|IG:'+p.gestWeeks+'s':''} ${ca?'|IC:'+ca:''}
+Alergias:${alrg}
+DX:${p.diagMain||'n/e'}|Sec:${p.diagSec.join(',')||'nenhum'}
+AP:${p.antecedentes||'n/r'}
+HDA:${p.hda||'n/r'}
+Vitais:${vStr}
+Dispositivos:${devs}
+Medicação:${meds}
+Alimentação:${nutr}
+Feito:${done}|Pendente:${pend}
+Notas:${notes}`;
+}
+async function genISBAR(all){
+  if(!ST.wurl&&!ST.apiKey){alert('Configure o Worker URL ou Chave API em "Sobre".');return;}
+  const out=el('isbar-out'),txt=el('isbar-text');if(!out||!txt)return;
+  out.style.display='block';txt.textContent='A gerar relatório ISBAR...';txt.style.opacity='.6';
+  const pts=all?ST.patients.filter(p=>p.status==='internado'):[ST.patients[ST.idx]];
+  const mins=ST.shiftStart?Math.round((Date.now()-new Date(ST.shiftStart))/60000):0;
+  const sums=pts.map(p=>buildSum(p)).join('\n\n───\n\n');
+  const msgs=[{role:'system',content:'És especialista em UCIP e UCIN pediátrica e neonatologia. Gera relatórios ISBAR profissionais em PT-PT. Formato: I-Identificação (doente, cama, idade, IG, IC, peso, alergias), S-Situação (sinais vitais, alertas), B-Background/Antecedentes, A-Avaliação (cuidados, dispositivos, medicação, alimentação), R-Recomendações (pendentes, atenção próximo turno). Sê conciso e clínico. Destaca ALERTAS em maiúsculas.'},{role:'user',content:`ISBAR passagem de turno (${mins} min, ${pts.length} doente(s)):\n\n${sums}`}];
+  try{const res=await callAI({type:'isbar',messages:msgs});txt.textContent=res.text||'Sem conteúdo.';txt.style.opacity='1';}
+  catch(e){txt.textContent='Erro: '+e.message;txt.style.opacity='1';}
+}
+function copyISBAR(){navigator.clipboard?.writeText(el('isbar-text')?.textContent||'');const b=document.querySelector('[onclick="copyISBAR()"]');if(b){b.textContent='Copiado ✓';setTimeout(()=>b.textContent='Copiar Relatório',2000);}}
+
+// ══════════════════════════════════════════════
+// MODULE: AI
+// ══════════════════════════════════════════════
 async function callAI(payload){
-  const url=ST.wurl?('https://'+ST.wurl.replace(/^https?:\/\//,'')):null;
-  if(url){
-    const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    if(!r.ok)throw new Error('Worker erro: '+r.status);
-    return r.json();
-  }
-  if(ST.apiKey){
-    // Direct Groq fallback
-    const msgs=payload.messages||[{role:'system',content:'Extrai sinais vitais. JSON apenas.'},{role:'user',content:[{type:'image_url',image_url:{url:`data:${payload.mt};base64,${payload.b64}`}},{type:'text',text:'JSON apenas.'}]}];
-    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+ST.apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1000,temperature:0.3})});
-    if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.error?.message||'Groq erro: '+r.status);}
-    const d=await r.json();return{text:d.choices?.[0]?.message?.content||''};
-  }
-  throw new Error('Sem IA configurada. Configure Worker URL ou Chave Groq em "Sobre".');
+  const url=ST.wurl?'https://'+ST.wurl.replace(/^https?:\/\//,''):null;
+  if(url){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw new Error('Worker erro: '+r.status);return r.json();}
+  if(ST.apiKey){const msgs=payload.messages||[{role:'system',content:'Extrai sinais vitais. JSON apenas.'},{role:'user',content:[{type:'image_url',image_url:{url:`data:${payload.mt};base64,${payload.b64}`}},{type:'text',text:'JSON apenas.'}]}];const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+ST.apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1000,temperature:0.3})});if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.error?.message||'Groq erro: '+r.status);}const d=await r.json();return{text:d.choices?.[0]?.message?.content||''};}
+  throw new Error('Sem IA configurada. Configure em "Sobre".');
 }
 
 // ══════════════════════════════════════════════
 // CLOCK + INIT
 // ══════════════════════════════════════════════
-function updateClock(){const c=el('clock-display');if(c)c.textContent=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});}
+function updateClock(){
+  const now=new Date();
+  const c=el('clock-big');if(c)c.textContent=now.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+  const d=el('date-big');if(d)d.textContent=now.toLocaleDateString('pt-PT',{weekday:'long',day:'numeric',month:'long'});
+}
 updateClock();setInterval(updateClock,1000);
 setInterval(()=>{if(ST.screen==='s-dashboard')renderDash();},60000);
+
 document.addEventListener('click',e=>{if(!e.target.closest('#modal-med')){const ac=el('med-autocomplete');if(ac)ac.innerHTML='';}});
-document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const id=document.activeElement?.id;if(id==='f-diag2')addSD('f-diag2','f-dtags','sd');if(id==='m-diag2')addSD('m-diag2','m-dtags','sdm');if(id==='note-inp')addNote();if(id==='todo-inp')addTodoC();});
-const bd=el('build-date');if(bd)bd.textContent=new Date().toLocaleDateString('pt-PT',{year:'numeric',month:'long'});
+document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const id=document.activeElement?.id;if(id==='f-diag2')addSD('f-diag2','f-dtags','sd');if(id==='m-diag2')addSD('m-diag2','m-dtags','sdm');if(id==='note-inp-enf')addNoteEnf();if(id==='todo-inp')addTodoC();});
+
+const bd=el('build-date');if(bd)bd.textContent=new Date().toLocaleDateString('pt-PT',{year:'numeric',month:'long',day:'numeric'});
 
 loadData();
-if(ST.patients.length&&ST.shiftStart){renderDash();showScreen('s-dashboard');}
+if(ST.patients.filter(p=>p.status==='internado').length&&ST.shiftStart){renderDash();showScreen('s-dashboard');}
 else{renderSetup();showScreen('s-setup');}
 </script>
 </body>
