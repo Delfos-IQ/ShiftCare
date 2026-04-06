@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0F766E">
-<title>ShiftCare</title>
+<title>ShiftCare v2.2</title>
 <style>
 :root{--p:#0D9488;--pd:#0F766E;--pl:#CCFBF1;--pm:#5EEAD4;--bg:#F0FDFA;--s:#FFFFFF;--s2:#F8FAFC;--b:#CBD5E1;--b2:#94A3B8;--t:#0F172A;--t2:#334155;--t3:#94A3B8;--red:#DC2626;--rbg:#FEF2F2;--org:#D97706;--obg:#FFFBEB;--grn:#059669;--gbg:#ECFDF5;--gborder:#6EE7B7;--vio:#7C3AED;--viobg:#EDE9FE;--rad:14px;--rads:8px;--shsm:0 1px 3px rgba(0,0,0,.07);--sh:0 2px 8px rgba(0,0,0,.09);--shm:0 4px 16px rgba(0,0,0,.12);--shl:0 12px 32px rgba(0,0,0,.15)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -206,11 +206,26 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .isbar-divider{border-top:1px solid var(--b);margin:13px 0}
 .sbar-out{background:var(--s2);border:1px solid var(--b);border-radius:var(--rad);padding:12px;margin-bottom:9px;font-size:12px;line-height:1.9;font-family:monospace;white-space:pre-wrap;word-break:break-word;max-height:48vh;overflow-y:auto}
 /* Nutrition */
-.nutr-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
-.nutr-btn{padding:11px 10px;border-radius:var(--rads);border:2px solid var(--b);background:var(--s);font-size:13px;cursor:pointer;font-weight:700;color:var(--t);text-align:center}
-.nutr-btn.active{background:var(--p);border-color:var(--p);color:#fff}
-.sub-nutr-btn{padding:8px 11px;border-radius:var(--rads);border:1.5px solid var(--b);background:var(--s);font-size:12px;cursor:pointer;font-weight:600;color:var(--t)}
-.sub-nutr-btn.active{background:var(--pl);border-color:var(--p);color:var(--pd)}
+/* Nutrition */
+.nutr-type-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:14px}
+.nutr-type-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border-radius:var(--rads);border:2px solid var(--b);background:var(--s);font-size:11px;font-weight:700;color:var(--t);cursor:pointer;text-align:center;transition:all .14s;line-height:1.3}
+.nutr-type-btn .nt-icon{font-size:20px}
+.nutr-type-btn.active{background:var(--p);border-color:var(--p);color:#fff}
+.nutr-type-btn.pausa-btn.active{background:#6B7280;border-color:#6B7280}
+.add-chip{padding:7px 11px;border-radius:20px;border:1.5px solid var(--b);background:var(--s);font-size:12px;cursor:pointer;font-weight:600;color:var(--t);white-space:nowrap;transition:all .14s}
+.add-chip.sel{background:var(--org);border-color:var(--org);color:#fff}
+.mode-freq-btn{padding:8px 12px;border-radius:var(--rads);border:1.5px solid var(--b);background:var(--s);font-size:12px;cursor:pointer;font-weight:600;color:var(--t);transition:all .14s}
+.mode-freq-btn.sel{background:var(--vio);border-color:var(--vio);color:#fff}
+.mode-via-btn{padding:8px 12px;border-radius:var(--rads);border:1.5px solid var(--b);background:var(--s);font-size:12px;cursor:pointer;font-weight:600;color:var(--t);transition:all .14s}
+.mode-via-btn.sel{background:var(--pd);border-color:var(--pd);color:#fff}
+.nutr-record{background:var(--s);border:1px solid var(--b);border-radius:var(--rads);padding:11px 13px;margin-bottom:8px;display:flex;gap:9px;align-items:flex-start;position:relative}
+.nutr-record.inactive{opacity:.55;border-style:dashed}
+.nutr-rec-type{font-weight:800;font-size:13px;display:flex;align-items:center;gap:5px}
+.nutr-rec-sub{font-size:11px;color:var(--t2);margin-top:3px;line-height:1.5}
+.nutr-rec-time{font-size:10px;color:var(--t3);margin-top:3px;font-family:monospace}
+.nutr-badge{display:inline-flex;align-items:center;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700}
+.nb-freq{background:var(--viobg);color:var(--vio)}
+.nb-via{background:var(--pl);color:var(--pd)}
 /* About */
 #s-about .wrap{max-width:500px;margin:0 auto;padding:14px 14px 40px}
 .about-hdr{background:linear-gradient(135deg,var(--pd),var(--p));padding:10px 13px;display:flex;align-items:center;gap:9px;flex-shrink:0}
@@ -226,6 +241,24 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .hist-status{padding:3px 9px;border-radius:10px;font-size:10px;font-weight:800;text-transform:uppercase}
 .hist-status.alta{background:var(--gbg);color:var(--grn)}
 .hist-status.transferido{background:var(--pl);color:var(--pd)}
+/* Ponto de Situação */
+.sit-section{padding:9px 11px;border-top:1px solid var(--b)}
+.sit-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.sit-dot{width:6px;height:6px;border-radius:50%;background:var(--p);display:inline-block;flex-shrink:0}
+.sit-group{margin-bottom:7px}
+.sit-group:last-child{margin-bottom:0}
+.sit-group-lbl{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.sit-pills{display:flex;flex-wrap:wrap;gap:4px}
+.sit-pill{display:inline-flex;align-items:center;gap:3px;padding:3px 7px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;border:1px solid transparent}
+.sp-dev{background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE}
+.sp-med{background:#F0FDF4;color:#166534;border-color:#BBF7D0}
+.sp-perf-ev{background:var(--pl);color:var(--pd);border-color:var(--pm)}
+.sp-perf-epi{background:var(--viobg);color:var(--vio);border-color:#C4B5FD}
+.sp-nutr{background:#FFF7ED;color:#9A3412;border-color:#FED7AA}
+.sp-note{background:var(--s2);color:var(--t2);border-color:var(--b);font-weight:400;font-style:italic}
+.sp-todo{background:#FFFBEB;color:#92400E;border-color:#FDE68A}
+.sp-alert{background:var(--rbg);color:var(--red);border-color:#FECACA}
+.sit-empty{font-size:11px;color:var(--t3);font-style:italic}
 /* Modals */
 .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .2s;pointer-events:none}
 .modal-ov.open{opacity:1;pointer-events:all}
@@ -239,6 +272,28 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 #capture-preview-wrap{display:none;margin-bottom:11px;text-align:center}
 #capture-preview-wrap img{max-width:100%;border-radius:var(--rads);max-height:160px;object-fit:cover}
 #photo-input{display:none}
+/* Setup modes */
+.setup-mode-btn{display:flex;align-items:center;gap:13px;background:var(--s);border:1.5px solid var(--b);border-radius:var(--rad);padding:15px 16px;width:100%;cursor:pointer;transition:all .15s;text-align:left;font-family:inherit;margin-bottom:10px;box-shadow:var(--shsm)}
+.setup-mode-btn:active{transform:scale(.98);background:var(--s2)}
+.setup-mode-btn.primary{border-color:var(--p);background:var(--pl)}
+.smode-icon{font-size:28px;flex-shrink:0;width:40px;text-align:center}
+.smode-title{font-size:14px;font-weight:800;color:var(--t)}
+.smode-sub{font-size:12px;color:var(--t2);margin-top:3px;line-height:1.4}
+.smode-badge{font-size:10px;font-weight:800;background:var(--p);color:#fff;padding:2px 7px;border-radius:10px;margin-top:5px;display:inline-block}
+/* Finalize */
+.fin-opt{display:flex;align-items:center;gap:13px;background:var(--s);border:1.5px solid var(--b);border-radius:var(--rad);padding:14px;cursor:pointer;margin-bottom:10px;transition:all .14s}
+.fin-opt:active{transform:scale(.98);background:var(--s2)}
+.fin-opt-icon{font-size:24px;flex-shrink:0}
+.fin-opt-title{font-size:14px;font-weight:800}
+.fin-opt-sub{font-size:12px;color:var(--t2);margin-top:3px}
+/* QR */
+.qr-pt-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--b)}
+.qr-pt-row:last-child{border-bottom:none}
+.qr-canvas-area{background:#fff;border-radius:var(--rads);padding:12px;border:1px solid var(--b);display:flex;align-items:center;justify-content:center;margin:10px 0}
+/* Scanner */
+.scan-wrap{position:relative;border-radius:var(--rads);overflow:hidden;background:#000;min-height:260px}
+.scan-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.scan-frame{width:200px;height:200px;border:3px solid var(--p);border-radius:12px;box-shadow:0 0 0 2000px rgba(0,0,0,.5)}
 </style>
 </head>
 <body>
@@ -247,6 +302,8 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 <div id="s-setup" class="screen">
   <div class="scroll-y">
     <div class="wrap">
+
+      <!-- HERO -->
       <div class="setup-hero">
         <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px">
           <div style="width:52px;height:52px;background:var(--p);border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -263,54 +320,111 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
           <div>
             <div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
-            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v2.1</div>
+            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v2.2</div>
           </div>
         </div>
-        <h2 style="font-size:17px;font-weight:700;margin-bottom:4px">Novo Turno</h2>
-        <p style="font-size:13px;color:var(--t2)">Adicione os doentes e inicie o turno</p>
+        <div id="wl-status-home" style="display:flex;justify-content:center;margin-bottom:4px"></div>
       </div>
-      <div id="pt-list"></div>
-      <div class="add-form">
-        <div class="add-form-title">Adicionar Doente</div>
-        <div class="form-row" style="margin-bottom:10px">
-          <div><label>Nome / Alias</label><input id="f-name" type="text" placeholder="Ex: Doente A"></div>
-          <div><label>Cama</label><input id="f-bed" type="text" placeholder="Ex: 3"></div>
+
+      <!-- ── PANEL: HOME (3 mode buttons) ── -->
+      <div id="panel-home">
+        <button class="setup-mode-btn primary" onclick="showSetupPanel('novo')">
+          <span class="smode-icon">➕</span>
+          <div>
+            <div class="smode-title">Novo Turno</div>
+            <div class="smode-sub">Adicionar novos doentes e iniciar turno</div>
+          </div>
+        </button>
+        <button class="setup-mode-btn" id="btn-continuar" onclick="continuarTurno()" style="display:none">
+          <span class="smode-icon">🔄</span>
+          <div>
+            <div class="smode-title">Continuar Turno Anterior</div>
+            <div class="smode-sub" id="continuar-sub">Retomar onde ficou</div>
+            <div class="smode-badge" id="continuar-badge"></div>
+          </div>
+        </button>
+        <button class="setup-mode-btn" onclick="showSetupPanel('scan')">
+          <span class="smode-icon">📷</span>
+          <div>
+            <div class="smode-title">Receber de Colega</div>
+            <div class="smode-sub">Ler QR Code de transferência do turno anterior</div>
+          </div>
+        </button>
+      </div>
+
+      <!-- ── PANEL: NOVO (add patients form) ── -->
+      <div id="panel-novo" style="display:none">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:13px">
+          <button class="btn btn-o btn-sm" onclick="showSetupPanel('home')">← Voltar</button>
+          <div style="font-size:15px;font-weight:800">Adicionar Doentes</div>
         </div>
-        <div style="margin-bottom:10px">
-          <label>Idade</label>
-          <div class="age-row">
-            <input id="f-age" type="number" min="0" placeholder="Ex: 28">
-            <div class="unit-tog">
-              <button class="unit-btn active" id="u-dias" onclick="setU('dias','s')">Dias</button>
-              <button class="unit-btn" id="u-meses" onclick="setU('meses','s')">Meses</button>
-              <button class="unit-btn" id="u-anos" onclick="setU('anos','s')">Anos</button>
+        <div id="pt-list"></div>
+        <div class="add-form">
+          <div class="add-form-title">Novo Doente</div>
+          <div class="form-row" style="margin-bottom:10px">
+            <div><label>Nome / Alias</label><input id="f-name" type="text" placeholder="Ex: Doente A"></div>
+            <div><label>Cama</label><input id="f-bed" type="text" placeholder="Ex: 3"></div>
+          </div>
+          <div style="margin-bottom:10px">
+            <label>Idade</label>
+            <div class="age-row">
+              <input id="f-age" type="number" min="0" placeholder="Ex: 28">
+              <div class="unit-tog">
+                <button class="unit-btn active" id="u-dias" onclick="setU('dias','s')">Dias</button>
+                <button class="unit-btn" id="u-meses" onclick="setU('meses','s')">Meses</button>
+                <button class="unit-btn" id="u-anos" onclick="setU('anos','s')">Anos</button>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="form-row" style="margin-bottom:10px">
-          <div><label>Peso (kg)</label><input id="f-wt" type="number" step="0.001" min="0" placeholder="Ex: 1.650"></div>
-          <div><label>Alergias</label><input id="f-alrg" type="text" placeholder="Ex: Penicilina"></div>
-        </div>
-        <!-- Gestational age (neonatology) -->
-        <div style="background:var(--pl);border-radius:var(--rads);padding:10px;margin-bottom:10px;border:1px solid var(--pm)">
-          <div style="font-size:11px;font-weight:700;color:var(--pd);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">🍼 Neonatologia (opcional)</div>
-          <div class="form-row" style="margin-bottom:8px">
-            <div><label>Idade Gestacional (semanas)</label><input id="f-ig-w" type="number" min="22" max="44" placeholder="Ex: 28"></div>
-            <div><label>+ dias</label><input id="f-ig-d" type="number" min="0" max="6" placeholder="0-6"></div>
+          <div class="form-row" style="margin-bottom:10px">
+            <div><label>Peso (kg)</label><input id="f-wt" type="number" step="0.001" min="0" placeholder="Ex: 1.650"></div>
+            <div><label>Alergias</label><input id="f-alrg" type="text" placeholder="Ex: Penicilina"></div>
           </div>
-          <div><label>Data de Nascimento</label><input id="f-dnasc" type="date"></div>
+          <div style="background:var(--pl);border-radius:var(--rads);padding:10px;margin-bottom:10px;border:1px solid var(--pm)">
+            <div style="font-size:11px;font-weight:700;color:var(--pd);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">🍼 Neonatologia (opcional)</div>
+            <div class="form-row" style="margin-bottom:8px">
+              <div><label>IG (semanas)</label><input id="f-ig-w" type="number" min="22" max="44" placeholder="Ex: 28"></div>
+              <div><label>+ dias</label><input id="f-ig-d" type="number" min="0" max="6" placeholder="0-6"></div>
+            </div>
+            <div><label>Data de Nascimento</label><input id="f-dnasc" type="date"></div>
+          </div>
+          <div style="margin-bottom:10px"><label>Diagnóstico Principal</label><input id="f-diag" type="text" placeholder="Ex: Bronquiolite VRS grave"></div>
+          <div style="margin-bottom:13px">
+            <label>Diagnósticos Secundários</label>
+            <div class="diag-tags" id="f-dtags"></div>
+            <div class="diag2-row"><input id="f-diag2" type="text" placeholder="Adicionar..."><button class="btn btn-o btn-sm" onclick="addSD('f-diag2','f-dtags','sd')">+</button></div>
+          </div>
+          <button class="btn btn-o" style="width:100%;margin-bottom:9px" onclick="addPt('s')">+ Adicionar Doente</button>
         </div>
-        <div style="margin-bottom:10px"><label>Diagnóstico Principal</label><input id="f-diag" type="text" placeholder="Ex: Bronquiolite VRS grave"></div>
-        <div style="margin-bottom:13px">
-          <label>Diagnósticos Secundários</label>
-          <div class="diag-tags" id="f-dtags"></div>
-          <div class="diag2-row"><input id="f-diag2" type="text" placeholder="Adicionar..."><button class="btn btn-o btn-sm" onclick="addSD('f-diag2','f-dtags','sd')">+</button></div>
+        <div id="start-area" style="display:none;padding-bottom:32px">
+          <button class="btn btn-p" style="width:100%;font-size:15px;padding:13px" onclick="startShift()">Iniciar Turno →</button>
         </div>
-        <button class="btn btn-p" style="width:100%" onclick="addPt('s')">Adicionar Doente</button>
       </div>
-      <div id="start-area" style="display:none;padding-bottom:32px">
-        <button class="btn btn-p" style="width:100%;font-size:15px;padding:13px" onclick="startShift()">Iniciar Turno →</button>
+
+      <!-- ── PANEL: SCAN (read QR from colleague) ── -->
+      <div id="panel-scan" style="display:none;padding-bottom:32px">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:13px">
+          <button class="btn btn-o btn-sm" onclick="showSetupPanel('home');stopScan()">← Voltar</button>
+          <div style="font-size:15px;font-weight:800">Ler QR de Colega</div>
+        </div>
+        <div class="sub-card" style="margin-bottom:13px">
+          <div style="padding:13px">
+            <div class="scan-wrap" id="scan-wrap">
+              <video id="scan-video" style="width:100%;display:block;min-height:240px" autoplay playsinline muted></video>
+              <div class="scan-overlay"><div class="scan-frame"></div></div>
+            </div>
+            <canvas id="scan-canvas" style="display:none"></canvas>
+            <div id="scan-status" style="text-align:center;padding:10px 0;font-size:13px;color:var(--t2)">A iniciar câmara...</div>
+          </div>
+        </div>
+        <div id="scan-results" style="display:none">
+          <div style="font-size:13px;font-weight:700;color:var(--grn);margin-bottom:10px">✅ Doentes importados:</div>
+          <div id="scan-results-list"></div>
+          <button class="btn btn-p" style="width:100%;margin-top:12px;font-size:15px;padding:13px" onclick="startShiftAfterScan()">Iniciar Turno com Estes Doentes →</button>
+          <div style="margin-top:9px;font-size:12px;color:var(--t2);text-align:center">Continue a apontar a câmara para ler mais QR Codes.</div>
+        </div>
       </div>
+
     </div>
   </div>
 </div>
@@ -329,6 +443,9 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         <div class="dash-app-sub" id="dash-sub">A carregar...</div>
       </div>
       <div class="dash-right-btns">
+        <button class="btn-ic" onclick="openFinalizeModal()" title="Finalizar Turno" style="background:rgba(239,68,68,.25);border-color:rgba(239,68,68,.4)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
         <button class="btn-ic" onclick="goHistorico()" title="Histórico">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
         </button>
@@ -579,6 +696,71 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
   </div>
 </div>
 
+<!-- ═══ MODAL: Finalizar Turno ═══ -->
+<div id="modal-fin" class="modal-ov">
+  <div class="modal-sheet">
+    <div class="modal-hdr">
+      <div class="modal-title">Finalizar Turno</div>
+      <button class="close-btn" onclick="closeM('modal-fin')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fin-opt" onclick="finSaveAndExit()">
+        <span class="fin-opt-icon">💾</span>
+        <div>
+          <div class="fin-opt-title">Guardar e Sair</div>
+          <div class="fin-opt-sub">Doentes ficam guardados. No próximo turno pode retomar com "Continuar Turno Anterior".</div>
+        </div>
+      </div>
+      <div class="fin-opt" onclick="finShowQR()">
+        <span class="fin-opt-icon">📱</span>
+        <div>
+          <div class="fin-opt-title">Transferir a Colega (QR)</div>
+          <div class="fin-opt-sub">Gera um QR Code por doente. O colega lê com a câmara e importa os doentes.</div>
+        </div>
+      </div>
+      <div class="fin-opt" onclick="finNewShiftSamePatients()">
+        <span class="fin-opt-icon">🔄</span>
+        <div>
+          <div class="fin-opt-title">Novo Turno — Mesmos Doentes</div>
+          <div class="fin-opt-sub">Reinicia o turno mantendo todos os doentes activos. Os cuidados ficam registados.</div>
+        </div>
+      </div>
+      <div class="fin-opt" onclick="finArchiveAll()">
+        <span class="fin-opt-icon">📁</span>
+        <div>
+          <div class="fin-opt-title">Terminar e Arquivar Tudo</div>
+          <div class="fin-opt-sub">Move todos os doentes activos para o Histórico. Inicia sessão limpa.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: QR Codes por Doente ═══ -->
+<div id="modal-qr" class="modal-ov">
+  <div class="modal-sheet">
+    <div class="modal-hdr">
+      <div class="modal-title">QR de Transferência</div>
+      <button class="close-btn" onclick="closeM('modal-qr')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--t2);margin-bottom:13px;line-height:1.6">
+        Seleccione o doente para gerar o QR Code. O colega abre a app, escolhe <strong>Receber de Colega</strong> e aponta a câmara.
+      </div>
+      <div id="qr-patient-tabs" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px"></div>
+      <div id="qr-display" style="display:none">
+        <div class="qr-canvas-area" id="qr-canvas-area">
+          <div id="qr-canvas-inner"></div>
+        </div>
+        <div id="qr-pt-info" style="text-align:center;font-size:12px;color:var(--t2);margin-top:5px"></div>
+        <div style="font-size:11px;color:var(--t3);text-align:center;margin-top:4px">Um QR por doente · Aponte a câmara do colega para este ecrã</div>
+      </div>
+      <div id="qr-loading" style="display:none;text-align:center;padding:20px;font-size:13px;color:var(--t3)">A gerar QR Code...</div>
+      <div id="qr-error" style="display:none;background:var(--rbg);border-radius:var(--rads);padding:10px;font-size:12px;color:var(--red);margin-top:9px"></div>
+    </div>
+  </div>
+</div>
+
 <input type="file" id="photo-input" accept="image/*" capture="environment" onchange="onPhoto(event)">
 
 <script>
@@ -616,8 +798,22 @@ const QCATS=[{cat:'Colheita',items:['Sangue','Secreções','Urina','LCR']},{cat:
 const COMMON_MEDS=['Morfina','Fentanil','Midazolam','Propofol','Ketamina','Adrenalina','Noradrenalina','Dopamina','Dobutamina','Furosemida','Heparina','Insulina','Dextrose 10%','Amoxicilina','Ampicilina','Gentamicina','Meropenem','Vancomicina','Paracetamol','Ibuprofeno','Dexametasona','Hidrocortisona','Surfactante','Cafeína','Fenobarbital','Levetiracetam','Albumina','Vitamina K','NaCl 0.9%','Ringer Lactato','Bicarbonato de Sódio'];
 const SHIFTS=[{name:'Manhã',start:8,end:15,accent:'#D97706'},{name:'Tarde',start:15,end:22,accent:'#7C3AED'},{name:'Noite',start:22,end:8,accent:'#0369A1'}];
 const FREQ_MAP={'1/1h':1,'2/2h':2,'4/4h':4,'6/6h':6,'8/8h':8,'12/12h':12,'24/24h':24,'36/36h':36,'SOS':0};
-const NUTR_TYPES=['Leite Materno','Leite Artificial','Leite Específico','Adequada à Idade'];
-const NUTR_SPECIFIC=['PeptiJunior','Leite Fortificado','MCT-Oil','Neocate','Nutramigen'];
+// Nutrition data
+const NUTR_TYPES=[
+  {k:'pausa',    label:'Pausa Alimentar', icon:'⏸'},
+  {k:'materno',  label:'Leite Materno',   icon:'🤱'},
+  {k:'artificial',label:'Leite Artificial',icon:'🍼'},
+  {k:'especifico',label:'Leite Específico',icon:'🧪'},
+  {k:'adequada', label:'Adequada à Idade',icon:'🥗'},
+  {k:'especial', label:'Alimentação Específica',icon:'📝'},
+];
+const NUTR_ADDITIVES=[
+  'PeptiJunior','Neocate','Fortificante','MCT-Oil',
+  'Infantrini','Nutrini','Peptisorbe','Nutramigen',
+  'Dieta Hipolipídica','Dieta Diabética','Dieta Líquida','Dieta Fria',
+];
+const NUTR_MODE_FREQ=['Bolus','Perfusão Contínua','2/2h','3/3h','Horário Livre'];
+const NUTR_MODE_VIA=['Tetina','Sonda Dedo','Copo','SOG','SNG','Gastro'];
 
 function vRanges(d){d=parseInt(d)||0;if(d<=28)return{hr:[100,180],rr:[40,60],sbp:[45,80],spo2:[88,100],temp:[36.3,37.5],gluc:[45,120]};if(d<=90)return{hr:[100,180],rr:[35,55],sbp:[60,95],spo2:[95,100],temp:[36.3,37.5],gluc:[50,120]};if(d<=365)return{hr:[100,160],rr:[30,50],sbp:[65,100],spo2:[95,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=730)return{hr:[90,150],rr:[24,40],sbp:[70,110],spo2:[95,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=1825)return{hr:[80,140],rr:[22,34],sbp:[80,112],spo2:[96,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=4380)return{hr:[70,120],rr:[18,30],sbp:[85,118],spo2:[96,100],temp:[36.5,37.5],gluc:[60,120]};return{hr:[55,100],rr:[12,20],sbp:[90,130],spo2:[96,100],temp:[36.5,37.5],gluc:[70,120]};}
 function vSt(v,r){if(v===''||v===null||v===undefined)return'';const n=parseFloat(v);if(isNaN(n))return'';if(n<r[0]||n>r[1])return'alrt';const s=r[1]-r[0];if(n<r[0]+s*.12||n>r[1]-s*.12)return'warn';return'ok';}
@@ -688,8 +884,14 @@ function mkPt(o){
     status:'internado',dischargeAt:null,dischargeNote:''};
 }
 
-function save(){try{localStorage.setItem('sc_v21',JSON.stringify({p:ST.patients,ss:ST.shiftStart,ak:ST.apiKey,wu:ST.wurl}));localStorage.setItem('sc_learn',JSON.stringify(LEARN));}catch(e){}}
-function loadData(){try{const d=JSON.parse(localStorage.getItem('sc_v21')||'{}');if(d.p)ST.patients=d.p;if(d.ss)ST.shiftStart=d.ss;if(d.ak)ST.apiKey=d.ak;if(d.wu)ST.wurl=d.wu;const l=JSON.parse(localStorage.getItem('sc_learn')||'{}');if(l.meds)LEARN=l;}catch(e){}}
+function save(){try{localStorage.setItem('sc_v22',JSON.stringify({p:ST.patients,ss:ST.shiftStart,ak:ST.apiKey,wu:ST.wurl}));localStorage.setItem('sc_learn',JSON.stringify(LEARN));}catch(e){}}
+function loadData(){try{
+  // Try v22 first, fall back to v21
+  const raw=localStorage.getItem('sc_v22')||localStorage.getItem('sc_v21')||'{}';
+  const d=JSON.parse(raw);
+  if(d.p)ST.patients=d.p;if(d.ss)ST.shiftStart=d.ss;if(d.ak)ST.apiKey=d.ak;if(d.wu)ST.wurl=d.wu;
+  const l=JSON.parse(localStorage.getItem('sc_learn')||'{}');if(l.meds)LEARN=l;
+}catch(e){}}
 function learnMed(n){if(!n)return;LEARN.meds[n.toLowerCase()]=(LEARN.meds[n.toLowerCase()]||0)+1;save();}
 function learnTask(t){LEARN.tasks[t]=(LEARN.tasks[t]||0)+1;save();}
 function medSugg(q){if(!q)return[];q=q.toLowerCase();const learned=Object.entries(LEARN.meds||{}).filter(([k])=>k.includes(q)).sort(([,a],[,b])=>b-a).slice(0,4).map(([k])=>COMMON_MEDS.find(m=>m.toLowerCase()===k)||k);const stat=COMMON_MEDS.filter(m=>m.toLowerCase().includes(q)).slice(0,5);return[...new Set([...learned,...stat])].slice(0,6);}
@@ -763,7 +965,6 @@ function renderDash(){
 function dashCard(p,ri){
   const R=vRanges(p.ageDays);const ac=alrtCnt(p);
   const td=p.tasks.filter(t=>t.done).length,pct=Math.round(td/p.tasks.length*100);
-  const pend=(p.todos||[]).filter(t=>!t.done).length;
   const {pills,alrg}=ptInfoPills(p);
   const ca=correctedAge(p);
   const vRow=VITALS_DEF.slice(0,4).map(v=>{const val=p.vitals[v.k];const st=val&&R[v.k]?vSt(val,R[v.k]):'';return`<div class="vt-chip ${st}"><span class="vc-lbl2">${v.label}</span><span class="vc-val2">${val||'—'}</span></div>`;}).join('');
@@ -779,7 +980,7 @@ function dashCard(p,ri){
             <div class="pc-meta-item">📅 <strong>${ageLabel(p)}</strong></div>
             ${p.weightKg?`<div class="pc-meta-item">⚖ <strong>${p.weightKg}kg</strong></div>`:''}
             ${p.gestWeeks?`<div class="pc-meta-item">🍼 <strong>IG ${p.gestWeeks}s${p.gestDays?'+'+p.gestDays+'d':''}</strong></div>`:''}
-            ${ca?`<div class="pc-meta-item">📊 <strong>${ca}</strong></div>`:''}
+            ${ca?`<div class="pc-meta-item" style="grid-column:1/-1">📊 <strong>${ca}</strong></div>`:''}
           </div>
           ${p.diagMain?`<div class="pc-diag">${p.diagMain}</div>`:''}
           ${alrg?`<div class="pc-alrg">⚠ Alergia: ${alrg}</div>`:''}
@@ -789,11 +990,53 @@ function dashCard(p,ri){
     <div class="pc-body">
       ${ac>0?`<div class="alert-ban">⚠ ${ac} constante(s) fora do intervalo pediátrico</div>`:''}
       <div class="pc-sect"><div class="sect-lbl">Sinais Vitais</div><div class="vt-row">${vRow}</div>${p.vitals.lastUp?`<div style="font-size:10px;color:var(--t3);margin-top:3px">Atualizado: ${ft(p.vitals.lastUp)}</div>`:''}</div>
-      <div class="pc-sect"><div class="sect-lbl">Cuidados</div><div class="task-prog"><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div><span class="prog-txt">${td}/${p.tasks.length}</span></div>${pend?`<div style="font-size:10px;color:var(--org);margin-top:4px">📋 ${pend} to-do pendente(s)</div>`:''}</div>
-      ${p.notes.length?`<div class="pc-sect"><div class="sect-lbl">Última Nota</div><div style="font-size:11px;color:var(--t2)">[${ft(p.notes[0].timestamp)}] ${p.notes[0].text}</div></div>`:''}
+      <div class="pc-sect"><div class="sect-lbl">Cuidados</div><div class="task-prog"><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div><span class="prog-txt">${td}/${p.tasks.length}</span></div></div>
+      ${dashSituacao(p)}
     </div>
     <div class="pc-foot"><button class="btn btn-p" style="flex:1" data-open="${ri}">Ver Detalhes →</button></div>
   </div>`;
+}
+
+function dashSituacao(p){
+  const groups=[];
+
+  // ── Alertas de sinais vitais ──────────────────────
+  const R=vRanges(p.ageDays);
+  const vAlerts=VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&R[v.k]&&vSt(val,R[v.k])==='alrt';}).map(v=>`<span class="sit-pill sp-alert">⚠ ${v.label}=${p.vitals[v.k]} ${v.unit}</span>`);
+  const vWarns=VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&R[v.k]&&vSt(val,R[v.k])==='warn';}).map(v=>`<span class="sit-pill sp-alert" style="background:#FFF7ED;color:var(--org);border-color:#FED7AA">⚡ ${v.label}=${p.vitals[v.k]} ${v.unit}</span>`);
+  if(vAlerts.length||vWarns.length) groups.push({label:'Sinais Vitais',pills:[...vAlerts,...vWarns]});
+
+  // ── Dispositivos activos ──────────────────────────
+  const devs=(p.devices||[]).map(d=>`<span class="sit-pill sp-dev">${d.icon||'💉'} ${d.label.split(' ').slice(-2).join(' ')}${d.location?' · '+d.location.split(' ').slice(-1)[0]:''}${d.gauge&&d.gauge!=='N/A'?' '+d.gauge:''}</span>`);
+  if(devs.length) groups.push({label:'Dispositivos',pills:devs});
+
+  // ── Medicações horárias activas ───────────────────
+  const meds=(p.medications||[]).filter(m=>m.freq!=='Contínua'&&!m.suspended).map(m=>`<span class="sit-pill sp-med">💊 ${m.name} ${m.dose}${m.unit} ${m.freq}</span>`);
+  if(meds.length) groups.push({label:'Medicação',pills:meds});
+
+  // ── Perfusões activas ─────────────────────────────
+  const perfs=(p.medications||[]).filter(m=>m.freq==='Contínua'&&!m.suspended).map(m=>{const isEpi=m.route==='Epidural';return`<span class="sit-pill ${isEpi?'sp-perf-epi':'sp-perf-ev'}">💧 ${m.name} ${m.dose}${m.unit}/h${m.vel?' '+m.vel:''}${isEpi?' (Epi)':''}</span>`;});
+  if(perfs.length) groups.push({label:'Perfusões',pills:perfs});
+
+  // ── Alimentação activa ────────────────────────────
+  const n=getNutr(p);
+  const nutrPills=(n.active||[]).map(r=>{const parts=[nutrTypeLabel(r.type)];if(r.additives&&r.additives.length)parts.push(r.additives.slice(0,2).join('+')+(r.additives.length>2?'…':''));if(r.modeFreq)parts.push(r.modeFreq);if(r.modeVia)parts.push(r.modeVia);if(r.volume)parts.push(r.volume);return`<span class="sit-pill sp-nutr">🍼 ${parts.join(' · ')}</span>`;});
+  if(nutrPills.length) groups.push({label:'Alimentação',pills:nutrPills});
+
+  // ── To-dos pendentes ─────────────────────────────
+  const todos=(p.todos||[]).filter(t=>!t.done).map(t=>`<span class="sit-pill sp-todo">📋 ${t.text}</span>`);
+  if(todos.length) groups.push({label:'To-Do',pills:todos});
+
+  // ── Última nota ───────────────────────────────────
+  if(p.notes&&p.notes.length){
+    const n0=p.notes[0];
+    groups.push({label:'Última Nota',pills:[`<span class="sit-pill sp-note">[${ft(n0.timestamp)}] ${n0.text.slice(0,60)}${n0.text.length>60?'…':''}</span>`]});
+  }
+
+  if(!groups.length) return`<div class="sit-section"><div class="sit-label"><span class="sit-dot"></span>Ponto de Situação</div><div class="sit-empty">Sem registos activos</div></div>`;
+
+  const groupsHTML=groups.map(g=>`<div class="sit-group"><div class="sit-group-lbl">${g.label}</div><div class="sit-pills">${g.pills.join('')}</div></div>`).join('');
+  return`<div class="sit-section"><div class="sit-label"><span class="sit-dot"></span>Ponto de Situação</div>${groupsHTML}</div>`;
 }
 
 let _ci=0;
@@ -1062,31 +1305,236 @@ function archiveMed(i){
 function setFH(i,h){const p=ST.patients[ST.idx];if(!p)return;p.medications[i].firstHour=parseInt(h);save();renMsec(ST.msec);}
 
 // ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 // MODULE: ALIMENTAÇÃO
 // ══════════════════════════════════════════════
-function renAlim(){
-  const p=ST.patients[ST.idx];if(!p)return;
-  if(!p.nutrition)p.nutrition={type:'',specificType:'',diet:''};
-  const n=p.nutrition;
-  const mainBtns=NUTR_TYPES.map(t=>`<button class="nutr-btn${n.type===t?' active':''}" onclick="setNutrType('${t}')">${t}</button>`).join('');
-  const specShow=n.type==='Leite Específico';
-  const specBtns=specShow?`<div style="margin-bottom:12px"><div class="sect-lbl">Tipo específico</div><div style="display:flex;flex-wrap:wrap;gap:7px">${NUTR_SPECIFIC.map(s=>`<button class="sub-nutr-btn${n.specificType===s?' active':''}" onclick="setNutrSpec('${s}')">${s}</button>`).join('')}</div></div>`:'';
-  el('tab-alimentacao').innerHTML=`
-    <div class="sub-card">
-      <div class="sub-card-hdr">Tipo de Alimentação</div>
-      <div style="padding:13px">
-        <div class="nutr-grid">${mainBtns}</div>
-        ${specBtns}
-        <div>
-          <label>Dieta específica / Notas</label>
-          <textarea id="nutr-diet" rows="4" placeholder="Ex: 60mL cada 3h por SNG. Volume total: 480mL/dia..." oninput="saveNutrDiet(this.value)">${n.diet||''}</textarea>
-        </div>
+
+// Ensure nutrition data structure is correct
+function getNutr(p) {
+  if (!p.nutrition || !p.nutrition.staging) {
+    p.nutrition = {
+      staging: { type:'', additives:[], modeFreq:'', modeVia:'', volume:'', notes:'' },
+      active:   [],
+      inactive: [],
+    };
+  }
+  if (!p.nutrition.active)   p.nutrition.active   = [];
+  if (!p.nutrition.inactive) p.nutrition.inactive = [];
+  return p.nutrition;
+}
+
+function nutrTypeLabel(k) {
+  const t = NUTR_TYPES.find(x => x.k === k);
+  return t ? t.label : k || '—';
+}
+function nutrTypeIcon(k) {
+  const t = NUTR_TYPES.find(x => x.k === k);
+  return t ? t.icon : '🍽';
+}
+
+function renAlim() {
+  const p = ST.patients[ST.idx]; if (!p) return;
+  const n = getNutr(p);
+  const s = n.staging;
+  const isPausa = s.type === 'pausa';
+
+  // ── Type buttons (3-column grid) ──────────────
+  const typeGrid = NUTR_TYPES.map(t =>
+    `<button class="nutr-type-btn${s.type===t.k?' active':''}${t.k==='pausa'?' pausa-btn':''}" onclick="nutrSetType('${t.k}')">
+      <span class="nt-icon">${t.icon}</span>${t.label}
+    </button>`
+  ).join('');
+
+  // ── Additives (multi-select chips) ──────────────
+  const additivesSection = isPausa ? '' : `
+    <div style="margin-bottom:13px">
+      <div class="sect-lbl">Adicionados <span style="font-weight:400;text-transform:none">(seleção múltipla)</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${NUTR_ADDITIVES.map(a =>
+          `<button class="add-chip${s.additives&&s.additives.includes(a)?' sel':''}" onclick="nutrTglAdditive('${a}')">${a}</button>`
+        ).join('')}
       </div>
     </div>`;
+
+  // ── Mode: frequency ──────────────────────────────
+  const freqSection = `
+    <div style="margin-bottom:11px">
+      <div class="sect-lbl">Frequência / Modo</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${NUTR_MODE_FREQ.map(m =>
+          `<button class="mode-freq-btn${s.modeFreq===m?' sel':''}" onclick="nutrSetFreq('${m}')">${m}</button>`
+        ).join('')}
+      </div>
+    </div>`;
+
+  // ── Mode: via ────────────────────────────────────
+  const viaSection = isPausa ? '' : `
+    <div style="margin-bottom:11px">
+      <div class="sect-lbl">Via de Administração</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${NUTR_MODE_VIA.map(m =>
+          `<button class="mode-via-btn${s.modeVia===m?' sel':''}" onclick="nutrSetVia('${m}')">${m}</button>`
+        ).join('')}
+      </div>
+    </div>`;
+
+  // ── Volume ───────────────────────────────────────
+  const volumeSection = isPausa ? '' : `
+    <div style="margin-bottom:11px">
+      <div class="sect-lbl">Volume (mL/dose ou mL/h)</div>
+      <input id="nutr-vol" type="text" placeholder="Ex: 60 mL cada 3h" value="${s.volume||''}"
+        oninput="nutrSaveVol(this.value)" style="font-size:13px">
+    </div>`;
+
+  // ── Notes ────────────────────────────────────────
+  const notesSection = `
+    <div style="margin-bottom:13px">
+      <div class="sect-lbl">Notas / Prescrição específica</div>
+      <textarea id="nutr-notes" rows="3"
+        placeholder="${isPausa ? 'Motivo da pausa alimentar, duração prevista...' : 'Ex: 60mL cada 3h por SNG. Débito residual < 20mL...'}"
+        oninput="nutrSaveNotes(this.value)">${s.notes||''}</textarea>
+    </div>`;
+
+  // ── Confirm button ───────────────────────────────
+  const canConfirm = !!s.type;
+  const confirmBtn = `
+    <button class="btn btn-p" style="width:100%;padding:12px;font-size:14px;${canConfirm?'':'opacity:.5;pointer-events:none'}"
+      onclick="nutrConfirm()">
+      ✓ Adicionar Alimentação
+    </button>`;
+
+  // ── Staging preview ──────────────────────────────
+  let preview = '';
+  if (s.type) {
+    const parts = [nutrTypeLabel(s.type)];
+    if (s.additives && s.additives.length) parts.push(s.additives.join(', '));
+    if (s.modeFreq) parts.push(s.modeFreq);
+    if (s.modeVia)  parts.push(s.modeVia);
+    if (s.volume)   parts.push(s.volume);
+    preview = `<div style="background:var(--pl);border:1px solid var(--pm);border-radius:var(--rads);padding:9px 12px;margin-bottom:11px;font-size:12px;color:var(--pd);font-weight:600">
+      ${nutrTypeIcon(s.type)} ${parts.join(' · ')}
+    </div>`;
+  }
+
+  // ── Active records ───────────────────────────────
+  const activeRecs = n.active.length ? n.active.map((r, i) => nutrRecordHTML(r, i, false)).join('') :
+    '<div class="empty-st">Sem alimentação activa</div>';
+
+  // ── Inactive records ─────────────────────────────
+  const inactiveSection = n.inactive.length ? `
+    <div class="sub-card">
+      <div class="sub-card-hdr">Alimentação Inactiva</div>
+      <div style="padding:9px 13px">
+        ${n.inactive.map((r, i) => nutrRecordHTML(r, i, true)).join('')}
+      </div>
+    </div>` : '';
+
+  el('tab-alimentacao').innerHTML = `
+    <div class="sub-card">
+      <div class="sub-card-hdr">Nova Prescrição Alimentar</div>
+      <div style="padding:13px">
+        <div class="sect-lbl">Tipo de Alimentação</div>
+        <div class="nutr-type-grid">${typeGrid}</div>
+        ${additivesSection}
+        ${freqSection}
+        ${viaSection}
+        ${volumeSection}
+        ${notesSection}
+        ${preview}
+        ${confirmBtn}
+      </div>
+    </div>
+    <div class="sub-card">
+      <div class="sub-card-hdr">Alimentação Activa</div>
+      <div style="padding:9px 13px">${activeRecs}</div>
+    </div>
+    ${inactiveSection}`;
 }
-function setNutrType(t){const p=ST.patients[ST.idx];if(!p)return;if(!p.nutrition)p.nutrition={};p.nutrition.type=t;if(t!=='Leite Específico')p.nutrition.specificType='';save();renAlim();}
-function setNutrSpec(s){const p=ST.patients[ST.idx];if(!p)return;if(!p.nutrition)p.nutrition={};p.nutrition.specificType=s;save();renAlim();}
-function saveNutrDiet(v){const p=ST.patients[ST.idx];if(!p)return;if(!p.nutrition)p.nutrition={};p.nutrition.diet=v;save();}
+
+function nutrRecordHTML(r, i, isInactive) {
+  const parts = [];
+  if (r.additives && r.additives.length) parts.push(r.additives.join(', '));
+  const timePart = isInactive
+    ? `▶ ${r.startAt ? fdt(r.startAt) : '—'} &nbsp;⏹ ${r.stopAt ? fdt(r.stopAt) : '—'}`
+    : `▶ ${r.startAt ? fdt(r.startAt) : '—'}`;
+  const actionBtn = isInactive
+    ? `<button class="rm-btn" onclick="nutrDelInact(${i})" title="Eliminar">🗑</button>`
+    : `<button class="btn btn-o btn-sm" style="font-size:11px;white-space:nowrap;color:var(--red);border-color:#FECACA;flex-shrink:0" onclick="nutrInactivate(${i})">Inativar</button>`;
+  return `<div class="nutr-record${isInactive?' inactive':''}">
+    <div style="flex:1;min-width:0">
+      <div class="nutr-rec-type">${nutrTypeIcon(r.type)} ${nutrTypeLabel(r.type)}</div>
+      ${parts.length ? `<div class="nutr-rec-sub">${parts.join(' · ')}</div>` : ''}
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:5px">
+        ${r.modeFreq ? `<span class="nutr-badge nb-freq">${r.modeFreq}</span>` : ''}
+        ${r.modeVia  ? `<span class="nutr-badge nb-via">${r.modeVia}</span>`   : ''}
+        ${r.volume   ? `<span class="nutr-badge nb-via">${r.volume}</span>`    : ''}
+      </div>
+      ${r.notes ? `<div class="nutr-rec-sub" style="font-style:italic;margin-top:4px">${r.notes}</div>` : ''}
+      <div class="nutr-rec-time">${timePart}</div>
+    </div>
+    ${actionBtn}
+  </div>`;
+}
+
+function nutrSetType(k) {
+  const p = ST.patients[ST.idx]; if (!p) return;
+  const n = getNutr(p);
+  if (n.staging.type === k) n.staging.type = '';  // toggle off
+  else { n.staging.type = k; if (k === 'pausa') { n.staging.additives = []; n.staging.modeVia = ''; n.staging.volume = ''; } }
+  save(); renAlim();
+}
+function nutrTglAdditive(a) {
+  const p = ST.patients[ST.idx]; if (!p) return;
+  const n = getNutr(p); const arr = n.staging.additives || (n.staging.additives = []);
+  const i = arr.indexOf(a); if (i >= 0) arr.splice(i, 1); else arr.push(a);
+  save(); renAlim();
+}
+function nutrSetFreq(m) {
+  const p = ST.patients[ST.idx]; if (!p) return;
+  const n = getNutr(p); n.staging.modeFreq = n.staging.modeFreq === m ? '' : m;
+  save(); renAlim();
+}
+function nutrSetVia(m) {
+  const p = ST.patients[ST.idx]; if (!p) return;
+  const n = getNutr(p); n.staging.modeVia = n.staging.modeVia === m ? '' : m;
+  save(); renAlim();
+}
+function nutrSaveVol(v)   { const p=ST.patients[ST.idx]; if(!p)return; getNutr(p).staging.volume=v; save(); }
+function nutrSaveNotes(v) { const p=ST.patients[ST.idx]; if(!p)return; getNutr(p).staging.notes=v; save(); }
+
+function nutrConfirm() {
+  const p = ST.patients[ST.idx]; if (!p) return;
+  const n = getNutr(p); const s = n.staging;
+  if (!s.type) { alert('Selecione o tipo de alimentação.'); return; }
+  n.active.push({
+    id: uid(), type: s.type,
+    additives: [...(s.additives||[])],
+    modeFreq: s.modeFreq, modeVia: s.modeVia,
+    volume: s.volume, notes: s.notes,
+    startAt: new Date().toISOString(),
+  });
+  // Reset staging
+  n.staging = { type:'', additives:[], modeFreq:'', modeVia:'', volume:'', notes:'' };
+  save(); renAlim();
+}
+function nutrInactivate(i) {
+  const p = ST.patients[ST.idx]; if (!p) return;
+  const n = getNutr(p);
+  const rec = { ...n.active[i], stopAt: new Date().toISOString() };
+  n.inactive.unshift(rec); n.active.splice(i, 1);
+  save(); renAlim();
+}
+function nutrDelInact(i) {
+  const p = ST.patients[ST.idx]; if (!p || !confirm('Eliminar registo?')) return;
+  getNutr(p).inactive.splice(i, 1); save(); renAlim();
+}
+
+// Helper used by ISBAR summary
+function nutrSummary(p) {
+  const n = getNutr(p);
+  if (!n.active.length) return 'Sem alimentação activa';
+  return n.active.map(r => [nutrTypeLabel(r.type), ...(r.additives||[]), r.modeFreq, r.modeVia, r.volume].filter(Boolean).join(' · ')).join(' | ');
+}
 
 // ══════════════════════════════════════════════
 // MODULE: ANTECEDENTES / ISBAR
@@ -1119,7 +1567,7 @@ function buildSum(p){
   const notes=p.notes.slice(0,5).map(n=>`[${ft(n.timestamp)}]${n.text}`).join('/')||'sem notas';
   const devs=(p.devices||[]).map(d=>d.label+(d.location?' '+d.location:'')+(d.gauge?' '+d.gauge:'')).join(',')||'sem dispositivos';
   const meds=(p.medications||[]).map(m=>`${m.name} ${m.dose}${m.unit}${m.freq==='Contínua'?' contínuo':' '+m.freq}`).join(';')||'n/r';
-  const nutr=p.nutrition?.type||'n/r';
+  const nutr=nutrSummary(p);
   const alrg=p.allergies||'sem alergias conhecidas';
   return`Cama:${p.bed}|Idade:${ageLabel(p)}${p.weightKg?'|Peso:'+p.weightKg+'kg':''}${p.gestWeeks?'|IG:'+p.gestWeeks+'s':''} ${ca?'|IC:'+ca:''}
 Alergias:${alrg}
@@ -1175,6 +1623,42 @@ const bd=el('build-date');if(bd)bd.textContent=new Date().toLocaleDateString('pt
 loadData();
 if(ST.patients.filter(p=>p.status==='internado').length&&ST.shiftStart){renderDash();showScreen('s-dashboard');}
 else{renderSetup();showScreen('s-setup');}
+</script>
+<script>
+// FIX: missing showSetupPanel
+function showSetupPanel(panel){
+  const panels = ['home','novo','scan'];
+  panels.forEach(p=>{
+    const elp = document.getElementById('panel-'+p);
+    if(elp) elp.style.display = (p===panel)?'block':'none';
+  });
+}
+</script>
+<script>
+// FIX: Finalizar turno functions
+function openFinalizeModal(){
+  const m=document.getElementById('modal-fin');
+  if(m) m.style.display='block';
+}
+function closeM(id){
+  const m=document.getElementById(id);
+  if(m) m.style.display='none';
+}
+function finSaveAndExit(){
+  alert('Turno guardado (demo)');
+  closeM('modal-fin');
+}
+function finShowQR(){
+  alert('QR no implementado');
+}
+function finNewShiftSamePatients(){
+  alert('Novo turno iniciado (demo)');
+  closeM('modal-fin');
+}
+function finArchiveAll(){
+  alert('Doentes arquivados (demo)');
+  closeM('modal-fin');
+}
 </script>
 </body>
 </html>
