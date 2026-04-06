@@ -565,7 +565,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           <div style="margin-bottom:11px">
             <label>Cloudflare Worker URL</label>
             <input type="url" id="worker-inp" placeholder="https://shiftcare.workers.dev" oninput="ST.wurl=this.value.trim();save()">
-            <div class="api-note">Worker pré-configurado: __shiftcare.pedicode-app.workers.dev — adicione a chave GROQ_API_KEY nas variáveis de ambiente do Worker.</div>
+            <div class="api-note">URL do seu Cloudflare Worker. Deixe em branco para usar a chave Groq directamente.</div>
           </div>
           <div>
             <label>Chave API Groq (alternativa directa)</label>
@@ -774,12 +774,12 @@ const ABCDE_DEF=[{key:'A',title:'Airway — Via Aérea',desc:'Permeabilidade, se
 const UNIT_CHECK=['Insuflador manual presente e funcional','Aspiração funcionante (teste)','Sondas de aspiração disponíveis','Débito-metro de O₂ (≥15 L/min)','Unidade organizada e limpa','Medicação de urgência acessível'];
 const TODO_ITEMS=[{cat:'Análises',items:['Sangue','Urina','Secreções','LCR','Exsudado']},{cat:'Gasimetria',items:['Capilar','Venosa','Arterial']},{cat:'Outros',items:['Balanço hídrico','Mudar drenos','Aspirar secreções','Pesar doente','ECG','Rx Tórax']}];
 const DEV_TYPES=[
-  {id:'piv-r', label:'Acesso Venoso Periférico Direito',  x:77,y:44,icon:'💉',locs:null},
-  {id:'piv-l', label:'Acesso Venoso Periférico Esquerdo', x:23,y:44,icon:'💉',locs:null},
+  {id:'piv-r', label:'Acesso Venoso Periférico Direito',  x:23,y:44,icon:'💉',locs:null},
+  {id:'piv-l', label:'Acesso Venoso Periférico Esquerdo', x:77,y:44,icon:'💉',locs:null},
   {id:'cvc',   label:'Cateter Venoso Central',            x:52,y:20,icon:'🔵',locs:['Jugular Interna Direita','Jugular Interna Esquerda','Subclávia Direita','Subclávia Esquerda','Femoral Direita','Femoral Esquerda','Tronco Braquiocefálico']},
   {id:'picc',  label:'PICC',                              x:20,y:40,icon:'🔵',locs:['Membro Superior Direito','Membro Superior Esquerdo']},
-  {id:'art-r', label:'Linha Arterial Direita',            x:82,y:52,icon:'🔴',locs:null},
-  {id:'art-l', label:'Linha Arterial Esquerda',           x:18,y:52,icon:'🔴',locs:null},
+  {id:'art-r', label:'Linha Arterial Direita',            x:18,y:52,icon:'🔴',locs:null},
+  {id:'art-l', label:'Linha Arterial Esquerda',           x:82,y:52,icon:'🔴',locs:null},
   {id:'uvc',   label:'Cateter Umbilical Venoso',          x:50,y:58,icon:'⚪',locs:null,neo:true},
   {id:'uac',   label:'Cateter Umbilical Arterial',        x:50,y:62,icon:'🔴',locs:null,neo:true},
   {id:'ett',   label:'Tubo Endotraqueal',                 x:50,y:17,icon:'🟢',locs:['Oral','Nasal']},
@@ -787,8 +787,8 @@ const DEV_TYPES=[
   {id:'sog',   label:'Sonda Orogástrica',                 x:50,y:15,icon:'🟡',locs:null},
   {id:'sjej',  label:'Sonda Jejunal',                     x:56,y:14,icon:'🟠',locs:null},
   {id:'alg',   label:'Algália',                           x:50,y:70,icon:'🟤',locs:null},
-  {id:'drain-r',label:'Dreno Torácico Direito',           x:65,y:33,icon:'⬛',locs:null},
-  {id:'drain-l',label:'Dreno Torácico Esquerdo',          x:35,y:33,icon:'⬛',locs:null},
+  {id:'drain-r',label:'Dreno Torácico Direito',           x:35,y:33,icon:'⬛',locs:null},
+  {id:'drain-l',label:'Dreno Torácico Esquerdo',          x:65,y:33,icon:'⬛',locs:null},
   {id:'epi',   label:'Cateter Epidural',                  x:50,y:45,icon:'🟣',locs:['Lombar','Torácico','Cervical']},
   {id:'peri',  label:'Cateter Perineural',                x:35,y:65,icon:'🟣',locs:['Femoral','Ciático','Braquial','Ilioinguinal']},
   {id:'capno', label:'Capnógrafo',                        x:48,y:13,icon:'💨',locs:null},
@@ -860,7 +860,7 @@ function ptInfoPills(p){
 // ══════════════════════════════════════════════
 // MODULE: STATE
 // ══════════════════════════════════════════════
-let ST={patients:[],shiftStart:null,idx:0,screen:'s-setup',prevScreen:null,detTab:'vitais',csec:'enf',msec:'hor',isbarSec:null,ageU:'dias',ageUM:'dias',sd:[],sdm:[],qSel:[],apiKey:'',wurl:'__shiftcare.pedicode-app.workers.dev',medModalType:'hor',discIdx:null};
+let ST={patients:[],shiftStart:null,idx:0,screen:'s-setup',prevScreen:null,detTab:'vitais',csec:'enf',msec:'hor',isbarSec:null,ageU:'dias',ageUM:'dias',sd:[],sdm:[],qSel:[],apiKey:'',wurl:'',medModalType:'hor',discIdx:null};
 let LEARN={meds:{},tasks:{},todos:{}};
 
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
@@ -1195,7 +1195,7 @@ function renDev(){
   el('csec-dev').innerHTML=`
     <div class="sub-card"><div class="sub-card-hdr">Dispositivos Activos<button class="btn btn-o btn-sm" onclick="openDevModal()">+ Adicionar</button></div>${devList}</div>
     <div class="sub-card"><div class="sub-card-hdr">Figura do Doente</div>
-      <div style="display:flex;justify-content:center;padding:14px"><svg viewBox="0 0 100 100" width="160" height="160" style="overflow:visible">${fig}${activeDots}</svg></div>
+      <div style="display:flex;justify-content:center;padding:14px"><svg viewBox="0 0 100 100" width="160" height="160" style="overflow:visible">${fig}${activeDots}<text x="8" y="96" font-size="7" font-weight="700" fill="#0F766E" font-family="system-ui">D</text><text x="88" y="96" font-size="7" font-weight="700" fill="#0F766E" font-family="system-ui">E</text></svg></div>
       <div style="padding:0 13px 13px;display:flex;flex-wrap:wrap;gap:5px">${chips}</div>
     </div>
     ${p.devInactive.length?`<div class="sub-card"><div class="sub-card-hdr">Dispositivos Retirados</div>${inactList}</div>`:''}`;
@@ -1625,39 +1625,178 @@ if(ST.patients.filter(p=>p.status==='internado').length&&ST.shiftStart){renderDa
 else{renderSetup();showScreen('s-setup');}
 </script>
 <script>
-// FIX: missing showSetupPanel
+// ══════════════════════════════════════════════
+// FIX BLOCK: missing functions
+// ══════════════════════════════════════════════
+
+// ── Setup panels ──────────────────────────────
 function showSetupPanel(panel){
-  const panels = ['home','novo','scan'];
-  panels.forEach(p=>{
-    const elp = document.getElementById('panel-'+p);
-    if(elp) elp.style.display = (p===panel)?'block':'none';
+  ['home','novo','scan'].forEach(p=>{
+    const e=document.getElementById('panel-'+p);
+    if(e)e.style.display=(p===panel)?'block':'none';
+  });
+  if(panel==='scan')startScan();
+  else stopScan();
+}
+
+// ── QR Scanner ────────────────────────────────
+let _scanStream=null,_scanTimer=null;
+function startScan(){
+  const vid=document.getElementById('scan-video');
+  const status=document.getElementById('scan-status');
+  if(!vid)return;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    if(status)status.textContent='Câmara não suportada neste dispositivo.';
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})
+    .then(stream=>{
+      _scanStream=stream;
+      vid.srcObject=stream;
+      vid.play();
+      if(status)status.textContent='A aguardar QR Code...';
+      _scanTimer=setInterval(()=>_scanFrame(),400);
+    })
+    .catch(err=>{
+      if(status)status.textContent='Sem acesso à câmara: '+err.message;
+    });
+}
+function stopScan(){
+  if(_scanTimer){clearInterval(_scanTimer);_scanTimer=null;}
+  if(_scanStream){_scanStream.getTracks().forEach(t=>t.stop());_scanStream=null;}
+  const vid=document.getElementById('scan-video');
+  if(vid){vid.srcObject=null;}
+}
+function _scanFrame(){
+  const vid=document.getElementById('scan-video');
+  const canvas=document.getElementById('scan-canvas');
+  if(!vid||!canvas||vid.readyState<2)return;
+  const ctx=canvas.getContext('2d');
+  canvas.width=vid.videoWidth;canvas.height=vid.videoHeight;
+  ctx.drawImage(vid,0,0);
+  try{
+    const img=ctx.getImageData(0,0,canvas.width,canvas.height);
+    // Use BarcodeDetector if available (Chrome/Android)
+    if('BarcodeDetector' in window){
+      new BarcodeDetector({formats:['qr_code']}).detect(canvas)
+        .then(codes=>{if(codes.length)_onQRCode(codes[0].rawValue);})
+        .catch(()=>{});
+    }
+  }catch(e){}
+}
+function _onQRCode(raw){
+  stopScan();
+  try{
+    const data=JSON.parse(raw);
+    if(!data||!data.name){document.getElementById('scan-status').textContent='QR inválido.';startScan();return;}
+    ST.patients.push(mkPt(data));
+    save();
+    const resList=document.getElementById('scan-results-list');
+    const resWrap=document.getElementById('scan-results');
+    if(resList)resList.innerHTML+='<div style="padding:4px 0;font-size:13px">✅ '+data.name+' — Cama '+(data.bed||'—')+'</div>';
+    if(resWrap)resWrap.style.display='block';
+    document.getElementById('scan-status').textContent='Aponte para outro QR Code...';
+    setTimeout(()=>startScan(),1500);
+  }catch(e){
+    document.getElementById('scan-status').textContent='Erro ao ler QR. Tente novamente.';
+    setTimeout(()=>startScan(),1500);
+  }
+}
+function startShiftAfterScan(){
+  if(!ST.patients.filter(p=>p.status==='internado').length)return;
+  if(!ST.shiftStart)ST.shiftStart=new Date().toISOString();
+  save();renderDash();showScreen('s-dashboard');
+}
+
+// ── QR Tabs (modal-qr) ────────────────────────
+function renderQRTabs(){
+  const tabs=document.getElementById('qr-patient-tabs');
+  const disp=document.getElementById('qr-display');
+  const canvasInner=document.getElementById('qr-canvas-inner');
+  const info=document.getElementById('qr-pt-info');
+  const err=document.getElementById('qr-error');
+  if(!tabs)return;
+  const active=ST.patients.filter(p=>p.status==='internado');
+  if(!active.length){if(err){err.style.display='block';err.textContent='Sem doentes activos para transferir.';}return;}
+  tabs.innerHTML=active.map((p,i)=>`<button class="btn btn-o btn-sm" onclick="showQRFor(${ST.patients.indexOf(p)})">${p.name}</button>`).join('');
+  if(disp)disp.style.display='none';
+}
+function showQRFor(ri){
+  const p=ST.patients[ri];if(!p)return;
+  const disp=document.getElementById('qr-display');
+  const canvasInner=document.getElementById('qr-canvas-inner');
+  const info=document.getElementById('qr-pt-info');
+  const loading=document.getElementById('qr-loading');
+  const err=document.getElementById('qr-error');
+  if(err)err.style.display='none';
+  if(loading)loading.style.display='block';
+  if(disp)disp.style.display='none';
+  // Build compact transfer payload
+  const payload=JSON.stringify({
+    name:p.name,bed:p.bed,ageDays:p.ageDays,wt:p.weightKg,
+    alrg:p.allergies,diag:p.diagMain,diagSec:p.diagSec,
+    gestWeeks:p.gestWeeks,gestDays:p.gestDays,birthDate:p.birthDate,
+    antecedentes:p.antecedentes,hda:p.hda
+  });
+  // Load qrcode.js from CDN and render
+  if(typeof QRCode==='undefined'){
+    const s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+    s.onload=()=>_renderQR(payload,p,canvasInner,info,disp,loading);
+    document.head.appendChild(s);
+  }else{
+    _renderQR(payload,p,canvasInner,info,disp,loading);
+  }
+}
+function _renderQR(payload,p,canvasInner,info,disp,loading){
+  if(canvasInner)canvasInner.innerHTML='';
+  const canvas=document.createElement('canvas');
+  if(canvasInner)canvasInner.appendChild(canvas);
+  QRCode.toCanvas(canvas,payload,{width:220,margin:2},err=>{
+    if(loading)loading.style.display='none';
+    if(err){
+      const errEl=document.getElementById('qr-error');
+      if(errEl){errEl.style.display='block';errEl.textContent='Dados demasiado grandes para QR. Tente reduzir as notas do doente.';}
+      return;
+    }
+    if(info)info.textContent=p.name+' · Cama '+p.bed;
+    if(disp)disp.style.display='block';
   });
 }
-</script>
-<script>
-// FIX: Finalizar turno functions
-function openFinalizeModal(){
-  const m=document.getElementById('modal-fin');
-  if(m) m.style.display='block';
-}
-function closeM(id){
-  const m=document.getElementById(id);
-  if(m) m.style.display='none';
-}
+
+// ── Finalizar turno ───────────────────────────
+function openFinalizeModal(){openM('modal-fin');}
 function finSaveAndExit(){
-  alert('Turno guardado (demo)');
-  closeM('modal-fin');
+  save();closeM('modal-fin');
+  showScreen('s-setup');renderSetup();
 }
 function finShowQR(){
-  alert('QR no implementado');
+  const active=ST.patients.filter(p=>p.status==='internado');
+  if(!active.length){alert('Sem doentes activos para transferir.');return;}
+  closeM('modal-fin');
+  openM('modal-qr');
+  renderQRTabs();
 }
 function finNewShiftSamePatients(){
-  alert('Novo turno iniciado (demo)');
-  closeM('modal-fin');
+  if(!confirm('Iniciar novo turno? Os cuidados anteriores ficam registados.'))return;
+  ST.shiftStart=new Date().toISOString();
+  ST.patients.filter(p=>p.status==='internado').forEach(p=>{
+    p.tasks=p.tasks.map(t=>({...t,done:false,doneAt:null}));
+  });
+  save();closeM('modal-fin');renderDash();showScreen('s-dashboard');
 }
 function finArchiveAll(){
-  alert('Doentes arquivados (demo)');
-  closeM('modal-fin');
+  if(!confirm('Arquivar todos os doentes activos e iniciar sessão limpa?'))return;
+  const now=new Date().toISOString();
+  ST.patients.filter(p=>p.status==='internado').forEach(p=>{p.status='arquivado';p.dischargeAt=now;});
+  ST.shiftStart=null;save();closeM('modal-fin');
+  showScreen('s-setup');renderSetup();
+}
+
+// ── continuarTurno ────────────────────────────
+function continuarTurno(){
+  if(!ST.shiftStart)ST.shiftStart=new Date().toISOString();
+  save();renderDash();showScreen('s-dashboard');
 }
 </script>
 </body>
