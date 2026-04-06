@@ -551,8 +551,8 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
         </div>
         <div style="padding:0 15px 15px">
-          <div class="about-row"><span>Versão</span><span class="about-val">2.1.0</span></div>
-          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v2.1</span></div>
+          <div class="about-row"><span>Versão</span><span class="about-val">2.2.0</span></div>
+          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v2.2</span></div>
           <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
           <div class="about-row"><span>IA</span><span class="about-val">Groq LLaMA via Cloudflare Worker</span></div>
           <div class="about-row"><span>Idioma</span><span class="about-val">Português (PT)</span></div>
@@ -565,7 +565,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           <div style="margin-bottom:11px">
             <label>Cloudflare Worker URL</label>
             <input type="url" id="worker-inp" placeholder="https://shiftcare.workers.dev" oninput="ST.wurl=this.value.trim();save()">
-            <div class="api-note">URL do seu Cloudflare Worker. Deixe em branco para usar a chave Groq directamente.</div>
+            <div class="api-note">URL do seu Cloudflare Worker (opcional). Deixe em branco para usar a Chave API Groq directamente.</div>
           </div>
           <div>
             <label>Chave API Groq (alternativa directa)</label>
@@ -580,7 +580,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
       <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:11px" onclick="resetLearn()">Resetar Módulo de Aprendizagem</button>
-      <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v2.1 © 2025 · Todos os direitos reservados</div>
+      <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v2.2 © 2025 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
@@ -884,7 +884,14 @@ function mkPt(o){
     status:'internado',dischargeAt:null,dischargeNote:''};
 }
 
-function save(){try{localStorage.setItem('sc_v22',JSON.stringify({p:ST.patients,ss:ST.shiftStart,ak:ST.apiKey,wu:ST.wurl}));localStorage.setItem('sc_learn',JSON.stringify(LEARN));}catch(e){}}
+function save(){
+  try{
+    localStorage.setItem('sc_v22',JSON.stringify({p:ST.patients,ss:ST.shiftStart,ak:ST.apiKey,wu:ST.wurl}));
+    localStorage.setItem('sc_learn',JSON.stringify(LEARN));
+  }catch(e){
+    showToast('⚠ Erro ao guardar dados: '+e.message+'. Armazenamento local pode estar cheio.','error');
+  }
+}
 function loadData(){try{
   // Try v22 first, fall back to v21
   const raw=localStorage.getItem('sc_v22')||localStorage.getItem('sc_v21')||'{}';
@@ -946,6 +953,21 @@ function renderSetup(){
   const pts=ST.patients.filter(p=>p.status==='internado');
   el('pt-list').innerHTML=pts.map((p,pi)=>{const ri=ST.patients.indexOf(p);return`<div class="pt-item"><div class="pti"><div class="pti-name">${p.name}</div><div class="pti-sub">Cama ${p.bed} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}${p.diagMain?' · '+p.diagMain:''}</div></div><button class="rm-btn" onclick="rmSetupPt(${ri})">×</button></div>`;}).join('');
   el('start-area').style.display=pts.length?'block':'none';
+  // Show "Continuar Turno" button if there's a saved shift with active patients
+  const btnCont=el('btn-continuar');
+  if(btnCont){
+    if(pts.length&&ST.shiftStart){
+      const mins=Math.round((Date.now()-new Date(ST.shiftStart))/60000);
+      const dur=mins<60?mins+' min':Math.floor(mins/60)+'h '+(mins%60)+'min';
+      const sub=el('continuar-sub');
+      const badge=el('continuar-badge');
+      if(sub)sub.textContent=`Turno iniciado há ${dur}`;
+      if(badge)badge.textContent=`${pts.length} doente(s) activo(s)`;
+      btnCont.style.display='flex';
+    } else {
+      btnCont.style.display='none';
+    }
+  }
 }
 function startShift(){if(!ST.patients.filter(p=>p.status==='internado').length)return;if(!ST.shiftStart)ST.shiftStart=new Date().toISOString();save();renderDash();showScreen('s-dashboard');}
 
@@ -1118,7 +1140,7 @@ function renVitals(){
 function onVI(k,v){const p=ST.patients[ST.idx];if(!p)return;p.vitals[k]=v;p.vitals.lastUp=new Date().toISOString();const R=vRanges(p.ageDays);const st=v&&R[k]?vSt(v,R[k]):'';const vc=el('vc-'+k);if(vc)vc.className='vc '+st;renVAlert();updBadge();save();}
 function renVAlert(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);const e=el('vitals-alert');if(e)e.innerHTML=ac>0?`<div class="alert-ban">⚠ ${ac} constante(s) fora do intervalo pediátrico normal</div>`:'';}
 function clearVit(){const p=ST.patients[ST.idx];if(!p||!confirm('Limpar sinais vitais?'))return;VITALS_DEF.forEach(v=>p.vitals[v.k]='');save();renVitals();}
-function openCam(){if(!ST.wurl&&!ST.apiKey){alert('Configure o Worker URL ou Chave Groq em "Sobre".');return;}el('photo-input').click();}
+function openCam(){const rawUrl=(ST.wurl||'').trim();const hasWorker=rawUrl&&!rawUrl.startsWith('__');if(!hasWorker&&!ST.apiKey){alert('Configure o Worker URL ou Chave Groq em "Sobre".');return;}el('photo-input').click();}
 async function onPhoto(evt){const file=evt.target.files[0];if(!file)return;const r=new FileReader();r.onload=async e=>{const b64=e.target.result.split(',')[1],mt=file.type||'image/jpeg';el('capture-img').src=e.target.result;el('capture-preview-wrap').style.display='block';const btn=el('cam-btn');if(btn){btn.textContent='⏳ A interpretar...';btn.disabled=true;}try{const res=await callAI({type:'vitals_image',b64,mt});const vals=JSON.parse((res.text||'{}').replace(/```json|```/g,'').trim());const p=ST.patients[ST.idx];if(!p)return;VITALS_DEF.forEach(v=>{if(vals[v.k]!==undefined)p.vitals[v.k]=String(vals[v.k]);});p.vitals.lastUp=new Date().toISOString();save();renVitals();alert(`✅ ${Object.keys(vals).length} valor(es) interpretado(s). Verifique!`);}catch(err){alert('Erro ao interpretar: '+err.message);}finally{el('capture-preview-wrap').style.display='none';if(btn){btn.textContent='📷 Capturar Ecrã';btn.disabled=false;}}};r.readAsDataURL(file);evt.target.value='';}
 
 // ══════════════════════════════════════════════
@@ -1159,7 +1181,7 @@ function renEnf(){
   renQCats('');
 }
 function focusNoteInp(){const e=el('note-inp-enf');if(e){e.focus();e.scrollIntoView({behavior:'smooth'});}}
-function addNoteEnf(){const inp=el('note-inp-enf');if(!inp||!inp.value.trim())return;addNoteText(inp.value.trim());inp.value='';renEnf();}
+function addNoteEnf(){const inp=el('note-inp-enf');if(!inp||!inp.value.trim())return;addNoteText(inp.value.trim());inp.value='';showToast('Nota registada ✓','ok');renEnf();}
 function addNoteText(txt){const p=ST.patients[ST.idx];if(!p)return;p.notes.unshift({id:uid(),text:txt,timestamp:new Date().toISOString()});save();}
 function saveABCDE(k,v){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcde)p.abcde={};p.abcde[k]=v;save();}
 function tglUC(i){const p=ST.patients[ST.idx];if(!p)return;if(!p.unitCheck)p.unitCheck={};p.unitCheck[i]=!p.unitCheck[i];save();renEnf();}
@@ -1195,7 +1217,7 @@ function renDev(){
   el('csec-dev').innerHTML=`
     <div class="sub-card"><div class="sub-card-hdr">Dispositivos Activos<button class="btn btn-o btn-sm" onclick="openDevModal()">+ Adicionar</button></div>${devList}</div>
     <div class="sub-card"><div class="sub-card-hdr">Figura do Doente</div>
-      <div style="display:flex;justify-content:center;padding:14px"><svg viewBox="0 0 100 100" width="160" height="160" style="overflow:visible">${fig}${activeDots}<text x="8" y="96" font-size="7" font-weight="700" fill="#0F766E" font-family="system-ui">D</text><text x="88" y="96" font-size="7" font-weight="700" fill="#0F766E" font-family="system-ui">E</text></svg></div>
+      <div style="display:flex;justify-content:center;padding:14px"><svg viewBox="0 0 100 100" width="160" height="160" style="overflow:visible">${fig}${activeDots}<text x="5" y="97" font-size="7" font-weight="700" fill="#0F766E" font-family="system-ui,sans-serif">D</text><text x="89" y="97" font-size="7" font-weight="700" fill="#0F766E" font-family="system-ui,sans-serif">E</text></svg></div>
       <div style="padding:0 13px 13px;display:flex;flex-wrap:wrap;gap:5px">${chips}</div>
     </div>
     ${p.devInactive.length?`<div class="sub-card"><div class="sub-card-hdr">Dispositivos Retirados</div>${inactList}</div>`:''}`;
@@ -1209,7 +1231,7 @@ function openDevModal(){
   el('dev-side').value='';
   onDevTypeChange();openM('modal-dev');
 }
-function confDev(){const p=ST.patients[ST.idx];if(!p)return;const typeId=el('dev-type').value;const gauge=el('dev-gauge').value;const side=el('dev-side').value.trim();const locWrap=el('dev-location-wrap');const location=locWrap&&locWrap.style.display!=='none'?(el('dev-location')?.value||''):'';const dt=DEV_TYPES.find(d=>d.id===typeId);if(!dt)return;if(!p.devices)p.devices=[];p.devices.push({id:uid(),typeId,label:dt.label,icon:dt.icon,location,gauge,side});save();closeM('modal-dev');renDev();}
+function confDev(){const p=ST.patients[ST.idx];if(!p)return;const typeId=el('dev-type').value;const gauge=el('dev-gauge').value;const side=el('dev-side').value.trim();const locWrap=el('dev-location-wrap');const location=locWrap&&locWrap.style.display!=='none'?(el('dev-location')?.value||''):'';const dt=DEV_TYPES.find(d=>d.id===typeId);if(!dt)return;if(!p.devices)p.devices=[];p.devices.push({id:uid(),typeId,label:dt.label,icon:dt.icon,location,gauge,side});save();showToast('Dispositivo adicionado ✓','ok');closeM('modal-dev');renDev();}
 
 // ─── To-Do ────────────────────────────────────
 function renTodo(){
@@ -1290,7 +1312,7 @@ function confMed(){
   const startAt=el('med-start')?.value||new Date().toISOString();
   if(!p.medications)p.medications=[];
   p.medications.push({id:uid(),name,dose,unit:el('med-unit').value,route:el('med-route').value,freq,firstHour:8,administered:{},suspended:false,notes,vel,startAt});
-  learnMed(name);save();closeM('modal-med');renMsec(ST.msec);
+  learnMed(name);save();showToast('Medicação adicionada ✓','ok');closeM('modal-med');renMsec(ST.msec);
 }
 function tglDose(key,idx){const p=ST.patients[ST.idx];if(!p)return;const m=p.medications[idx];if(!m)return;if(!m.administered)m.administered={};m.administered[key]=!m.administered[key];save();renMsec(ST.msec);}
 function tglSusp(i){const p=ST.patients[ST.idx];if(!p)return;p.medications[i].suspended=!p.medications[i].suspended;save();renMsec(ST.msec);}
@@ -1515,7 +1537,7 @@ function nutrConfirm() {
   });
   // Reset staging
   n.staging = { type:'', additives:[], modeFreq:'', modeVia:'', volume:'', notes:'' };
-  save(); renAlim();
+  save(); showToast('Alimentação adicionada ✓','ok'); renAlim();
 }
 function nutrInactivate(i) {
   const p = ST.patients[ST.idx]; if (!p) return;
@@ -1554,10 +1576,10 @@ function renISBARDetail(s){
   const back=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:13px"><button class="btn btn-o btn-sm" onclick="ST.isbarSec=null;renISBAR()">← Voltar</button><div style="font-weight:700;font-size:14px">${s==='ap'?'Antecedentes Pessoais':s==='hda'?'HDA':'Relatório ISBAR'}</div></div>`;
   if(s==='ap'){el('tab-isbar').innerHTML=`${back}<textarea id="ap-inp" rows="14" style="font-size:13px;line-height:1.7" placeholder="Alergias:&#10;Patologias crónicas:&#10;Cirurgias:&#10;Medicação habitual:&#10;Vacinação:&#10;Antecedentes familiares:">${p.antecedentes||''}</textarea><button class="btn btn-p" style="width:100%;margin-top:9px" onclick="saveAP()">Guardar</button>`;}
   else if(s==='hda'){el('tab-isbar').innerHTML=`${back}<textarea id="hda-inp" rows="14" style="font-size:13px;line-height:1.7" placeholder="Data de início dos sintomas:&#10;Motivo de internamento:&#10;Evolução clínica:&#10;Exames realizados:&#10;Intervenções efectuadas:">${p.hda||''}</textarea><button class="btn btn-p" style="width:100%;margin-top:9px" onclick="saveHDA()">Guardar</button>`;}
-  else{el('tab-isbar').innerHTML=`${back}<div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--rads);padding:11px;margin-bottom:12px;font-size:12px;color:var(--t2);line-height:1.7"><strong>ISBAR</strong> — I·S·B·A·R<br><span style="font-size:11px;color:var(--t3)">Worker: ${ST.wurl?'configurado ✓':'não configurado ⚠'}</span></div><button class="btn btn-p" style="width:100%;margin-bottom:9px" onclick="genISBAR(false)">⚡ ISBAR deste doente</button><button class="btn btn-o" style="width:100%;margin-bottom:12px" onclick="genISBAR(true)">📋 ISBAR de todos os doentes</button><div id="isbar-out" style="display:none"><div class="sbar-out" id="isbar-text"></div><button class="btn btn-o" style="width:100%;margin-top:8px" onclick="copyISBAR()">Copiar Relatório</button></div>`;}
+  else{el('tab-isbar').innerHTML=`${back}<div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--rads);padding:11px;margin-bottom:12px;font-size:12px;color:var(--t2);line-height:1.7"><strong>ISBAR</strong> — I·S·B·A·R<br><span style="font-size:11px;color:var(--t3)">Worker: ${(ST.wurl&&!ST.wurl.startsWith('__'))?'configurado ✓':'não configurado ⚠'}</span></div><button class="btn btn-p" style="width:100%;margin-bottom:9px" onclick="genISBAR(false)">⚡ ISBAR deste doente</button><button class="btn btn-o" style="width:100%;margin-bottom:12px" onclick="genISBAR(true)">📋 ISBAR de todos os doentes</button><div id="isbar-out" style="display:none"><div class="sbar-out" id="isbar-text"></div><button class="btn btn-o" style="width:100%;margin-top:8px" onclick="copyISBAR()">Copiar Relatório</button></div>`;}
 }
-function saveAP(){const p=ST.patients[ST.idx];if(!p)return;p.antecedentes=el('ap-inp').value;save();ST.isbarSec=null;renISBAR();}
-function saveHDA(){const p=ST.patients[ST.idx];if(!p)return;p.hda=el('hda-inp').value;save();ST.isbarSec=null;renISBAR();}
+function saveAP(){const p=ST.patients[ST.idx];if(!p)return;p.antecedentes=el('ap-inp').value;save();showToast('Antecedentes guardados ✓','ok');ST.isbarSec=null;renISBAR();}
+function saveHDA(){const p=ST.patients[ST.idx];if(!p)return;p.hda=el('hda-inp').value;save();showToast('HDA guardada ✓','ok');ST.isbarSec=null;renISBAR();}
 function buildSum(p){
   const R=vRanges(p.ageDays);
   const ca=correctedAge(p);
@@ -1582,7 +1604,7 @@ Feito:${done}|Pendente:${pend}
 Notas:${notes}`;
 }
 async function genISBAR(all){
-  if(!ST.wurl&&!ST.apiKey){alert('Configure o Worker URL ou Chave API em "Sobre".');return;}
+  const _rawW=(ST.wurl||'').trim();if((!_rawW||_rawW.startsWith('__'))&&!ST.apiKey){alert('Configure o Worker URL ou Chave API em "Sobre".');return;}
   const out=el('isbar-out'),txt=el('isbar-text');if(!out||!txt)return;
   out.style.display='block';txt.textContent='A gerar relatório ISBAR...';txt.style.opacity='.6';
   const pts=all?ST.patients.filter(p=>p.status==='internado'):[ST.patients[ST.idx]];
@@ -1598,7 +1620,8 @@ function copyISBAR(){navigator.clipboard?.writeText(el('isbar-text')?.textConten
 // MODULE: AI
 // ══════════════════════════════════════════════
 async function callAI(payload){
-  const url=ST.wurl?'https://'+ST.wurl.replace(/^https?:\/\//,''):null;
+  const rawUrl=(ST.wurl||'').trim();
+  const url=(rawUrl&&!rawUrl.startsWith('__'))?'https://'+rawUrl.replace(/^https?:\/\//,''):null;
   if(url){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw new Error('Worker erro: '+r.status);return r.json();}
   if(ST.apiKey){const msgs=payload.messages||[{role:'system',content:'Extrai sinais vitais. JSON apenas.'},{role:'user',content:[{type:'image_url',image_url:{url:`data:${payload.mt};base64,${payload.b64}`}},{type:'text',text:'JSON apenas.'}]}];const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+ST.apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1000,temperature:0.3})});if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.error?.message||'Groq erro: '+r.status);}const d=await r.json();return{text:d.choices?.[0]?.message?.content||''};}
   throw new Error('Sem IA configurada. Configure em "Sobre".');
@@ -1626,10 +1649,33 @@ else{renderSetup();showScreen('s-setup');}
 </script>
 <script>
 // ══════════════════════════════════════════════
-// FIX BLOCK: missing functions
+// FASE 1 — Funções implementadas
 // ══════════════════════════════════════════════
 
-// ── Setup panels ──────────────────────────────
+// ── Toast de feedback ──────────────────────────────────────────────────────
+(function(){
+  const style=document.createElement('style');
+  style.textContent=`
+    #sc-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);
+      background:#0F172A;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;
+      font-weight:600;z-index:9999;opacity:0;transition:opacity .22s,transform .22s;
+      max-width:90vw;text-align:center;pointer-events:none}
+    #sc-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    #sc-toast.error{background:#DC2626}
+    #sc-toast.ok{background:#059669}
+  `;
+  document.head.appendChild(style);
+  const t=document.createElement('div');t.id='sc-toast';document.body.appendChild(t);
+})();
+let _toastTimer=null;
+function showToast(msg,type){
+  const t=document.getElementById('sc-toast');if(!t)return;
+  t.textContent=msg;t.className='show '+(type||'');
+  if(_toastTimer)clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>{t.className='';},2800);
+}
+
+// ── Setup panels ───────────────────────────────────────────────────────────
 function showSetupPanel(panel){
   ['home','novo','scan'].forEach(p=>{
     const e=document.getElementById('panel-'+p);
@@ -1639,23 +1685,32 @@ function showSetupPanel(panel){
   else stopScan();
 }
 
-// ── QR Scanner ────────────────────────────────
-let _scanStream=null,_scanTimer=null;
+// ── continuarTurno ─────────────────────────────────────────────────────────
+function continuarTurno(){
+  if(!ST.shiftStart)ST.shiftStart=new Date().toISOString();
+  save();renderDash();showScreen('s-dashboard');
+}
+
+// ── QR Scanner ─────────────────────────────────────────────────────────────
+let _scanStream=null,_scanTimer=null,_scanLock=false;
 function startScan(){
   const vid=document.getElementById('scan-video');
   const status=document.getElementById('scan-status');
+  const res=document.getElementById('scan-results');
+  if(res)res.style.display='none';
+  _scanLock=false;
   if(!vid)return;
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
     if(status)status.textContent='Câmara não suportada neste dispositivo.';
     return;
   }
-  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})
+  navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}}})
     .then(stream=>{
       _scanStream=stream;
       vid.srcObject=stream;
       vid.play();
       if(status)status.textContent='A aguardar QR Code...';
-      _scanTimer=setInterval(()=>_scanFrame(),400);
+      _scanTimer=setInterval(_scanFrame,350);
     })
     .catch(err=>{
       if(status)status.textContent='Sem acesso à câmara: '+err.message;
@@ -1665,138 +1720,172 @@ function stopScan(){
   if(_scanTimer){clearInterval(_scanTimer);_scanTimer=null;}
   if(_scanStream){_scanStream.getTracks().forEach(t=>t.stop());_scanStream=null;}
   const vid=document.getElementById('scan-video');
-  if(vid){vid.srcObject=null;}
+  if(vid&&vid.srcObject){vid.srcObject=null;}
 }
 function _scanFrame(){
+  if(_scanLock)return;
   const vid=document.getElementById('scan-video');
   const canvas=document.getElementById('scan-canvas');
-  if(!vid||!canvas||vid.readyState<2)return;
-  const ctx=canvas.getContext('2d');
+  if(!vid||!canvas||vid.readyState<2||!vid.videoWidth)return;
   canvas.width=vid.videoWidth;canvas.height=vid.videoHeight;
+  const ctx=canvas.getContext('2d');
   ctx.drawImage(vid,0,0);
-  try{
-    const img=ctx.getImageData(0,0,canvas.width,canvas.height);
-    // Use BarcodeDetector if available (Chrome/Android)
-    if('BarcodeDetector' in window){
-      new BarcodeDetector({formats:['qr_code']}).detect(canvas)
-        .then(codes=>{if(codes.length)_onQRCode(codes[0].rawValue);})
-        .catch(()=>{});
-    }
-  }catch(e){}
+  if('BarcodeDetector' in window){
+    new BarcodeDetector({formats:['qr_code']}).detect(canvas)
+      .then(codes=>{if(codes.length){_scanLock=true;_onQRCode(codes[0].rawValue);}})
+      .catch(()=>{});
+  }
 }
 function _onQRCode(raw){
   stopScan();
+  const status=document.getElementById('scan-status');
   try{
     const data=JSON.parse(raw);
-    if(!data||!data.name){document.getElementById('scan-status').textContent='QR inválido.';startScan();return;}
-    ST.patients.push(mkPt(data));
-    save();
+    if(!data||!data.name){
+      if(status)status.textContent='QR inválido. Tente novamente.';
+      setTimeout(()=>startScan(),1500);
+      return;
+    }
+    // Avoid duplicate imports
+    const exists=ST.patients.some(p=>p.name===data.name&&p.bed===data.bed&&p.status==='internado');
+    if(!exists){
+      ST.patients.push(mkPt({
+        name:data.name,bed:data.bed,ageDays:data.ageDays||0,
+        wt:data.wt,alrg:data.alrg,diag:data.diag,diagSec:data.diagSec||[],
+        gestWeeks:data.gestWeeks,gestDays:data.gestDays,birthDate:data.birthDate
+      }));
+      // Restore clinical notes if present
+      const p=ST.patients[ST.patients.length-1];
+      if(data.antecedentes)p.antecedentes=data.antecedentes;
+      if(data.hda)p.hda=data.hda;
+      save();
+    }
     const resList=document.getElementById('scan-results-list');
     const resWrap=document.getElementById('scan-results');
-    if(resList)resList.innerHTML+='<div style="padding:4px 0;font-size:13px">✅ '+data.name+' — Cama '+(data.bed||'—')+'</div>';
+    if(resList){
+      const div=document.createElement('div');
+      div.style.cssText='padding:5px 0;font-size:13px;display:flex;align-items:center;gap:6px';
+      div.innerHTML=(exists?'⚠ Já importado: ':'✅ Importado: ')+'<strong>'+data.name+'</strong> — Cama '+(data.bed||'—');
+      resList.appendChild(div);
+    }
     if(resWrap)resWrap.style.display='block';
-    document.getElementById('scan-status').textContent='Aponte para outro QR Code...';
-    setTimeout(()=>startScan(),1500);
+    if(status)status.textContent='Lido! Aponte para outro QR Code...';
+    setTimeout(()=>{_scanLock=false;startScan();},1200);
   }catch(e){
-    document.getElementById('scan-status').textContent='Erro ao ler QR. Tente novamente.';
-    setTimeout(()=>startScan(),1500);
+    if(status)status.textContent='Erro ao ler QR. Tente novamente.';
+    setTimeout(()=>{_scanLock=false;startScan();},1500);
   }
 }
 function startShiftAfterScan(){
   if(!ST.patients.filter(p=>p.status==='internado').length)return;
   if(!ST.shiftStart)ST.shiftStart=new Date().toISOString();
-  save();renderDash();showScreen('s-dashboard');
+  save();stopScan();renderDash();showScreen('s-dashboard');
 }
 
-// ── QR Tabs (modal-qr) ────────────────────────
+// ── Modal QR (Transferir a Colega) ─────────────────────────────────────────
 function renderQRTabs(){
   const tabs=document.getElementById('qr-patient-tabs');
   const disp=document.getElementById('qr-display');
-  const canvasInner=document.getElementById('qr-canvas-inner');
-  const info=document.getElementById('qr-pt-info');
   const err=document.getElementById('qr-error');
+  const loading=document.getElementById('qr-loading');
   if(!tabs)return;
-  const active=ST.patients.filter(p=>p.status==='internado');
-  if(!active.length){if(err){err.style.display='block';err.textContent='Sem doentes activos para transferir.';}return;}
-  tabs.innerHTML=active.map((p,i)=>`<button class="btn btn-o btn-sm" onclick="showQRFor(${ST.patients.indexOf(p)})">${p.name}</button>`).join('');
   if(disp)disp.style.display='none';
+  if(err)err.style.display='none';
+  if(loading)loading.style.display='none';
+  const active=ST.patients.filter(p=>p.status==='internado');
+  if(!active.length){
+    tabs.innerHTML='<div style="font-size:13px;color:var(--t2)">Sem doentes activos para transferir.</div>';
+    return;
+  }
+  tabs.innerHTML=active.map(p=>{
+    const ri=ST.patients.indexOf(p);
+    return`<button class="btn btn-o btn-sm" onclick="showQRFor(${ri})">${p.name} · Cama ${p.bed}</button>`;
+  }).join('');
 }
 function showQRFor(ri){
   const p=ST.patients[ri];if(!p)return;
   const disp=document.getElementById('qr-display');
-  const canvasInner=document.getElementById('qr-canvas-inner');
+  const inner=document.getElementById('qr-canvas-inner');
   const info=document.getElementById('qr-pt-info');
   const loading=document.getElementById('qr-loading');
   const err=document.getElementById('qr-error');
   if(err)err.style.display='none';
-  if(loading)loading.style.display='block';
   if(disp)disp.style.display='none';
-  // Build compact transfer payload
+  if(loading)loading.style.display='block';
+  if(inner)inner.innerHTML='';
+  // Compact payload — only essential clinical data for transfer
   const payload=JSON.stringify({
     name:p.name,bed:p.bed,ageDays:p.ageDays,wt:p.weightKg,
     alrg:p.allergies,diag:p.diagMain,diagSec:p.diagSec,
     gestWeeks:p.gestWeeks,gestDays:p.gestDays,birthDate:p.birthDate,
-    antecedentes:p.antecedentes,hda:p.hda
+    antecedentes:(p.antecedentes||'').slice(0,300),
+    hda:(p.hda||'').slice(0,300)
   });
-  // Load qrcode.js from CDN and render
+  const doRender=()=>{
+    if(loading)loading.style.display='none';
+    const canvas=document.createElement('canvas');
+    if(inner)inner.appendChild(canvas);
+    QRCode.toCanvas(canvas,payload,{width:220,margin:2,color:{dark:'#0F172A',light:'#FFFFFF'}},e=>{
+      if(e){
+        if(err){err.style.display='block';err.textContent='Dados demasiado grandes para QR. Reduza as notas do doente.';}
+        return;
+      }
+      if(info)info.textContent=p.name+' · Cama '+p.bed;
+      if(disp)disp.style.display='block';
+    });
+  };
   if(typeof QRCode==='undefined'){
     const s=document.createElement('script');
     s.src='https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
-    s.onload=()=>_renderQR(payload,p,canvasInner,info,disp,loading);
+    s.onload=doRender;
+    s.onerror=()=>{if(loading)loading.style.display='none';if(err){err.style.display='block';err.textContent='Erro ao carregar biblioteca QR. Verifique a ligação à internet.';}};
     document.head.appendChild(s);
-  }else{
-    _renderQR(payload,p,canvasInner,info,disp,loading);
+  } else {
+    doRender();
   }
 }
-function _renderQR(payload,p,canvasInner,info,disp,loading){
-  if(canvasInner)canvasInner.innerHTML='';
-  const canvas=document.createElement('canvas');
-  if(canvasInner)canvasInner.appendChild(canvas);
-  QRCode.toCanvas(canvas,payload,{width:220,margin:2},err=>{
-    if(loading)loading.style.display='none';
-    if(err){
-      const errEl=document.getElementById('qr-error');
-      if(errEl){errEl.style.display='block';errEl.textContent='Dados demasiado grandes para QR. Tente reduzir as notas do doente.';}
-      return;
-    }
-    if(info)info.textContent=p.name+' · Cama '+p.bed;
-    if(disp)disp.style.display='block';
-  });
-}
 
-// ── Finalizar turno ───────────────────────────
+// ── Finalizar turno ────────────────────────────────────────────────────────
 function openFinalizeModal(){openM('modal-fin');}
 function finSaveAndExit(){
-  save();closeM('modal-fin');
-  showScreen('s-setup');renderSetup();
+  save();
+  showToast('Turno guardado ✓','ok');
+  closeM('modal-fin');
+  showScreen('s-setup');
+  renderSetup();
 }
 function finShowQR(){
   const active=ST.patients.filter(p=>p.status==='internado');
-  if(!active.length){alert('Sem doentes activos para transferir.');return;}
+  if(!active.length){showToast('Sem doentes activos para transferir.','error');return;}
   closeM('modal-fin');
   openM('modal-qr');
   renderQRTabs();
 }
 function finNewShiftSamePatients(){
-  if(!confirm('Iniciar novo turno? Os cuidados anteriores ficam registados.'))return;
+  if(!confirm('Iniciar novo turno? Os registos do turno anterior ficam guardados.'))return;
   ST.shiftStart=new Date().toISOString();
   ST.patients.filter(p=>p.status==='internado').forEach(p=>{
     p.tasks=p.tasks.map(t=>({...t,done:false,doneAt:null}));
+    if(!p.medHistory)p.medHistory=[];
   });
-  save();closeM('modal-fin');renderDash();showScreen('s-dashboard');
+  save();
+  closeM('modal-fin');
+  showToast('Novo turno iniciado ✓','ok');
+  renderDash();
+  showScreen('s-dashboard');
 }
 function finArchiveAll(){
-  if(!confirm('Arquivar todos os doentes activos e iniciar sessão limpa?'))return;
+  const active=ST.patients.filter(p=>p.status==='internado');
+  if(!active.length){showToast('Sem doentes activos.','error');return;}
+  if(!confirm('Arquivar todos os '+active.length+' doente(s) activo(s) e iniciar sessão limpa?'))return;
   const now=new Date().toISOString();
-  ST.patients.filter(p=>p.status==='internado').forEach(p=>{p.status='arquivado';p.dischargeAt=now;});
-  ST.shiftStart=null;save();closeM('modal-fin');
-  showScreen('s-setup');renderSetup();
-}
-
-// ── continuarTurno ────────────────────────────
-function continuarTurno(){
-  if(!ST.shiftStart)ST.shiftStart=new Date().toISOString();
-  save();renderDash();showScreen('s-dashboard');
+  active.forEach(p=>{p.status='arquivado';p.dischargeAt=now;});
+  ST.shiftStart=null;
+  save();
+  closeM('modal-fin');
+  showToast('Doentes arquivados ✓','ok');
+  showScreen('s-setup');
+  renderSetup();
 }
 </script>
 </body>
