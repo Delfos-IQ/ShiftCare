@@ -240,6 +240,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .hist-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);margin-bottom:9px;overflow:hidden;box-shadow:var(--shsm)}
 .hist-status{padding:3px 9px;border-radius:10px;font-size:10px;font-weight:800;text-transform:uppercase}
 .hist-status.alta{background:var(--gbg);color:var(--grn)}
+.hist-status.arquivado{background:var(--gbg);color:var(--grn)}
 .hist-status.transferido{background:var(--pl);color:var(--pd)}
 /* Ponto de Situação */
 .sit-section{padding:9px 11px;border-top:1px solid var(--b)}
@@ -580,7 +581,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
       <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:11px" onclick="resetLearn()">Resetar Módulo de Aprendizagem</button>
-      <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v2.3 © 2025 · Todos os direitos reservados</div>
+      <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v2.3.1 © 2025 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
@@ -714,7 +715,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
       <div class="fin-opt" onclick="finShowQR()">
         <span class="fin-opt-icon">📱</span>
         <div>
-          <div class="fin-opt-title">Transferir a Colega (QR)</div>
+          <div class="fin-opt-title">Transferir para Colega (QR)</div>
           <div class="fin-opt-sub">Gera um QR Code por doente. O colega lê com a câmara e importa os doentes.</div>
         </div>
       </div>
@@ -951,7 +952,7 @@ function addPt(sc){
 function rmSetupPt(i){ST.patients.splice(i,1);renderSetup();save();}
 function renderSetup(){
   const pts=ST.patients.filter(p=>p.status==='internado');
-  el('pt-list').innerHTML=pts.map((p,pi)=>{const ri=ST.patients.indexOf(p);return`<div class="pt-item"><div class="pti"><div class="pti-name">${p.name}</div><div class="pti-sub">Cama ${p.bed} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}${p.diagMain?' · '+p.diagMain:''}</div></div><button class="rm-btn" onclick="rmSetupPt(${ri})">×</button></div>`;}).join('');
+  el('pt-list').innerHTML=pts.map((p,pi)=>{const ri=ST.patients.indexOf(p);return`<div class="pt-item"><div class="pti"><div class="pti-name">${esc(p.name)}</div><div class="pti-sub">Cama ${esc(p.bed)} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}${p.diagMain?' · '+p.diagMain:''}</div></div><button class="rm-btn" onclick="rmSetupPt(${ri})">×</button></div>`;}).join('');
   el('start-area').style.display=pts.length?'block':'none';
   // Show "Continuar Turno" button if there's a saved shift with active patients
   const btnCont=el('btn-continuar');
@@ -994,17 +995,17 @@ function dashCard(p,ri){
     <div class="pc-hdr">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:7px">
         <div style="flex:1;min-width:0">
-          <div class="pc-name">${p.name}${ac>0?`<span class="alert-pill">⚠ ${ac}</span>`:''}
+          <div class="pc-name">${esc(p.name)}${ac>0?`<span class="alert-pill">⚠ ${ac}</span>`:''}
             <button class="btn-discharge" data-disc="${ri}">Alta/Transf.</button>
           </div>
           <div class="pc-meta-grid">
-            <div class="pc-meta-item">🛏 <strong>Cama ${p.bed}</strong></div>
+            <div class="pc-meta-item">🛏 <strong>Cama ${esc(p.bed)}</strong></div>
             <div class="pc-meta-item">📅 <strong>${ageLabel(p)}</strong></div>
             ${p.weightKg?`<div class="pc-meta-item">⚖ <strong>${p.weightKg}kg</strong></div>`:''}
             ${p.gestWeeks?`<div class="pc-meta-item">🍼 <strong>IG ${p.gestWeeks}s${p.gestDays?'+'+p.gestDays+'d':''}</strong></div>`:''}
             ${ca?`<div class="pc-meta-item" style="grid-column:1/-1">📊 <strong>${ca}</strong></div>`:''}
           </div>
-          ${p.diagMain?`<div class="pc-diag">${p.diagMain}</div>`:''}
+          ${p.diagMain?`<div class="pc-diag">${esc(p.diagMain)}</div>`:''}
           ${alrg?`<div class="pc-alrg">⚠ Alergia: ${alrg}</div>`:''}
         </div>
       </div>
@@ -1033,11 +1034,11 @@ function dashSituacao(p){
   if(devs.length) groups.push({label:'Dispositivos',pills:devs});
 
   // ── Medicações horárias activas ───────────────────
-  const meds=(p.medications||[]).filter(m=>m.freq!=='Contínua'&&!m.suspended).map(m=>`<span class="sit-pill sp-med">💊 ${m.name} ${m.dose}${m.unit} ${m.freq}</span>`);
+  const meds=(p.medications||[]).filter(m=>m.freq!=='Contínua'&&!m.suspended).map(m=>`<span class="sit-pill sp-med">💊 ${esc(m.name)} ${m.dose}${m.unit} ${m.freq}</span>`);
   if(meds.length) groups.push({label:'Medicação',pills:meds});
 
   // ── Perfusões activas ─────────────────────────────
-  const perfs=(p.medications||[]).filter(m=>m.freq==='Contínua'&&!m.suspended).map(m=>{const isEpi=m.route==='Epidural';return`<span class="sit-pill ${isEpi?'sp-perf-epi':'sp-perf-ev'}">💧 ${m.name} ${m.dose}${m.unit}/h${m.vel?' '+m.vel:''}${isEpi?' (Epi)':''}</span>`;});
+  const perfs=(p.medications||[]).filter(m=>m.freq==='Contínua'&&!m.suspended).map(m=>{const isEpi=m.route==='Epidural';return`<span class="sit-pill ${isEpi?'sp-perf-epi':'sp-perf-ev'}">💧 ${esc(m.name)} ${m.dose}${m.unit}/h${m.vel?' '+m.vel:''}${isEpi?' (Epi)':''}</span>`;});
   if(perfs.length) groups.push({label:'Perfusões',pills:perfs});
 
   // ── Alimentação activa ────────────────────────────
@@ -1046,13 +1047,13 @@ function dashSituacao(p){
   if(nutrPills.length) groups.push({label:'Alimentação',pills:nutrPills});
 
   // ── To-dos pendentes ─────────────────────────────
-  const todos=(p.todos||[]).filter(t=>!t.done).map(t=>`<span class="sit-pill sp-todo">📋 ${t.text}</span>`);
+  const todos=(p.todos||[]).filter(t=>!t.done).map(t=>`<span class="sit-pill sp-todo">📋 ${esc(t.text)}</span>`);
   if(todos.length) groups.push({label:'To-Do',pills:todos});
 
   // ── Última nota ───────────────────────────────────
   if(p.notes&&p.notes.length){
     const n0=p.notes[0];
-    groups.push({label:'Última Nota',pills:[`<span class="sit-pill sp-note">[${ft(n0.timestamp)}] ${n0.text.slice(0,60)}${n0.text.length>60?'…':''}</span>`]});
+    groups.push({label:'Última Nota',pills:[`<span class="sit-pill sp-note">[${ft(n0.timestamp)}] ${esc(n0.text.slice(0,60))}${n0.text.length>60?'…':''}</span>`]});
   }
 
   if(!groups.length) return`<div class="sit-section"><div class="sit-label"><span class="sit-dot"></span>Ponto de Situação</div><div class="sit-empty">Sem registos activos</div></div>`;
@@ -1078,15 +1079,15 @@ function renderHistorico(){
   e.innerHTML=disc.map((p,i)=>{const ri=ST.patients.indexOf(p);return`<div class="hist-card">
     <div style="padding:12px 13px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
       <div style="flex:1">
-        <div style="font-weight:700;font-size:14px">${p.name}</div>
-        <div style="font-size:11px;color:var(--t2);margin-top:3px">Cama ${p.bed} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}</div>
-        ${p.diagMain?`<div style="font-size:11px;color:var(--t2);margin-top:2px">${p.diagMain}</div>`:''}
+        <div style="font-weight:700;font-size:14px">${esc(p.name)}</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:3px">Cama ${esc(p.bed)} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}</div>
+        ${p.diagMain?`<div style="font-size:11px;color:var(--t2);margin-top:2px">${esc(p.diagMain)}</div>`:''}
         ${p.gestWeeks?`<div style="font-size:10px;color:var(--t3);margin-top:2px">IG: ${p.gestWeeks}s${p.gestDays?'+'+p.gestDays+'d':''}</div>`:''}
         <div style="margin-top:6px;display:flex;gap:6px;align-items:center">
           <span class="hist-status ${p.status}">${p.status==='alta'?'Alta':'Transferido'}</span>
           <span style="font-size:10px;color:var(--t3)">${p.dischargeAt?fd(p.dischargeAt):''}</span>
         </div>
-        ${p.dischargeNote?`<div style="font-size:11px;color:var(--t2);margin-top:4px;font-style:italic">${p.dischargeNote}</div>`:''}
+        ${p.dischargeNote?`<div style="font-size:11px;color:var(--t2);margin-top:4px;font-style:italic">${esc(p.dischargeNote)}</div>`:''}
       </div>
       <button class="rm-btn" onclick="deleteHist(${ri})" title="Eliminar definitivamente">🗑</button>
     </div>
@@ -1107,7 +1108,7 @@ function renInfoBar(){
   const p=ST.patients[ST.idx];if(!p)return;
   const {pills,alrg}=ptInfoPills(p);
   const e=el('pt-info-bar');if(!e)return;
-  e.innerHTML=`<div class="pt-info-name">${p.name}</div><div class="pt-info-meta">${pills.map(x=>`<span class="pt-info-pill">${x}</span>`).join('')}${alrg?`<span class="pt-info-pill alrg">⚠ ${alrg}</span>`:''}</div>`;
+  e.innerHTML=`<div class="pt-info-name">${esc(p.name)}</div><div class="pt-info-meta">${pills.map(x=>`<span class="pt-info-pill">${x}</span>`).join('')}${alrg?`<span class="pt-info-pill alrg">⚠ ${alrg}</span>`:''}</div>`;
 }
 function updBadge(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);el('det-badge').innerHTML=ac>0?`<span class="badge badge-r">⚠ ${ac}</span>`:''}
 
@@ -1154,9 +1155,9 @@ function renEnf(){
   const p=ST.patients[ST.idx];if(!p)return;
   const chkSvg='<svg class="chk-svg" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const abcde=ABCDE_DEF.map(a=>`<div class="abcde-item"><div class="abcde-hdr"><div class="abcde-key">${a.key}</div><div><div class="abcde-title">${a.title}</div><div class="abcde-desc">${a.desc}</div></div></div><textarea class="abcde-inp" rows="2" placeholder="Observações..." oninput="saveABCDE('${a.key}',this.value)">${p.abcde?.[a.key]||''}</textarea></div>`).join('');
-  const tasks=p.tasks.map(t=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTask('${t.id}')">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${t.text}</div>${t.done&&t.doneAt?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div></div>`).join('');
+  const tasks=p.tasks.map(t=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTask('${t.id}')">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${esc(t.text)}</div>${t.done&&t.doneAt?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div></div>`).join('');
   const uc=UNIT_CHECK.map((item,i)=>{const done=p.unitCheck?.[i]||false;return`<div class="task-it"><div class="task-chk ${done?'done':''}" onclick="tglUC(${i})">${done?chkSvg:''}</div><div class="task-lbl ${done?'done':''}">${item}</div></div>`;}).join('');
-  const notes=p.notes.length?p.notes.map(n=>`<div class="note-it"><span class="note-t">${ft(n.timestamp)}</span><span class="note-txt">${n.text}</span></div>`).join(''):'<div class="empty-st">Sem notas</div>';
+  const notes=p.notes.length?p.notes.map(n=>`<div class="note-it"><span class="note-t">${ft(n.timestamp)}</span><span class="note-txt">${esc(n.text)}</span></div>`).join(''):'<div class="empty-st">Sem notas</div>';
   el('csec-enf').innerHTML=`
     <div class="sub-card"><div class="sub-card-hdr">Avaliação ABCDE</div>${abcde}</div>
     <div class="sub-card"><div class="sub-card-hdr">Lista de Cuidados</div>${tasks}<div class="task-add"><input id="new-task-inp" type="text" placeholder="Adicionar cuidado..."><button class="btn btn-o btn-sm" onclick="addCustomTask()">+</button></div></div>
@@ -1211,8 +1212,8 @@ function renDev(){
   const chkSvg='<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const activeDots=DEV_TYPES.filter(dt=>!dt.neo||cat==='neo').map(dt=>{const a=p.devices.some(d=>d.typeId===dt.id);if(!a)return'';const col=dt.id.includes('art')||dt.id==='uac'?'#DC2626':dt.id.includes('cvc')||dt.id==='picc'||dt.id==='uvc'?'#3B82F6':dt.id==='ett'||dt.id==='capno'?'#10B981':dt.id.includes('epi')||dt.id.includes('peri')||dt.id==='bis'?'#7C3AED':'#F59E0B';return`<circle cx="${dt.x}" cy="${dt.y}" r="3.5" fill="${col}" stroke="white" stroke-width="1"><title>${dt.label}</title></circle>`;}).join('');
   const fig=cat==='neo'?`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="12" r="10" fill="#FDE68A" stroke="#D97706"/><ellipse cx="50" cy="35" rx="14" ry="18" fill="#FDE68A" stroke="#D97706"/><path d="M36 27 Q26 32 22 44" stroke-linecap="round"/><path d="M64 27 Q74 32 78 44" stroke-linecap="round"/><path d="M43 52 Q40 65 38 78" stroke-linecap="round"/><path d="M57 52 Q60 65 62 78" stroke-linecap="round"/><circle cx="50" cy="40" r="2" fill="#E5E7EB" stroke="#9CA3AF"/></g>`:cat==='lac'?`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="11" r="9" fill="#FDE68A" stroke="#D97706"/><rect x="39" y="22" width="22" height="26" rx="4" fill="#FDE68A" stroke="#D97706"/><path d="M39 26 Q27 30 24 44" stroke-linecap="round"/><path d="M61 26 Q73 30 76 44" stroke-linecap="round"/><path d="M43 48 L40 70" stroke-linecap="round"/><path d="M57 48 L60 70" stroke-linecap="round"/></g>`:`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="10" r="8" fill="#FDE68A" stroke="#D97706"/><rect x="40" y="20" width="20" height="24" rx="3" fill="#FDE68A" stroke="#D97706"/><path d="M40 24 Q30 28 27 42" stroke-linecap="round"/><path d="M60 24 Q70 28 73 42" stroke-linecap="round"/><path d="M44 44 L41 65" stroke-linecap="round"/><path d="M56 44 L59 65" stroke-linecap="round"/></g>`;
-  const devList=p.devices.map((d,i)=>`<div class="dev-item"><span class="dev-icon">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl">${d.label}</div>${d.location?`<div class="dev-sub">${d.location}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${d.gauge}${d.side?' · '+d.side:''}</div>`:''}</div><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red);border-color:#FECACA" onclick="retireDev(${i})">Retirar</button></div>`).join('')||'<div class="empty-st">Sem dispositivos activos</div>';
-  const inactList=p.devInactive.map((d,i)=>`<div class="dev-item" style="opacity:.6"><span class="dev-icon" style="opacity:.5">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl" style="text-decoration:line-through">${d.label}</div>${d.location?`<div class="dev-sub">${d.location}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${d.gauge}${d.side?' · '+d.side:''}</div>`:''}<div class="dev-removed-lbl">Retirado: ${d.removedAt?fd(d.removedAt):'—'}</div></div><button class="rm-btn" onclick="delInactiveDev(${i})" title="Eliminar">🗑</button></div>`).join('');
+  const devList=p.devices.map((d,i)=>`<div class="dev-item"><span class="dev-icon">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl">${esc(d.label)}</div>${d.location?`<div class="dev-sub">${esc(d.location)}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${esc(d.gauge)}${d.side?' · '+d.side:''}</div>`:''}</div><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red);border-color:#FECACA" onclick="retireDev(${i})">Retirar</button></div>`).join('')||'<div class="empty-st">Sem dispositivos activos</div>';
+  const inactList=p.devInactive.map((d,i)=>`<div class="dev-item" style="opacity:.6"><span class="dev-icon" style="opacity:.5">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl" style="text-decoration:line-through">${esc(d.label)}</div>${d.location?`<div class="dev-sub">${esc(d.location)}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${esc(d.gauge)}${d.side?' · '+d.side:''}</div>`:''}<div class="dev-removed-lbl">Retirado: ${d.removedAt?fd(d.removedAt):'—'}</div></div><button class="rm-btn" onclick="delInactiveDev(${i})" title="Eliminar">🗑</button></div>`).join('');
   const chips=DEV_TYPES.filter(dt=>!dt.neo||cat==='neo').map(dt=>{const a=p.devices.some(d=>d.typeId===dt.id);return`<button class="i-chip${a?' sel':''}" onclick="tglDevQ('${dt.id}')" style="font-size:11px;padding:5px 9px">${dt.icon} ${dt.label.split(' ').slice(-1)[0]}</button>`;}).join('');
   el('csec-dev').innerHTML=`
     <div class="sub-card"><div class="sub-card-hdr">Dispositivos Activos<button class="btn btn-o btn-sm" onclick="openDevModal()">+ Adicionar</button></div>${devList}</div>
@@ -1227,7 +1228,7 @@ function retireDev(i){const p=ST.patients[ST.idx];if(!p)return;if(!p.devInactive
 function delInactiveDev(i){const p=ST.patients[ST.idx];if(!p||!p.devInactive)return;if(!confirm('Eliminar este registo?'))return;p.devInactive.splice(i,1);save();renDev();}
 function onDevTypeChange(){const typeId=el('dev-type')?.value;const dt=DEV_TYPES.find(d=>d.id===typeId);const locWrap=el('dev-location-wrap'),locSel=el('dev-location');if(!locWrap||!locSel)return;if(dt&&dt.locs&&dt.locs.length){locSel.innerHTML=dt.locs.map(l=>`<option>${l}</option>`).join('');locWrap.style.display='block';}else locWrap.style.display='none';}
 function openDevModal(){
-  el('dev-type').innerHTML=DEV_TYPES.map(d=>`<option value="${d.id}">${d.label}</option>`).join('');
+  el('dev-type').innerHTML=DEV_TYPES.map(d=>`<option value="${d.id}">${esc(d.label)}</option>`).join('');
   el('dev-side').value='';
   onDevTypeChange();openM('modal-dev');
 }
@@ -1237,7 +1238,7 @@ function confDev(){const p=ST.patients[ST.idx];if(!p)return;const typeId=el('dev
 function renTodo(){
   const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];
   const chkSvg='<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const listH=p.todos.map((t,i)=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTodo(${i})">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${t.text}</div>${t.done?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div><button class="rm-btn" onclick="rmTodo(${i})">×</button></div>`).join('')||'<div class="empty-st">Sem tarefas</div>';
+  const listH=p.todos.map((t,i)=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTodo(${i})">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${esc(t.text)}</div>${t.done?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div><button class="rm-btn" onclick="rmTodo(${i})">×</button></div>`).join('')||'<div class="empty-st">Sem tarefas</div>';
   const qH=TODO_ITEMS.map(c=>`<div style="margin-bottom:9px"><div class="sect-lbl">${c.cat}</div><div style="display:flex;flex-wrap:wrap;gap:5px">${c.items.map(item=>`<button class="i-chip" onclick="addTodoQ('${item}')">${item}</button>`).join('')}</div></div>`).join('');
   el('csec-todo').innerHTML=`<div class="sub-card"><div class="sub-card-hdr">To-Do do Turno</div>${listH}<div class="task-add"><input id="todo-inp" type="text" placeholder="Adicionar tarefa..."><button class="btn btn-o btn-sm" onclick="addTodoC()">+</button></div></div><div class="sub-card"><div class="sub-card-hdr">Acesso Rápido</div><div style="padding:12px">${qH}</div></div>`;
 }
@@ -1269,7 +1270,7 @@ function renPerf(){
 function renMedHist(){
   const p=ST.patients[ST.idx];if(!p)return;
   const hist=(p.medHistory||[]);
-  const h=hist.map((m,i)=>`<div class="med-hist-item"><div style="flex:1"><div class="med-hist-name">${m.name}</div><div class="med-hist-sub">${m.dose} ${m.unit} · ${m.route}${m.freq&&m.freq!=='Contínua'?' · '+m.freq:' · Perfusão'}</div>${m.vel?`<div class="med-hist-sub">${m.vel}</div>`:''}<div class="med-hist-dates">▶ ${m.startAt?fdt(m.startAt):'—'} &nbsp;⏹ ${m.stopAt?fdt(m.stopAt):'A decorrer'}</div></div><button class="rm-btn" onclick="delMedHist(${i})">🗑</button></div>`).join('')||'<div class="empty-st">Sem histórico de medicações</div>';
+  const h=hist.map((m,i)=>`<div class="med-hist-item"><div style="flex:1"><div class="med-hist-name">${esc(m.name)}</div><div class="med-hist-sub">${m.dose} ${m.unit} · ${m.route}${m.freq&&m.freq!=='Contínua'?' · '+m.freq:' · Perfusão'}</div>${m.vel?`<div class="med-hist-sub">${m.vel}</div>`:''}<div class="med-hist-dates">▶ ${m.startAt?fdt(m.startAt):'—'} &nbsp;⏹ ${m.stopAt?fdt(m.stopAt):'A decorrer'}</div></div><button class="rm-btn" onclick="delMedHist(${i})">🗑</button></div>`).join('')||'<div class="empty-st">Sem histórico de medicações</div>';
   el('med-content').innerHTML=h;
 }
 function delMedHist(i){const p=ST.patients[ST.idx];if(!p)return;if(!confirm('Eliminar registo?'))return;p.medHistory.splice(i,1);save();renMedHist();}
@@ -1278,12 +1279,12 @@ function medCardH(m,i){
   const fh=FREQ_MAP[m.freq]||0;
   const allDoses=fh>0?shiftDoses(m.firstHour||8,fh):[];
   const sH=SHIFTS.map(sh=>{const doses=dosesInShift(allDoses,sh);const pills=doses.map(h=>{const key=`${m.id}_${h}`;const done=m.administered?.[key];return`<span class="dose-pill${done?' done':''}" onclick="tglDose('${key}',${i})">${String(h).padStart(2,'0')}h</span>`;}).join('');return`<div class="shift-col" style="border-left:3px solid ${sh.accent}"><div class="shift-name" style="color:${sh.accent}">${sh.name}</div><div class="dose-row">${pills||'<span style="font-size:9px;color:var(--t3)">—</span>'}</div></div>`;}).join('');
-  return`<div class="med-card${m.suspended?' suspended':''}"><div class="med-card-hdr"><div><div class="med-name">${m.name}</div><div class="med-meta">${m.dose} ${m.unit} · ${m.route} · ${m.freq}</div>${m.suspended?'<div class="med-susp-lbl">SUSPENSO</div>':''}</div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-o btn-sm" style="font-size:11px" onclick="tglSusp(${i})">${m.suspended?'Reativar':'Suspender'}</button><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red)" onclick="archiveMed(${i})">▣</button><button class="rm-btn" onclick="rmMed(${i})">×</button></div></div><div class="shifts-row">${sH}</div><div class="med-first-row">Primeira dose: <select onchange="setFH(${i},this.value)">${Array.from({length:24},(_,h)=>`<option value="${h}"${m.firstHour==h?' selected':''}>${String(h).padStart(2,'0')}h</option>`).join('')}</select></div></div>`;
+  return`<div class="med-card${m.suspended?' suspended':''}"><div class="med-card-hdr"><div><div class="med-name">${esc(m.name)}</div><div class="med-meta">${m.dose} ${m.unit} · ${m.route} · ${m.freq}</div>${m.suspended?'<div class="med-susp-lbl">SUSPENSO</div>':''}</div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-o btn-sm" style="font-size:11px" onclick="tglSusp(${i})">${m.suspended?'Reativar':'Suspender'}</button><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red)" onclick="archiveMed(${i})">▣</button><button class="rm-btn" onclick="rmMed(${i})">×</button></div></div><div class="shifts-row">${sH}</div><div class="med-first-row">Primeira dose: <select onchange="setFH(${i},this.value)">${Array.from({length:24},(_,h)=>`<option value="${h}"${m.firstHour==h?' selected':''}>${String(h).padStart(2,'0')}h</option>`).join('')}</select></div></div>`;
 }
 function perfCardH(m,i){
   const isEpi=m.route==='Epidural';
   const badge=isEpi?`<span class="perf-badge-epi">Epidural</span>`:`<span class="perf-badge-ev">EV</span>`;
-  return`<div class="med-card ${isEpi?'perf-card-epi':'perf-card-ev'}${m.suspended?' suspended':''}"><div class="med-card-hdr"><div><div class="med-name">${m.name} ${badge}</div><div class="med-meta">${m.dose} ${m.unit}/h${m.vel?' · '+m.vel:''} · ${m.route}</div>${m.notes?`<div class="med-meta">${m.notes}</div>`:''} ${m.suspended?'<div class="med-susp-lbl">SUSPENSO</div>':''}</div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-o btn-sm" style="font-size:11px" onclick="tglSusp(${i})">${m.suspended?'Reativar':'Suspender'}</button><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red)" onclick="archiveMed(${i})">▣ Parar</button><button class="rm-btn" onclick="rmMed(${i})">×</button></div></div><div style="padding:8px 12px;background:${isEpi?'var(--viobg)':'var(--pl)'};font-size:12px;color:${isEpi?'var(--vio)':'var(--pd)'}">💧 Perfusão contínua a ${m.dose} ${m.unit}/h ${m.vel?'· '+m.vel:''} ${m.suspended?'— SUSPENSA':'— A CORRER'}</div></div>`;
+  return`<div class="med-card ${isEpi?'perf-card-epi':'perf-card-ev'}${m.suspended?' suspended':''}"><div class="med-card-hdr"><div><div class="med-name">${esc(m.name)} ${badge}</div><div class="med-meta">${m.dose} ${m.unit}/h${m.vel?' · '+m.vel:''} · ${m.route}</div>${m.notes?`<div class="med-meta">${esc(m.notes)}</div>`:''} ${m.suspended?'<div class="med-susp-lbl">SUSPENSO</div>':''}</div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-o btn-sm" style="font-size:11px" onclick="tglSusp(${i})">${m.suspended?'Reativar':'Suspender'}</button><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red)" onclick="archiveMed(${i})">▣ Parar</button><button class="rm-btn" onclick="rmMed(${i})">×</button></div></div><div style="padding:8px 12px;background:${isEpi?'var(--viobg)':'var(--pl)'};font-size:12px;color:${isEpi?'var(--vio)':'var(--pd)'}">💧 Perfusão contínua a ${m.dose} ${m.unit}/h ${m.vel?'· '+m.vel:''} ${m.suspended?'— SUSPENSA':'— A CORRER'}</div></div>`;
 }
 
 function openMedModal(type){
@@ -1489,9 +1490,9 @@ function nutrRecordHTML(r, i, isInactive) {
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:5px">
         ${r.modeFreq ? `<span class="nutr-badge nb-freq">${r.modeFreq}</span>` : ''}
         ${r.modeVia  ? `<span class="nutr-badge nb-via">${r.modeVia}</span>`   : ''}
-        ${r.volume   ? `<span class="nutr-badge nb-via">${r.volume}</span>`    : ''}
+        ${r.volume   ? `<span class="nutr-badge nb-via">${esc(r.volume)}</span>`    : ''}
       </div>
-      ${r.notes ? `<div class="nutr-rec-sub" style="font-style:italic;margin-top:4px">${r.notes}</div>` : ''}
+      ${r.notes ? `<div class="nutr-rec-sub" style="font-style:italic;margin-top:4px">${esc(r.notes)}</div>` : ''}
       <div class="nutr-rec-time">${timePart}</div>
     </div>
     ${actionBtn}
@@ -1586,12 +1587,12 @@ function buildSum(p){
   const vStr=VITALS_DEF.map(v=>{const val=p.vitals[v.k];const st=val&&R[v.k]?vSt(val,R[v.k]):'';return`${v.label}=${val||'NR'} ${v.unit}${st==='alrt'?' [ALERTA]':st==='warn'?' [ATENÇÃO]':''}`;}).join('|');
   const done=p.tasks.filter(t=>t.done).map(t=>t.text).join(';')||'nenhuma';
   const pend=p.tasks.filter(t=>!t.done).map(t=>t.text).join(';')||'nenhuma';
-  const notes=p.notes.slice(0,5).map(n=>`[${ft(n.timestamp)}]${n.text}`).join('/')||'sem notas';
+  const notes=p.notes.slice(0,5).map(n=>`[${ft(n.timestamp)}]${esc(n.text)}`).join('/')||'sem notas';
   const devs=(p.devices||[]).map(d=>d.label+(d.location?' '+d.location:'')+(d.gauge?' '+d.gauge:'')).join(',')||'sem dispositivos';
-  const meds=(p.medications||[]).map(m=>`${m.name} ${m.dose}${m.unit}${m.freq==='Contínua'?' contínuo':' '+m.freq}`).join(';')||'n/r';
+  const meds=(p.medications||[]).map(m=>`${esc(m.name)} ${m.dose}${m.unit}${m.freq==='Contínua'?' contínuo':' '+m.freq}`).join(';')||'n/r';
   const nutr=nutrSummary(p);
   const alrg=p.allergies||'sem alergias conhecidas';
-  return`Cama:${p.bed}|Idade:${ageLabel(p)}${p.weightKg?'|Peso:'+p.weightKg+'kg':''}${p.gestWeeks?'|IG:'+p.gestWeeks+'s':''} ${ca?'|IC:'+ca:''}
+  return`Cama:${esc(p.bed)}|Idade:${ageLabel(p)}${p.weightKg?'|Peso:'+p.weightKg+'kg':''}${p.gestWeeks?'|IG:'+p.gestWeeks+'s':''} ${ca?'|IC:'+ca:''}
 Alergias:${alrg}
 DX:${p.diagMain||'n/e'}|Sec:${p.diagSec.join(',')||'nenhum'}
 AP:${p.antecedentes||'n/r'}
@@ -1778,7 +1779,7 @@ function startShiftAfterScan(){
   save();stopScan();renderDash();showScreen('s-dashboard');
 }
 
-// ── Modal QR (Transferir a Colega) ─────────────────────────────────────────
+// ── Modal QR (Transferir para Colega) ─────────────────────────────────────────
 function renderQRTabs(){
   const tabs=document.getElementById('qr-patient-tabs');
   const disp=document.getElementById('qr-display');
@@ -1795,7 +1796,7 @@ function renderQRTabs(){
   }
   tabs.innerHTML=active.map(p=>{
     const ri=ST.patients.indexOf(p);
-    return`<button class="btn btn-o btn-sm" onclick="showQRFor(${ri})">${p.name} · Cama ${p.bed}</button>`;
+    return`<button class="btn btn-o btn-sm" onclick="showQRFor(${ri})">${esc(p.name)} · Cama ${esc(p.bed)}</button>`;
   }).join('');
 }
 function showQRFor(ri){
@@ -1819,22 +1820,20 @@ function showQRFor(ri){
   });
   const doRender=()=>{
     if(loading)loading.style.display='none';
-    const canvas=document.createElement('canvas');
-    if(inner)inner.appendChild(canvas);
-    QRCode.toCanvas(canvas,payload,{width:220,margin:2,color:{dark:'#0F172A',light:'#FFFFFF'}},e=>{
-      if(e){
-        if(err){err.style.display='block';err.textContent='Dados demasiado grandes para QR. Reduza as notas do doente.';}
-        return;
-      }
+    if(inner)inner.innerHTML='';
+    try{
+      new QRCode(inner,{text:payload,width:220,height:220,colorDark:'#0F172A',colorLight:'#FFFFFF',correctLevel:QRCode.CorrectLevel.L});
       if(info)info.textContent=p.name+' · Cama '+p.bed;
       if(disp)disp.style.display='block';
-    });
+    }catch(e){
+      if(err){err.style.display='block';err.textContent='Dados demasiado grandes para QR. Reduza as notas do doente.';}
+    }
   };
   if(typeof QRCode==='undefined'){
     const s=document.createElement('script');
-    s.src='https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
     s.onload=doRender;
-    s.onerror=()=>{if(loading)loading.style.display='none';if(err){err.style.display='block';err.textContent='Erro ao carregar biblioteca QR. Verifique a ligação à internet.';}};
+    s.onerror=()=>{if(loading)loading.style.display='none';if(err){err.style.display='block';err.textContent='Será necessária ligação à internet para gerar QR (primeira utilização).';}};
     document.head.appendChild(s);
   } else {
     doRender();
@@ -1867,21 +1866,20 @@ function finNewShiftSamePatients(){
   save();
   closeM('modal-fin');
   showToast('Novo turno iniciado ✓','ok');
-  renderDash();
-  showScreen('s-dashboard');
+  setTimeout(()=>{renderDash();showScreen('s-dashboard');},260);
 }
 function finArchiveAll(){
   const active=ST.patients.filter(p=>p.status==='internado');
   if(!active.length){showToast('Sem doentes activos.','error');return;}
   if(!confirm('Arquivar todos os '+active.length+' doente(s) activo(s) e iniciar sessão limpa?'))return;
   const now=new Date().toISOString();
-  active.forEach(p=>{p.status='arquivado';p.dischargeAt=now;});
+  active.forEach(p=>{p.status='alta';p.dischargeAt=now;p.dischargeNote='Turno arquivado';});
   ST.shiftStart=null;
   save();
   closeM('modal-fin');
-  showToast('Doentes arquivados ✓','ok');
-  showScreen('s-setup');
-  renderSetup();
+  const _n=active.length;
+  showToast(_n+' doente(s) movido(s) para Histórico ✓ — Inicie um novo turno.','ok');
+  setTimeout(()=>{showScreen('s-setup');renderSetup();},300);
 }
 
 // ── Boot sequence ──────────────────────────────────────────────────────────
