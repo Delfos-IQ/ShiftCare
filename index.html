@@ -446,10 +446,10 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         <button class="btn-ic" onclick="openFinalizeModal()" title="Finalizar Turno" aria-label="Finalizar Turno" style="background:rgba(239,68,68,.25);border-color:rgba(239,68,68,.4)">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
-        <button class="btn-ic" onclick="goHistorico()" title="Histórico" aria-label="Ver Histórico">
+        <button class="btn-ic" onclick="goHistorico()" title="Histórico" aria-label="Histórico">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
         </button>
-        <button class="btn-ic" onclick="goAbout()" title="Sobre" aria-label="Sobre / Configurações">
+        <button class="btn-ic" onclick="goAbout()" title="Sobre" aria-label="Sobre">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r=".5" fill="currentColor"/></svg>
         </button>
       </div>
@@ -487,11 +487,11 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
   </div>
   <div class="pt-info-bar" id="pt-info-bar"></div>
   <div class="tab-bar" role="tablist">
-    <div class="tab-item active" role="tab" onclick="swTab('vitais')">Sinais Vitais</div>
-    <div class="tab-item" role="tab" onclick="swTab('cuidados')">Cuidados</div>
-    <div class="tab-item" role="tab" onclick="swTab('medicacao')">Medicação</div>
-    <div class="tab-item" role="tab" onclick="swTab('alimentacao')">Alimentação</div>
-    <div class="tab-item" role="tab" onclick="swTab('isbar')">Antec./ISBAR</div>
+    <div class="tab-item active" onclick="swTab('vitais')">Sinais Vitais</div>
+    <div class="tab-item" onclick="swTab('cuidados')">Cuidados</div>
+    <div class="tab-item" onclick="swTab('medicacao')">Medicação</div>
+    <div class="tab-item" onclick="swTab('alimentacao')">Alimentação</div>
+    <div class="tab-item" onclick="swTab('isbar')">Antec./ISBAR</div>
   </div>
   <div class="tab-body">
     <!-- VITAIS -->
@@ -551,8 +551,8 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
         </div>
         <div style="padding:0 15px 15px">
-          <div class="about-row"><span>Versão</span><span class="about-val">2.3.0</span></div>
-          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v2.3</span></div>
+          <div class="about-row"><span>Versão</span><span class="about-val">2.2.0</span></div>
+          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v2.2</span></div>
           <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
           <div class="about-row"><span>IA</span><span class="about-val">Groq LLaMA via Cloudflare Worker</span></div>
           <div class="about-row"><span>Idioma</span><span class="about-val">Português (PT)</span></div>
@@ -587,7 +587,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 
 <!-- MODALS -->
 <!-- Add Patient -->
-<div id="modal-addpt" class="modal-ov" role="dialog" aria-modal="true" aria-labelledby="modal-addpt-title">
+<div id="modal-addpt" class="modal-ov" role="dialog" aria-modal="true" aria-label="Adicionar Doente">
   <div class="modal-sheet">
     <div class="modal-hdr"><div class="modal-title">Adicionar Doente</div><button class="close-btn" onclick="closeM('modal-addpt')">✕</button></div>
     <div class="modal-body">
@@ -629,7 +629,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
   </div>
 </div>
 <!-- Discharge -->
-<div id="modal-disc" class="modal-ov" role="dialog" aria-modal="true" aria-label="Alta / Transferência">
+<div id="modal-disc" class="modal-ov" role="dialog" aria-modal="true" aria-label="Alta e Transferência">
   <div class="modal-sheet">
     <div class="modal-hdr"><div class="modal-title">Alta / Transferência</div><button class="close-btn" onclick="closeM('modal-disc')">✕</button></div>
     <div class="modal-body">
@@ -765,17 +765,6 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 
 <script>
 'use strict';
-
-// ── Security: HTML escape — prevents XSS via user-entered data ──────────────
-function esc(s){
-  if(s==null)return'';
-  return String(s)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#39;');
-}
 // ══════════════════════════════════════════════
 // MODULE: DATA
 // ══════════════════════════════════════════════
@@ -897,7 +886,7 @@ function mkPt(o){
 
 function save(){
   try{
-    localStorage.setItem('sc_v23',JSON.stringify({p:ST.patients,ss:ST.shiftStart,wu:ST.wurl}));// Note: apiKey intentionally NOT persisted to localStorage for security
+    localStorage.setItem('sc_v23',JSON.stringify({p:ST.patients,ss:ST.shiftStart,ak:ST.apiKey,wu:ST.wurl}));
     localStorage.setItem('sc_learn',JSON.stringify(LEARN));
   }catch(e){
     showToast('⚠ Erro ao guardar dados: '+e.message+'. Armazenamento local pode estar cheio.','error');
@@ -907,7 +896,7 @@ function loadData(){try{
   // Try v22 first, fall back to v21
   const raw=localStorage.getItem('sc_v23')||localStorage.getItem('sc_v22')||localStorage.getItem('sc_v21')||'{}';
   const d=JSON.parse(raw);
-  if(d.p)ST.patients=d.p;if(d.ss)ST.shiftStart=d.ss;if(d.wu)ST.wurl=d.wu;/* apiKey not loaded from storage */
+  if(d.p)ST.patients=d.p;if(d.ss)ST.shiftStart=d.ss;if(d.ak)ST.apiKey=d.ak;if(d.wu)ST.wurl=d.wu;
   const l=JSON.parse(localStorage.getItem('sc_learn')||'{}');if(l.meds)LEARN=l;
 }catch(e){}}
 function learnMed(n){if(!n)return;LEARN.meds[n.toLowerCase()]=(LEARN.meds[n.toLowerCase()]||0)+1;save();}
@@ -962,24 +951,7 @@ function addPt(sc){
 function rmSetupPt(i){ST.patients.splice(i,1);renderSetup();save();}
 function renderSetup(){
   const pts=ST.patients.filter(p=>p.status==='internado');
-  el('pt-list').innerHTML=pts.map((p,i)=>{const ri=ST.patients.indexOf(p);return`<div class="pt-item"><div class="pti"><div class="pti-name">${esc(p.name)}</div><div class="pti-sub">Cama ${esc(p.bed)} · ${esc(ageLabel(p))}${p.weightKg?' · '+esc(String(p.weightKg))+'kg':''}${p.diagMain?' · '+esc(p.diagMain):''}</div></div><button class="rm-btn" onclick="rmSetupPt(${ri})">×</button></div>`;}).join('');
-  el('start-area').style.display=pts.length?'block':'none';
-  // Show/hide Continuar button
-  const btnCont=el('btn-continuar');
-  const subCont=el('continuar-sub');
-  if(btnCont){
-    if(pts.length&&ST.shiftStart){
-      btnCont.style.display='flex';
-      if(subCont){
-        const mins=Math.round((Date.now()-new Date(ST.shiftStart))/60000);
-        const since=mins<60?mins+' min':Math.floor(mins/60)+'h'+(mins%60?''+mins%60+'min':'');
-        subCont.textContent=pts.length+' doente(s) guardado(s) · turno há '+since;
-      }
-    } else {
-      btnCont.style.display='none';
-    }
-  }
-}</div><div class="pti-sub">Cama ${p.bed} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}${p.diagMain?' · '+p.diagMain:''}</div></div><button class="rm-btn" onclick="rmSetupPt(${ri})">×</button></div>`;}).join('');
+  el('pt-list').innerHTML=pts.map((p,pi)=>{const ri=ST.patients.indexOf(p);return`<div class="pt-item"><div class="pti"><div class="pti-name">${p.name}</div><div class="pti-sub">Cama ${p.bed} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}${p.diagMain?' · '+p.diagMain:''}</div></div><button class="rm-btn" onclick="rmSetupPt(${ri})">×</button></div>`;}).join('');
   el('start-area').style.display=pts.length?'block':'none';
   // Show "Continuar Turno" button if there's a saved shift with active patients
   const btnCont=el('btn-continuar');
@@ -1026,19 +998,19 @@ function dashCard(p,ri){
             <button class="btn-discharge" data-disc="${ri}">Alta/Transf.</button>
           </div>
           <div class="pc-meta-grid">
-            <div class="pc-meta-item">🛏 <strong>Cama ${esc(p.bed)}</strong></div>
+            <div class="pc-meta-item">🛏 <strong>Cama ${p.bed}</strong></div>
             <div class="pc-meta-item">📅 <strong>${ageLabel(p)}</strong></div>
             ${p.weightKg?`<div class="pc-meta-item">⚖ <strong>${p.weightKg}kg</strong></div>`:''}
             ${p.gestWeeks?`<div class="pc-meta-item">🍼 <strong>IG ${p.gestWeeks}s${p.gestDays?'+'+p.gestDays+'d':''}</strong></div>`:''}
             ${ca?`<div class="pc-meta-item" style="grid-column:1/-1">📊 <strong>${ca}</strong></div>`:''}
           </div>
-          ${p.diagMain?`<div class="pc-diag">${esc(p.diagMain)}</div>`:''}
-          ${alrg?`<div class="pc-alrg">⚠ Alergia: ${esc(alrg)}</div>`:''}
+          ${p.diagMain?`<div class="pc-diag">${p.diagMain}</div>`:''}
+          ${alrg?`<div class="pc-alrg">⚠ Alergia: ${alrg}</div>`:''}
         </div>
       </div>
     </div>
     <div class="pc-body">
-      ${ac>0?`<div class="alert-ban" role="alert" aria-live="assertive">⚠ ${ac} constante(s) fora do intervalo pediátrico</div>`:''}
+      ${ac>0?`<div class="alert-ban" role="alert">⚠ ${ac} constante(s) fora do intervalo pediátrico</div>`:''}
       <div class="pc-sect"><div class="sect-lbl">Sinais Vitais</div><div class="vt-row">${vRow}</div>${p.vitals.lastUp?`<div style="font-size:10px;color:var(--t3);margin-top:3px">Atualizado: ${ft(p.vitals.lastUp)}</div>`:''}</div>
       <div class="pc-sect"><div class="sect-lbl">Cuidados</div><div class="task-prog"><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div><span class="prog-txt">${td}/${p.tasks.length}</span></div></div>
       ${dashSituacao(p)}
@@ -1080,7 +1052,7 @@ function dashSituacao(p){
   // ── Última nota ───────────────────────────────────
   if(p.notes&&p.notes.length){
     const n0=p.notes[0];
-    groups.push({label:'Última Nota',pills:[`<span class="sit-pill sp-note">[${ft(n0.timestamp)}] ${esc(n0.text.slice(0,60))}${n0.text.length>60?'…':''}</span>`]});
+    groups.push({label:'Última Nota',pills:[`<span class="sit-pill sp-note">[${ft(n0.timestamp)}] ${n0.text.slice(0,60)}${n0.text.length>60?'…':''}</span>`]});
   }
 
   if(!groups.length) return`<div class="sit-section"><div class="sit-label"><span class="sit-dot"></span>Ponto de Situação</div><div class="sit-empty">Sem registos activos</div></div>`;
@@ -1135,7 +1107,7 @@ function renInfoBar(){
   const p=ST.patients[ST.idx];if(!p)return;
   const {pills,alrg}=ptInfoPills(p);
   const e=el('pt-info-bar');if(!e)return;
-  e.innerHTML=`<div class="pt-info-name">${esc(p.name)}</div><div class="pt-info-meta">${pills.map(x=>`<span class="pt-info-pill">${x}</span>`).join('')}${alrg?`<span class="pt-info-pill alrg">⚠ ${alrg}</span>`:''}</div>`;
+  e.innerHTML=`<div class="pt-info-name">${p.name}</div><div class="pt-info-meta">${pills.map(x=>`<span class="pt-info-pill">${x}</span>`).join('')}${alrg?`<span class="pt-info-pill alrg">⚠ ${alrg}</span>`:''}</div>`;
 }
 function updBadge(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);el('det-badge').innerHTML=ac>0?`<span class="badge badge-r">⚠ ${ac}</span>`:''}
 
@@ -1166,7 +1138,7 @@ function renVitals(){
   renVAlert();
 }
 function onVI(k,v){const p=ST.patients[ST.idx];if(!p)return;p.vitals[k]=v;p.vitals.lastUp=new Date().toISOString();const R=vRanges(p.ageDays);const st=v&&R[k]?vSt(v,R[k]):'';const vc=el('vc-'+k);if(vc)vc.className='vc '+st;renVAlert();updBadge();save();}
-function renVAlert(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);const e=el('vitals-alert');if(e)e.innerHTML=ac>0?`<div class="alert-ban" role="alert" aria-live="assertive">⚠ ${ac} constante(s) fora do intervalo pediátrico normal</div>`:'';}
+function renVAlert(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);const e=el('vitals-alert');if(e)e.innerHTML=ac>0?`<div class="alert-ban" role="alert">⚠ ${ac} constante(s) fora do intervalo pediátrico normal</div>`:'';}
 function clearVit(){const p=ST.patients[ST.idx];if(!p||!confirm('Limpar sinais vitais?'))return;VITALS_DEF.forEach(v=>p.vitals[v.k]='');save();renVitals();}
 function openCam(){const rawUrl=(ST.wurl||'').trim();const hasWorker=rawUrl&&!rawUrl.startsWith('__');if(!hasWorker&&!ST.apiKey){alert('Configure o Worker URL ou Chave Groq em "Sobre".');return;}el('photo-input').click();}
 async function onPhoto(evt){const file=evt.target.files[0];if(!file)return;const r=new FileReader();r.onload=async e=>{const b64=e.target.result.split(',')[1],mt=file.type||'image/jpeg';el('capture-img').src=e.target.result;el('capture-preview-wrap').style.display='block';const btn=el('cam-btn');if(btn){btn.textContent='⏳ A interpretar...';btn.disabled=true;}try{const res=await callAI({type:'vitals_image',b64,mt});const vals=JSON.parse((res.text||'{}').replace(/```json|```/g,'').trim());const p=ST.patients[ST.idx];if(!p)return;VITALS_DEF.forEach(v=>{if(vals[v.k]!==undefined)p.vitals[v.k]=String(vals[v.k]);});p.vitals.lastUp=new Date().toISOString();save();renVitals();alert(`✅ ${Object.keys(vals).length} valor(es) interpretado(s). Verifique!`);}catch(err){alert('Erro ao interpretar: '+err.message);}finally{el('capture-preview-wrap').style.display='none';if(btn){btn.textContent='📷 Capturar Ecrã';btn.disabled=false;}}};r.readAsDataURL(file);evt.target.value='';}
@@ -1182,9 +1154,9 @@ function renEnf(){
   const p=ST.patients[ST.idx];if(!p)return;
   const chkSvg='<svg class="chk-svg" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const abcde=ABCDE_DEF.map(a=>`<div class="abcde-item"><div class="abcde-hdr"><div class="abcde-key">${a.key}</div><div><div class="abcde-title">${a.title}</div><div class="abcde-desc">${a.desc}</div></div></div><textarea class="abcde-inp" rows="2" placeholder="Observações..." oninput="saveABCDE('${a.key}',this.value)">${p.abcde?.[a.key]||''}</textarea></div>`).join('');
-  const tasks=p.tasks.map(t=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTask('${t.id}')">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${esc(t.text)}</div>${t.done&&t.doneAt?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div></div>`).join('');
+  const tasks=p.tasks.map(t=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTask('${t.id}')">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${t.text}</div>${t.done&&t.doneAt?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div></div>`).join('');
   const uc=UNIT_CHECK.map((item,i)=>{const done=p.unitCheck?.[i]||false;return`<div class="task-it"><div class="task-chk ${done?'done':''}" onclick="tglUC(${i})">${done?chkSvg:''}</div><div class="task-lbl ${done?'done':''}">${item}</div></div>`;}).join('');
-  const notes=p.notes.length?p.notes.map(n=>`<div class="note-it"><span class="note-t">${ft(n.timestamp)}</span><span class="note-txt">${esc(n.text)}</span></div>`).join(''):'<div class="empty-st">Sem notas</div>';
+  const notes=p.notes.length?p.notes.map(n=>`<div class="note-it"><span class="note-t">${ft(n.timestamp)}</span><span class="note-txt">${n.text}</span></div>`).join(''):'<div class="empty-st">Sem notas</div>';
   el('csec-enf').innerHTML=`
     <div class="sub-card"><div class="sub-card-hdr">Avaliação ABCDE</div>${abcde}</div>
     <div class="sub-card"><div class="sub-card-hdr">Lista de Cuidados</div>${tasks}<div class="task-add"><input id="new-task-inp" type="text" placeholder="Adicionar cuidado..."><button class="btn btn-o btn-sm" onclick="addCustomTask()">+</button></div></div>
@@ -1211,31 +1183,24 @@ function renEnf(){
 function focusNoteInp(){const e=el('note-inp-enf');if(e){e.focus();e.scrollIntoView({behavior:'smooth'});}}
 function addNoteEnf(){const inp=el('note-inp-enf');if(!inp||!inp.value.trim())return;addNoteText(inp.value.trim());inp.value='';showToast('Nota registada ✓','ok');renEnf();}
 function addNoteText(txt){const p=ST.patients[ST.idx];if(!p)return;p.notes.unshift({id:uid(),text:txt,timestamp:new Date().toISOString()});save();}
-let _abcdeTimer={};
-function saveABCDE(k,v){
-  const p=ST.patients[ST.idx];if(!p)return;
-  if(!p.abcde)p.abcde={};
-  p.abcde[k]=v;
-  clearTimeout(_abcdeTimer[k]);
-  _abcdeTimer[k]=setTimeout(()=>save(),600);
-}
+let _abcT={};function saveABCDE(k,v){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcde)p.abcde={};p.abcde[k]=v;clearTimeout(_abcT[k]);_abcT[k]=setTimeout(()=>save(),600);}
 function tglUC(i){const p=ST.patients[ST.idx];if(!p)return;if(!p.unitCheck)p.unitCheck={};p.unitCheck[i]=!p.unitCheck[i];save();renEnf();}
 function tglTask(tid){
   const p=ST.patients[ST.idx];if(!p)return;
   const t=p.tasks.find(x=>String(x.id)===String(tid));if(!t)return;
   t.done=!t.done;t.doneAt=t.done?new Date().toISOString():null;
-  if(t.done){learnTask(t.text);showToast(t.text.slice(0,30)+' ✓','ok');}save();renEnf();
+  if(t.done)learnTask(t.text);save();renEnf();
 }
 function addCustomTask(){const inp=el('new-task-inp');if(!inp||!inp.value.trim())return;const p=ST.patients[ST.idx];if(!p)return;p.tasks.push({id:uid(),text:inp.value.trim(),done:false,doneAt:null});learnTask(inp.value.trim());inp.value='';save();renEnf();}
 
 // Quick notes
-// ST.qSel moved to ST.qSel
-function renQCats(filter){const e=el('quick-cats');if(!e)return;const q=filter.toLowerCase();e.innerHTML=QCATS.map(c=>{const items=q?c.items.filter(i=>i.toLowerCase().includes(q)||c.cat.toLowerCase().includes(q)):c.items;if(q&&!items.length)return'';return`<div class="cat-wrap"><div class="cat-hdr${q?' open':''}" onclick="tglCat(this)"><span class="cat-hdr-name">${c.cat}</span><span class="cat-arr">›</span></div><div class="cat-items${q?' open':''}">${items.map(item=>{const sel=ST.qSel.some(s=>s.cat===c.cat&&s.item===item);return`<button class="i-chip${sel?' sel':''}" onclick="selQ('${c.cat}','${item}')">${item}</button>`;}).join('')}</div></div>`;}).join('');}
+let _qSel=[];
+function renQCats(filter){const e=el('quick-cats');if(!e)return;const q=filter.toLowerCase();e.innerHTML=QCATS.map(c=>{const items=q?c.items.filter(i=>i.toLowerCase().includes(q)||c.cat.toLowerCase().includes(q)):c.items;if(q&&!items.length)return'';return`<div class="cat-wrap"><div class="cat-hdr${q?' open':''}" onclick="tglCat(this)"><span class="cat-hdr-name">${c.cat}</span><span class="cat-arr">›</span></div><div class="cat-items${q?' open':''}">${items.map(item=>{const sel=_qSel.some(s=>s.cat===c.cat&&s.item===item);return`<button class="i-chip${sel?' sel':''}" onclick="selQ('${c.cat}','${item}')">${item}</button>`;}).join('')}</div></div>`;}).join('');}
 function tglCat(hdr){hdr.classList.toggle('open');const it=hdr.nextElementSibling;if(it)it.classList.toggle('open');}
-function selQ(cat,item){const i=ST.qSel.findIndex(s=>s.cat===cat&&s.item===item);if(i>=0)ST.qSel.splice(i,1);else ST.qSel.push({cat,item});updQB();renQCats(el('quick-search')?.value||'');}
-function updQB(){const b=el('qbuilder'),pv=el('qb-prev');if(!b||!pv)return;if(!ST.qSel.length){b.classList.remove('vis');return;}b.classList.add('vis');pv.textContent=ST.qSel.map(s=>`${s.cat} › ${s.item}`).join(' | ');}
-function confQ(){if(!ST.qSel.length)return;addNoteText(ST.qSel.map(s=>`${s.cat} › ${s.item}`).join(' | '));clrQ();renEnf();}
-function clrQ(){ST.qSel=[];updQB();renQCats(el('quick-search')?.value||'');}
+function selQ(cat,item){const i=_qSel.findIndex(s=>s.cat===cat&&s.item===item);if(i>=0)_qSel.splice(i,1);else _qSel.push({cat,item});updQB();renQCats(el('quick-search')?.value||'');}
+function updQB(){const b=el('qbuilder'),pv=el('qb-prev');if(!b||!pv)return;if(!_qSel.length){b.classList.remove('vis');return;}b.classList.add('vis');pv.textContent=_qSel.map(s=>`${s.cat} › ${s.item}`).join(' | ');}
+function confQ(){if(!_qSel.length)return;addNoteText(_qSel.map(s=>`${s.cat} › ${s.item}`).join(' | '));clrQ();renEnf();}
+function clrQ(){_qSel=[];updQB();renQCats(el('quick-search')?.value||'');}
 function filtQ(v){renQCats(v);}
 
 // ─── Dispositivos ────────────────────────────
@@ -1246,7 +1211,7 @@ function renDev(){
   const chkSvg='<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const activeDots=DEV_TYPES.filter(dt=>!dt.neo||cat==='neo').map(dt=>{const a=p.devices.some(d=>d.typeId===dt.id);if(!a)return'';const col=dt.id.includes('art')||dt.id==='uac'?'#DC2626':dt.id.includes('cvc')||dt.id==='picc'||dt.id==='uvc'?'#3B82F6':dt.id==='ett'||dt.id==='capno'?'#10B981':dt.id.includes('epi')||dt.id.includes('peri')||dt.id==='bis'?'#7C3AED':'#F59E0B';return`<circle cx="${dt.x}" cy="${dt.y}" r="3.5" fill="${col}" stroke="white" stroke-width="1"><title>${dt.label}</title></circle>`;}).join('');
   const fig=cat==='neo'?`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="12" r="10" fill="#FDE68A" stroke="#D97706"/><ellipse cx="50" cy="35" rx="14" ry="18" fill="#FDE68A" stroke="#D97706"/><path d="M36 27 Q26 32 22 44" stroke-linecap="round"/><path d="M64 27 Q74 32 78 44" stroke-linecap="round"/><path d="M43 52 Q40 65 38 78" stroke-linecap="round"/><path d="M57 52 Q60 65 62 78" stroke-linecap="round"/><circle cx="50" cy="40" r="2" fill="#E5E7EB" stroke="#9CA3AF"/></g>`:cat==='lac'?`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="11" r="9" fill="#FDE68A" stroke="#D97706"/><rect x="39" y="22" width="22" height="26" rx="4" fill="#FDE68A" stroke="#D97706"/><path d="M39 26 Q27 30 24 44" stroke-linecap="round"/><path d="M61 26 Q73 30 76 44" stroke-linecap="round"/><path d="M43 48 L40 70" stroke-linecap="round"/><path d="M57 48 L60 70" stroke-linecap="round"/></g>`:`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="10" r="8" fill="#FDE68A" stroke="#D97706"/><rect x="40" y="20" width="20" height="24" rx="3" fill="#FDE68A" stroke="#D97706"/><path d="M40 24 Q30 28 27 42" stroke-linecap="round"/><path d="M60 24 Q70 28 73 42" stroke-linecap="round"/><path d="M44 44 L41 65" stroke-linecap="round"/><path d="M56 44 L59 65" stroke-linecap="round"/></g>`;
-  const devList=p.devices.map((d,i)=>`<div class="dev-item"><span class="dev-icon">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl">${esc(d.label)}</div>${d.location?`<div class="dev-sub">${d.location}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${d.gauge}${d.side?' · '+d.side:''}</div>`:''}</div><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red);border-color:#FECACA" onclick="retireDev(${i})">Retirar</button></div>`).join('')||'<div class="empty-st">Sem dispositivos activos</div>';
+  const devList=p.devices.map((d,i)=>`<div class="dev-item"><span class="dev-icon">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl">${d.label}</div>${d.location?`<div class="dev-sub">${d.location}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${d.gauge}${d.side?' · '+d.side:''}</div>`:''}</div><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red);border-color:#FECACA" onclick="retireDev(${i})">Retirar</button></div>`).join('')||'<div class="empty-st">Sem dispositivos activos</div>';
   const inactList=p.devInactive.map((d,i)=>`<div class="dev-item" style="opacity:.6"><span class="dev-icon" style="opacity:.5">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl" style="text-decoration:line-through">${d.label}</div>${d.location?`<div class="dev-sub">${d.location}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${d.gauge}${d.side?' · '+d.side:''}</div>`:''}<div class="dev-removed-lbl">Retirado: ${d.removedAt?fd(d.removedAt):'—'}</div></div><button class="rm-btn" onclick="delInactiveDev(${i})" title="Eliminar">🗑</button></div>`).join('');
   const chips=DEV_TYPES.filter(dt=>!dt.neo||cat==='neo').map(dt=>{const a=p.devices.some(d=>d.typeId===dt.id);return`<button class="i-chip${a?' sel':''}" onclick="tglDevQ('${dt.id}')" style="font-size:11px;padding:5px 9px">${dt.icon} ${dt.label.split(' ').slice(-1)[0]}</button>`;}).join('');
   el('csec-dev').innerHTML=`
@@ -1272,7 +1237,7 @@ function confDev(){const p=ST.patients[ST.idx];if(!p)return;const typeId=el('dev
 function renTodo(){
   const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];
   const chkSvg='<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const listH=p.todos.map((t,i)=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTodo(${i})">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${esc(t.text)}</div>${t.done?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div><button class="rm-btn" onclick="rmTodo(${i})">×</button></div>`).join('')||'<div class="empty-st">Sem tarefas</div>';
+  const listH=p.todos.map((t,i)=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTodo(${i})">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${t.text}</div>${t.done?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div><button class="rm-btn" onclick="rmTodo(${i})">×</button></div>`).join('')||'<div class="empty-st">Sem tarefas</div>';
   const qH=TODO_ITEMS.map(c=>`<div style="margin-bottom:9px"><div class="sect-lbl">${c.cat}</div><div style="display:flex;flex-wrap:wrap;gap:5px">${c.items.map(item=>`<button class="i-chip" onclick="addTodoQ('${item}')">${item}</button>`).join('')}</div></div>`).join('');
   el('csec-todo').innerHTML=`<div class="sub-card"><div class="sub-card-hdr">To-Do do Turno</div>${listH}<div class="task-add"><input id="todo-inp" type="text" placeholder="Adicionar tarefa..."><button class="btn btn-o btn-sm" onclick="addTodoC()">+</button></div></div><div class="sub-card"><div class="sub-card-hdr">Acesso Rápido</div><div style="padding:12px">${qH}</div></div>`;
 }
@@ -1678,11 +1643,7 @@ document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const id=docum
 
 const bd=el('build-date');if(bd)bd.textContent=new Date().toLocaleDateString('pt-PT',{year:'numeric',month:'long',day:'numeric'});
 
-loadData();
-if(ST.patients.filter(p=>p.status==='internado').length&&ST.shiftStart){renderDash();showScreen('s-dashboard');}
-else{renderSetup();showScreen('s-setup');}
-</script>
-<script>
+
 // ══════════════════════════════════════════════
 // FASE 1 — Funções implementadas
 // ══════════════════════════════════════════════
@@ -1921,6 +1882,16 @@ function finArchiveAll(){
   showToast('Doentes arquivados ✓','ok');
   showScreen('s-setup');
   renderSetup();
+}
+
+// ── Boot sequence ──────────────────────────────────────────────────────────
+loadData();
+if(ST.patients.filter(p=>p.status==='internado').length&&ST.shiftStart){
+  renderDash();
+  showScreen('s-dashboard');
+} else {
+  renderSetup();
+  showScreen('s-setup');
 }
 </script>
 </body>
