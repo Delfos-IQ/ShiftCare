@@ -6,44 +6,83 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ShiftCare">
-<meta name="theme-color" content="#0D9488">
+<meta name="theme-color" content="#0F766E" id="meta-theme-color">
 <title>ShiftCare — Gestão de Turno</title>
 <style>
+/* ── ShiftCare theme variables ── */
 :root{
-  /* Brand — teal refinado */
-  --p:#0D9488;--pd:#0F766E;--pl:#E6FAF8;--pm:#5EEAD4;--pdk:#134E4A;
-  /* Superfícies */
-  --bg:#F4F7F9;--s:#FFFFFF;--s2:#F1F5F8;--s3:#E8EDF2;
-  /* Bordas */
-  --b:#DDE3EA;--b2:#B0BDC8;
-  /* Texto */
-  --t:#0F172A;--t2:#3D5166;--t3:#8FA3B5;
-  /* Semântico */
-  --red:#DC2626;--rbg:#FFF0F0;--rbd:#FECACA;
-  --org:#D97706;--obg:#FFFBEB;
-  --grn:#059669;--gbg:#EDFAF4;--gborder:#6EE7B7;
-  --vio:#7C3AED;--viobg:#F0EDFE;
-  /* Geometria e sombras */
+  /* Brand */
+  --p:#0D9488;--pd:#0F766E;--pm:#5EEAD4;--pdk:#134E4A;
+  /* Geometry */
   --rad:14px;--rads:9px;
-  --shsm:0 1px 3px rgba(15,23,42,.06);
-  --sh:0 2px 8px rgba(15,23,42,.08);
-  --shm:0 4px 18px rgba(15,23,42,.11);
-  --shl:0 10px 32px rgba(15,23,42,.14)
 }
+/* Dark theme (default) */
+:root,.dark{
+  --pl:rgba(13,148,136,0.15);
+  --bg:#060B18;--s:#0C1427;--s2:#111C35;--s3:#172240;
+  --b:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.13);
+  --t:#E2EAF4;--t2:#7A92B4;--t3:#3E5272;
+  --red:#F87171;--rbg:rgba(248,113,113,0.12);--rbd:rgba(248,113,113,0.3);
+  --org:#FBBF24;--obg:rgba(251,191,36,0.12);
+  --grn:#34D399;--gbg:rgba(52,211,153,0.12);--gborder:rgba(52,211,153,0.35);
+  --vio:#A78BFA;--viobg:rgba(167,139,250,0.12);
+  --shsm:0 1px 4px rgba(0,0,0,0.3);
+  --sh:0 2px 10px rgba(0,0,0,0.35);
+  --shm:0 4px 20px rgba(0,0,0,0.45);
+  --shl:0 10px 36px rgba(0,0,0,0.55);
+  color-scheme:dark;
+}
+/* Light theme */
+.light{
+  --pl:rgba(13,148,136,0.10);
+  --bg:#F0FDFA;--s:#FFFFFF;--s2:#F8FAFC;--s3:#EEF6F5;
+  --b:rgba(0,0,0,0.09);--b2:rgba(0,0,0,0.15);
+  --t:#0F172A;--t2:#475569;--t3:#94A3B8;
+  --red:#DC2626;--rbg:#FEF2F2;--rbd:#FECACA;
+  --org:#D97706;--obg:#FFFBEB;
+  --grn:#059669;--gbg:#ECFDF5;--gborder:#6EE7B7;
+  --vio:#7C3AED;--viobg:#EDE9FE;
+  --shsm:0 1px 3px rgba(0,0,0,0.07);
+  --sh:0 2px 8px rgba(0,0,0,0.09);
+  --shm:0 4px 16px rgba(0,0,0,0.11);
+  --shl:0 10px 32px rgba(0,0,0,0.14);
+  color-scheme:light;
+}
+/* System preference: if no manual override, follow OS */
+@media(prefers-color-scheme:light){
+  :root:not(.dark){
+    --pl:rgba(13,148,136,0.10);
+    --bg:#F0FDFA;--s:#FFFFFF;--s2:#F8FAFC;--s3:#EEF6F5;
+    --b:rgba(0,0,0,0.09);--b2:rgba(0,0,0,0.15);
+    --t:#0F172A;--t2:#475569;--t3:#94A3B8;
+    --red:#DC2626;--rbg:#FEF2F2;--rbd:#FECACA;
+    --org:#D97706;--obg:#FFFBEB;
+    --grn:#059669;--gbg:#ECFDF5;--gborder:#6EE7B7;
+    --vio:#7C3AED;--viobg:#EDE9FE;
+    --shsm:0 1px 3px rgba(0,0,0,0.07);
+    --sh:0 2px 8px rgba(0,0,0,0.09);
+    --shm:0 4px 16px rgba(0,0,0,0.11);
+    --shl:0 10px 32px rgba(0,0,0,0.14);
+    color-scheme:light;
+  }
+}
+/* Theme toggle button */
+.theme-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;padding:0;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;transition:all .2s}
+.light .theme-btn{background:rgba(0,0,0,.08);border-color:rgba(0,0,0,.15);color:var(--t)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;transition:opacity .18s,transform .18s}
 .screen.hidden{opacity:0;pointer-events:none;transform:translateX(14px)}
-input,textarea,select{font-family:inherit;font-size:14px;color:var(--t);background:var(--s2);border:1.5px solid var(--b);border-radius:var(--rads);padding:9px 11px;width:100%;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
-input:focus,textarea:focus,select:focus{border-color:var(--p);background:var(--s)}
+input,textarea,select{font-family:inherit;font-size:14px;color:var(--t);background:var(--s2);border:1.5px solid var(--b2);border-radius:var(--rads);padding:9px 11px;width:100%;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
+input:focus,textarea:focus,select:focus{border-color:var(--p);background:var(--s3)}
 textarea{resize:vertical;min-height:75px}
 label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:none;border-radius:var(--rads);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .14s;-webkit-user-select:none;user-select:none}
 .btn-p{background:var(--p);color:#fff;padding:11px 20px;border-radius:var(--rad)}
 .btn-p:active{background:var(--pd);transform:scale(.97)}
-.btn-o{background:var(--s);border:1.5px solid var(--b);color:var(--t);padding:9px 14px}
-.btn-o:active{background:var(--s2)}
+.btn-o{background:var(--s2);border:1.5px solid var(--b2);color:var(--t);padding:9px 14px}
+.btn-o:active{background:var(--s3)}
 .btn-g{background:transparent;color:rgba(255,255,255,.85);padding:6px 4px;border:none;cursor:pointer;display:flex;align-items:center}
 .btn-ic{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;padding:0;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .btn-sm{padding:7px 11px;font-size:12px}
@@ -98,7 +137,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .cards-wrap{position:relative;flex:1;overflow:hidden}
 .cards-track{display:flex;gap:13px;height:100%;padding:11px 46px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;align-items:stretch}
 .cards-track::-webkit-scrollbar{display:none}
-.pt-card{flex:0 0 min(calc(100vw - 92px),380px);scroll-snap-align:center;background:var(--s);border-radius:var(--rad);border:1px solid var(--b);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shm)}
+.pt-card{flex:0 0 min(calc(100vw - 92px),380px);scroll-snap-align:center;background:var(--s);border-radius:var(--rad);border:1px solid var(--b2);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shm)}
 .pt-card.has-alert{border:2px solid var(--red)}
 .pc-hdr{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);padding:13px 14px;color:#fff;flex-shrink:0}
 .pc-name{font-size:18px;font-weight:800;letter-spacing:-.3px;margin-bottom:5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
@@ -124,7 +163,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .prog-fill{height:100%;background:var(--p);border-radius:3px}
 .prog-txt{font-size:11px;font-weight:700;color:var(--t2);white-space:nowrap}
 .alert-ban{background:var(--rbg);border-left:3px solid var(--red);padding:7px 11px;margin:7px;border-radius:var(--rads);font-size:11px;font-weight:700;color:var(--red)}
-.nav-arr{position:absolute;top:50%;transform:translateY(-50%);z-index:50;width:38px;height:38px;border-radius:50%;background:var(--s);border:none;box-shadow:var(--shm);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--t);-webkit-user-select:none;user-select:none}
+.nav-arr{position:absolute;top:50%;transform:translateY(-50%);z-index:50;width:38px;height:38px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);box-shadow:var(--shm);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--t);-webkit-user-select:none;user-select:none}
 .nav-arr:active{transform:translateY(-50%) scale(.9)}
 .nav-l{left:4px}.nav-r{right:4px}
 .fab{position:fixed;bottom:16px;right:14px;width:48px;height:48px;border-radius:50%;background:var(--p);color:#fff;border:none;font-size:22px;cursor:pointer;box-shadow:var(--shl);display:flex;align-items:center;justify-content:center;z-index:100}
@@ -136,7 +175,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .tab-bar{background:var(--s);border-bottom:1px solid var(--b);display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
 .tab-bar::-webkit-scrollbar{display:none}
 .tab-item{flex:0 0 auto;padding:9px 12px;font-size:10px;font-weight:700;color:var(--t3);border-bottom:2.5px solid transparent;cursor:pointer;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em}
-.tab-item.active{color:var(--p);border-bottom-color:var(--p)}
+.tab-item.active{color:var(--pm);border-bottom-color:var(--pm)}
 .tab-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .tab-pane{display:none;padding:13px}
 .tab-pane.active{display:block}
@@ -273,25 +312,25 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .sit-group-lbl{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
 .sit-pills{display:flex;flex-wrap:wrap;gap:4px}
 .sit-pill{display:inline-flex;align-items:center;gap:3px;padding:3px 7px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;border:1px solid transparent}
-.sp-dev{background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE}
-.sp-med{background:#F0FDF4;color:#166534;border-color:#BBF7D0}
+.sp-dev{background:rgba(59,130,246,0.15);color:#93C5FD;border-color:rgba(59,130,246,0.3)}
+.sp-med{background:rgba(52,211,153,0.12);color:#6EE7B7;border-color:rgba(52,211,153,0.3)}
 .sp-perf-ev{background:var(--pl);color:var(--pd);border-color:var(--pm)}
 .sp-perf-epi{background:var(--viobg);color:var(--vio);border-color:#C4B5FD}
-.sp-nutr{background:#FFF7ED;color:#9A3412;border-color:#FED7AA}
+.sp-nutr{background:rgba(251,146,60,0.12);color:#FCA5A5;border-color:rgba(251,146,60,0.3)}
 .sp-note{background:var(--s2);color:var(--t2);border-color:var(--b);font-weight:400;font-style:italic}
-.sp-todo{background:#FFFBEB;color:#92400E;border-color:#FDE68A}
-.sp-alert{background:var(--rbg);color:var(--red);border-color:#FECACA}
+.sp-todo{background:rgba(251,191,36,0.12);color:#FDE68A;border-color:rgba(251,191,36,0.3)}
+.sp-alert{background:var(--rbg);color:var(--red);border-color:var(--rbd)}
 .sit-empty{font-size:11px;color:var(--t3);font-style:italic}
 /* Modals */
 .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .2s;pointer-events:none}
 .modal-ov.open{opacity:1;pointer-events:all}
-.modal-sheet{background:var(--s);border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:92vh;display:flex;flex-direction:column;transform:translateY(20px);transition:transform .22s}
+.modal-sheet{background:var(--s);border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:92vh;display:flex;flex-direction:column;transform:translateY(20px);transition:transform .22s;border:1px solid var(--b2);border-bottom:none}
 .modal-ov.open .modal-sheet{transform:translateY(0)}
 .modal-hdr{padding:13px 15px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .modal-title{font-size:15px;font-weight:800}
 .modal-body{padding:15px;overflow-y:auto;flex:1}
 .modal-foot{padding:12px 15px;border-top:1px solid var(--b);flex-shrink:0}
-.close-btn{width:26px;height:26px;border-radius:50%;background:var(--s2);border:1px solid var(--b);font-size:14px;cursor:pointer;color:var(--t2);display:flex;align-items:center;justify-content:center}
+.close-btn{width:26px;height:26px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);font-size:14px;cursor:pointer;color:var(--t2);display:flex;align-items:center;justify-content:center}
 #capture-preview-wrap{display:none;margin-bottom:11px;text-align:center}
 #capture-preview-wrap img{max-width:100%;border-radius:var(--rads);max-height:160px;object-fit:cover}
 #photo-input{display:none}
@@ -312,7 +351,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 /* QR */
 .qr-pt-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--b)}
 .qr-pt-row:last-child{border-bottom:none}
-.qr-canvas-area{background:#fff;border-radius:var(--rads);padding:12px;border:1px solid var(--b);display:flex;align-items:center;justify-content:center;margin:10px 0}
+.qr-canvas-area{background:#fff;border-radius:var(--rads);padding:12px;border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;margin:10px 0}
 /* Scanner */
 .scan-wrap{position:relative;border-radius:var(--rads);overflow:hidden;background:#000;min-height:260px}
 .scan-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
@@ -343,10 +382,13 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
           <div>
             <div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
-            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v2.3.0</div>
+            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v2.4.0</div>
           </div>
         </div>
-        <div id="wl-status-home" style="display:flex;justify-content:center;margin-bottom:4px"></div>
+        <div id="wl-status-home" style="display:flex;justify-content:center;margin-bottom:8px"></div>
+        <div style="background:var(--obg);border:1px solid var(--org);border-radius:var(--rads);padding:9px 13px;margin-bottom:6px;font-size:11px;color:var(--org);line-height:1.6;text-align:left">
+          <strong>Aviso:</strong> Aplicação de apoio ao registo de turno. Não substitui registos oficiais nem decisão clínica. Use com juízo crítico.
+        </div>
       </div>
 
       <!-- ── PANEL: HOME (3 mode buttons) ── -->
@@ -466,6 +508,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         <div class="dash-app-sub" id="dash-sub">A carregar...</div>
       </div>
       <div class="dash-right-btns">
+        <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" title="Tema claro/escuro" aria-label="Alternar tema">🌙</button>
         <button class="btn-ic" onclick="openFinalizeModal()" title="Finalizar Turno" aria-label="Finalizar Turno" style="background:rgba(239,68,68,.25);border-color:rgba(239,68,68,.4)">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
@@ -575,9 +618,9 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
         <div style="padding:0 15px 15px">
           <div class="about-row"><span>Versão</span><span class="about-val">2.3.0</span></div>
-          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v2.3</span></div>
+          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v2.4</span></div>
           <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
-          <div class="about-row"><span>IA</span><span class="about-val">Groq LLaMA via Cloudflare Worker</span></div>
+          <div class="about-row"><span>IA</span><span class="about-val">Integrada · Activa</span></div>
           <div class="about-row"><span>Idioma</span><span class="about-val">Português (PT)</span></div>
           <div class="about-row"><span>Ecrã activo</span><span class="about-val" id="wakelock-status">—</span></div>
           <div class="about-row"><span>Compilação</span><span class="about-val" id="build-date"></span></div>
@@ -585,16 +628,13 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
       </div>
       <div class="about-card">
         <div class="about-body">
-          <div style="font-weight:700;font-size:13px;margin-bottom:12px">Configuração de IA</div>
-          <div style="margin-bottom:11px">
-            <label>Cloudflare Worker URL</label>
-            <input type="url" id="worker-inp" placeholder="https://shiftcare.workers.dev" oninput="ST.wurl=this.value.trim();save()">
-            <div class="api-note">URL do seu Cloudflare Worker (opcional). Deixe em branco para usar a Chave API Groq directamente.</div>
-          </div>
-          <div>
-            <label>Chave API Groq (alternativa directa)</label>
-            <input type="password" id="apikey-inp" placeholder="gsk_..." oninput="ST.apiKey=this.value.trim();save()">
-            <div class="api-note">Guardada localmente no dispositivo. Nunca partilhada.</div>
+          <div style="font-weight:700;font-size:13px;margin-bottom:12px">Módulo de Inteligência Artificial</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--gbg);border:1px solid var(--gborder);border-radius:var(--rads)">
+            <span style="font-size:20px">🤖</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--grn)">IA integrada e activa</div>
+              <div style="font-size:11px;color:var(--t2);margin-top:2px">Motor de IA integrado · Activo · Não requer configuração</div>
+            </div>
           </div>
         </div>
       </div>
@@ -604,7 +644,30 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
       <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:11px" onclick="resetLearn()">Resetar Módulo de Aprendizagem</button>
-      <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v2.3.0 © 2025 · Todos os direitos reservados</div>
+      <!-- Finalidade -->
+      <div class="about-card" style="border-left:3px solid var(--p);border-radius:0 var(--rad) var(--rad) 0">
+        <div class="about-body">
+          <div style="font-size:12px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Finalidade</div>
+          <p style="font-size:13px;color:var(--t2);line-height:1.8">O ShiftCare serve como <strong style="color:var(--t)">registo temporário de intervenções e cuidados de enfermagem</strong> realizados durante o turno, até ao seu definitivo registo oficial no processo clínico do doente.</p>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="about-card" style="border-left:3px solid var(--org);border-radius:0 var(--rad) var(--rad) 0">
+        <div class="about-body">
+          <div style="font-size:12px;font-weight:700;color:var(--org);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">⚠ Aviso Importante</div>
+          <p style="font-size:12px;color:var(--t2);line-height:1.9;margin-bottom:10px">O <strong style="color:var(--t)">ShiftCare</strong> é uma aplicação de apoio ao registo de turnos de enfermagem. O seu uso pressupõe <strong style="color:var(--t)">juízo clínico e pensamento crítico</strong> por parte do profissional de saúde.</p>
+          <ul style="font-size:12px;color:var(--t2);line-height:2;padding-left:1.2rem;margin-bottom:10px">
+            <li>Não substitui os registos oficiais no processo clínico do doente.</li>
+            <li>Não substitui critérios de decisão clínica ou de enfermagem.</li>
+            <li>Não substitui o raciocínio e a responsabilidade do enfermeiro.</li>
+            <li>Não deve ser utilizada como única fonte de informação clínica.</li>
+          </ul>
+          <p style="font-size:11px;color:var(--t3);line-height:1.7;border-top:1px solid var(--b);padding-top:9px">O autor da aplicação não assume qualquer responsabilidade por decisões clínicas tomadas com base no seu uso, nem por eventuais erros, omissões ou falhas técnicas. A utilização é da exclusiva responsabilidade do profissional de saúde.</p>
+        </div>
+      </div>
+
+            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v2.3.0 © 2025 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
@@ -789,7 +852,14 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 
 <script>
 'use strict';
-// ── Utilitários base ───────────────────────────
+// ── IA integrada ──────────────────────────────
+const WORKER_URL='https://shiftcare.pedicode-app.workers.dev';
+async function callAI(payload){
+  const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.error||'Erro IA: '+r.status);}
+  return r.json();
+}
+// ── Utilitários base ──────────────────────────
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 const el=id=>document.getElementById(id);
 // ══════════════════════════════════════════════
@@ -887,7 +957,7 @@ function ptInfoPills(p){
 // ══════════════════════════════════════════════
 // MODULE: STATE
 // ══════════════════════════════════════════════
-let ST={patients:[],shiftStart:null,idx:0,screen:'s-setup',prevScreen:null,detTab:'vitais',csec:'enf',msec:'hor',isbarSec:null,ageU:'dias',ageUM:'dias',sd:[],sdm:[],qSel:[],apiKey:'',wurl:'',medModalType:'hor',discIdx:null};
+let ST={patients:[],shiftStart:null,idx:0,screen:'s-setup',prevScreen:null,detTab:'vitais',csec:'enf',msec:'hor',isbarSec:null,ageU:'dias',ageUM:'dias',sd:[],sdm:[],qSel:[],medModalType:'hor',discIdx:null};
 let LEARN={meds:{},tasks:{},todos:{}};
 
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
@@ -912,7 +982,7 @@ function mkPt(o){
 
 function save(){
   try{
-    localStorage.setItem('sc_v23',JSON.stringify({p:ST.patients,ss:ST.shiftStart,ak:ST.apiKey,wu:ST.wurl}));
+    localStorage.setItem('sc_v23',JSON.stringify({p:ST.patients,ss:ST.shiftStart}));
     localStorage.setItem('sc_learn',JSON.stringify(LEARN));
   }catch(e){
     showToast('⚠ Erro ao guardar dados: '+e.message+'. Armazenamento local pode estar cheio.','error');
@@ -922,7 +992,7 @@ function loadData(){try{
   // Try v22 first, fall back to v21
   const raw=localStorage.getItem('sc_v23')||localStorage.getItem('sc_v22')||localStorage.getItem('sc_v21')||'{}';
   const d=JSON.parse(raw);
-  if(d.p)ST.patients=d.p;if(d.ss)ST.shiftStart=d.ss;if(d.ak)ST.apiKey=d.ak;if(d.wu)ST.wurl=d.wu;
+  if(d.p)ST.patients=d.p;if(d.ss)ST.shiftStart=d.ss;
   const l=JSON.parse(localStorage.getItem('sc_learn')||'{}');if(l.meds)LEARN=l;
 }catch(e){}}
 function learnMed(n){if(!n)return;LEARN.meds[n.toLowerCase()]=(LEARN.meds[n.toLowerCase()]||0)+1;save();}
@@ -942,7 +1012,7 @@ function goBack(){
   else if(ST.screen==='s-about'){showScreen(ST.prevScreen||'s-dashboard');}
   else{showScreen('s-setup');}
 }
-function goAbout(){ST.prevScreen=ST.screen;if(el('apikey-inp'))el('apikey-inp').value=ST.apiKey;if(el('worker-inp'))el('worker-inp').value=ST.wurl;showScreen('s-about');}
+function goAbout(){ST.prevScreen=ST.screen;showScreen('s-about');}
 function goHistorico(){renderHistorico();showScreen('s-historico');}
 document.querySelectorAll('.modal-ov').forEach(e=>{e.addEventListener('click',ev=>{if(ev.target===e)closeM(e.id);});});
 
@@ -1065,7 +1135,7 @@ function dashSituacao(p){
   // ── Alertas de sinais vitais ──────────────────────
   const R=vRanges(p.ageDays);
   const vAlerts=VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&R[v.k]&&vSt(val,R[v.k])==='alrt';}).map(v=>`<span class="sit-pill sp-alert">⚠ ${v.label}=${p.vitals[v.k]} ${v.unit}</span>`);
-  const vWarns=VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&R[v.k]&&vSt(val,R[v.k])==='warn';}).map(v=>`<span class="sit-pill sp-alert" style="background:#FFF7ED;color:var(--org);border-color:#FED7AA">⚡ ${v.label}=${p.vitals[v.k]} ${v.unit}</span>`);
+  const vWarns=VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&R[v.k]&&vSt(val,R[v.k])==='warn';}).map(v=>`<span class="sit-pill sp-alert" style="background:var(--obg);color:var(--org);border-color:rgba(251,191,36,0.3)">⚡ ${v.label}=${p.vitals[v.k]} ${v.unit}</span>`);
   if(vAlerts.length||vWarns.length) groups.push({label:'Sinais Vitais',pills:[...vAlerts,...vWarns]});
 
   // ── Dispositivos activos ──────────────────────────
@@ -1181,7 +1251,7 @@ function renVitals(){
 function onVI(k,v){const p=ST.patients[ST.idx];if(!p)return;p.vitals[k]=v;p.vitals.lastUp=new Date().toISOString();const R=vRanges(p.ageDays);const st=v&&R[k]?vSt(v,R[k]):'';const vc=el('vc-'+k);if(vc)vc.className='vc '+st;renVAlert();updBadge();save();}
 function renVAlert(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);const e=el('vitals-alert');if(e)e.innerHTML=ac>0?`<div class="alert-ban" role="alert">⚠ ${ac} constante(s) fora do intervalo pediátrico normal</div>`:'';}
 function clearVit(){const p=ST.patients[ST.idx];if(!p||!confirm('Limpar sinais vitais?'))return;VITALS_DEF.forEach(v=>p.vitals[v.k]='');save();renVitals();}
-function openCam(){const rawUrl=(ST.wurl||'').trim();const hasWorker=rawUrl&&!rawUrl.startsWith('__');if(!hasWorker&&!ST.apiKey){alert('Configure o Worker URL ou Chave Groq em "Sobre".');return;}el('photo-input').click();}
+function openCam(){el('photo-input').click();}
 async function onPhoto(evt){const file=evt.target.files[0];if(!file)return;const r=new FileReader();r.onload=async e=>{const b64=e.target.result.split(',')[1],mt=file.type||'image/jpeg';el('capture-img').src=e.target.result;el('capture-preview-wrap').style.display='block';const btn=el('cam-btn');if(btn){btn.textContent='⏳ A interpretar...';btn.disabled=true;}try{const res=await callAI({type:'vitals_image',b64,mt});const vals=JSON.parse((res.text||'{}').replace(/```json|```/g,'').trim());const p=ST.patients[ST.idx];if(!p)return;VITALS_DEF.forEach(v=>{if(vals[v.k]!==undefined)p.vitals[v.k]=String(vals[v.k]);});p.vitals.lastUp=new Date().toISOString();save();renVitals();alert(`✅ ${Object.keys(vals).length} valor(es) interpretado(s). Verifique!`);}catch(err){alert('Erro ao interpretar: '+err.message);}finally{el('capture-preview-wrap').style.display='none';if(btn){btn.textContent='📷 Capturar Ecrã';btn.disabled=false;}}};r.readAsDataURL(file);evt.target.value='';}
 
 // ══════════════════════════════════════════════
@@ -1646,7 +1716,7 @@ function renISBARDetail(s){
   const back=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:13px"><button class="btn btn-o btn-sm" onclick="ST.isbarSec=null;renISBAR()">← Voltar</button><div style="font-weight:700;font-size:14px">${s==='ap'?'Antecedentes Pessoais':s==='hda'?'HDA':'Relatório ISBAR'}</div></div>`;
   if(s==='ap'){el('tab-isbar').innerHTML=`${back}<textarea id="ap-inp" rows="14" style="font-size:13px;line-height:1.7" placeholder="Alergias:&#10;Patologias crónicas:&#10;Cirurgias:&#10;Medicação habitual:&#10;Vacinação:&#10;Antecedentes familiares:">${p.antecedentes||''}</textarea><button class="btn btn-p" style="width:100%;margin-top:9px" onclick="saveAP()">Guardar</button>`;}
   else if(s==='hda'){el('tab-isbar').innerHTML=`${back}<textarea id="hda-inp" rows="14" style="font-size:13px;line-height:1.7" placeholder="Data de início dos sintomas:&#10;Motivo de internamento:&#10;Evolução clínica:&#10;Exames realizados:&#10;Intervenções efectuadas:">${p.hda||''}</textarea><button class="btn btn-p" style="width:100%;margin-top:9px" onclick="saveHDA()">Guardar</button>`;}
-  else{el('tab-isbar').innerHTML=`${back}<div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--rads);padding:11px;margin-bottom:12px;font-size:12px;color:var(--t2);line-height:1.7"><strong>ISBAR</strong> — I·S·B·A·R<br><span style="font-size:11px;color:var(--t3)">Worker: ${(ST.wurl&&!ST.wurl.startsWith('__'))?'configurado ✓':'não configurado ⚠'}</span></div><button class="btn btn-p" style="width:100%;margin-bottom:9px" onclick="genISBAR(false)">⚡ ISBAR deste doente</button><button class="btn btn-o" style="width:100%;margin-bottom:12px" onclick="genISBAR(true)">📋 ISBAR de todos os doentes</button><div id="isbar-out" style="display:none"><div class="sbar-out" id="isbar-text"></div><button class="btn btn-o" style="width:100%;margin-top:8px" onclick="copyISBAR()">Copiar Relatório</button></div>`;}
+  else{el('tab-isbar').innerHTML=`${back}<div style="background:var(--gbg);border:1px solid var(--gborder);border-radius:var(--rads);padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--t2);line-height:1.7"><strong>ISBAR</strong> — I·S·B·A·R &nbsp;<span style="color:var(--grn);font-weight:700">IA integrada ✓</span></div><button class="btn btn-p" style="width:100%;margin-bottom:9px" onclick="genISBAR(false)">⚡ ISBAR deste doente</button><button class="btn btn-o" style="width:100%;margin-bottom:12px" onclick="genISBAR(true)">📋 ISBAR de todos os doentes</button><div id="isbar-out" style="display:none"><div class="sbar-out" id="isbar-text"></div><button class="btn btn-o" style="width:100%;margin-top:8px" onclick="copyISBAR()">Copiar Relatório</button></div>`;}
 }
 function saveAP(){const p=ST.patients[ST.idx];if(!p)return;p.antecedentes=el('ap-inp').value;save();showToast('Antecedentes guardados ✓','ok');ST.isbarSec=null;renISBAR();}
 function saveHDA(){const p=ST.patients[ST.idx];if(!p)return;p.hda=el('hda-inp').value;save();showToast('HDA guardada ✓','ok');ST.isbarSec=null;renISBAR();}
@@ -1674,7 +1744,6 @@ Feito:${done}|Pendente:${pend}
 Notas:${notes}`;
 }
 async function genISBAR(all){
-  const _rawW=(ST.wurl||'').trim();if((!_rawW||_rawW.startsWith('__'))&&!ST.apiKey){alert('Configure o Worker URL ou Chave API em "Sobre".');return;}
   const out=el('isbar-out'),txt=el('isbar-text');if(!out||!txt)return;
   out.style.display='block';txt.textContent='A gerar relatório ISBAR...';txt.style.opacity='.6';
   const pts=all?ST.patients.filter(p=>p.status==='internado'):[ST.patients[ST.idx]];
@@ -1685,17 +1754,6 @@ async function genISBAR(all){
   catch(e){txt.textContent='Erro: '+e.message;txt.style.opacity='1';}
 }
 function copyISBAR(){navigator.clipboard?.writeText(el('isbar-text')?.textContent||'');const b=document.querySelector('[onclick="copyISBAR()"]');if(b){b.textContent='Copiado ✓';setTimeout(()=>b.textContent='Copiar Relatório',2000);}}
-
-// ══════════════════════════════════════════════
-// MODULE: AI
-// ══════════════════════════════════════════════
-async function callAI(payload){
-  const rawUrl=(ST.wurl||'').trim();
-  const url=(rawUrl&&!rawUrl.startsWith('__'))?'https://'+rawUrl.replace(/^https?:\/\//,''):null;
-  if(url){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw new Error('Worker erro: '+r.status);return r.json();}
-  if(ST.apiKey){const msgs=payload.messages||[{role:'system',content:'Extrai sinais vitais. JSON apenas.'},{role:'user',content:[{type:'image_url',image_url:{url:`data:${payload.mt};base64,${payload.b64}`}},{type:'text',text:'JSON apenas.'}]}];const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+ST.apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,max_tokens:1000,temperature:0.3})});if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.error?.message||'Groq erro: '+r.status);}const d=await r.json();return{text:d.choices?.[0]?.message?.content||''};}
-  throw new Error('Sem IA configurada. Configure em "Sobre".');
-}
 
 // ══════════════════════════════════════════════
 // CLOCK + INIT
@@ -1713,7 +1771,7 @@ async function reqWakeLock(){
       });
       const _ws=el('wakelock-status');if(_ws)_ws.textContent='Activo ✓';
       const badge=el('wl-status-home');
-      if(badge)badge.innerHTML='<span style="font-size:11px;background:#ECFDF5;color:#059669;padding:3px 9px;border-radius:10px;font-weight:700">&#128274; Ecrã activo</span>';
+      if(badge)badge.innerHTML='<span style="font-size:11px;background:var(--gbg);color:var(--grn);padding:3px 9px;border-radius:10px;font-weight:700">&#128274; Ecrã activo</span>';
     }
   }catch(e){/* wake lock unavailable in this browser */}
 }
@@ -1995,9 +2053,43 @@ function finArchiveAll(){
   setTimeout(()=>{showScreen('s-setup');renderSetup();},300);
 }
 
+// ── Theme management ─────────────────────────────────────────────────────────
+(function(){
+  // Order: localStorage override → system preference → dark fallback
+  const saved = localStorage.getItem('sc_theme');
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  document.documentElement.className = theme;
+  // Watch system changes (only when no manual override)
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if(!localStorage.getItem('sc_theme')){
+      document.documentElement.className = e.matches ? 'dark' : 'light';
+      _updThemeBtn();
+    }
+  });
+})();
+
+function toggleTheme(){
+  const isDark = document.documentElement.classList.contains('dark');
+  const next = isDark ? 'light' : 'dark';
+  document.documentElement.className = next;
+  localStorage.setItem('sc_theme', next);
+  _updThemeBtn();
+}
+function _updThemeBtn(){
+  const btn = document.getElementById('theme-btn');
+  if(!btn) return;
+  const isDark = document.documentElement.classList.contains('dark');
+  btn.textContent = isDark ? '🌙' : '☀️';
+  btn.title = isDark ? 'Mudar para tema claro' : 'Mudar para tema escuro';
+  const meta=document.getElementById('meta-theme-color');
+  if(meta)meta.content=isDark?'#0F766E':'#0D9488';
+}
+
 // ── Boot sequence ──────────────────────────────────────────────────────────
 reqWakeLock();
 loadData();
+_updThemeBtn();
 if(ST.patients.filter(p=>p.status==='internado').length&&ST.shiftStart){
   renderDash();
   showScreen('s-dashboard');
