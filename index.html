@@ -4,13 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0F766E">
-<title>ShiftCare v2.3</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ShiftCare">
+<meta name="theme-color" content="#0D9488">
+<title>ShiftCare — Gestão de Turno</title>
 <style>
-:root{--p:#0D9488;--pd:#0F766E;--pl:#CCFBF1;--pm:#5EEAD4;--bg:#F0FDFA;--s:#FFFFFF;--s2:#F8FAFC;--b:#CBD5E1;--b2:#94A3B8;--t:#0F172A;--t2:#334155;--t3:#94A3B8;--red:#DC2626;--rbg:#FEF2F2;--org:#D97706;--obg:#FFFBEB;--grn:#059669;--gbg:#ECFDF5;--gborder:#6EE7B7;--vio:#7C3AED;--viobg:#EDE9FE;--rad:14px;--rads:8px;--shsm:0 1px 3px rgba(0,0,0,.07);--sh:0 2px 8px rgba(0,0,0,.09);--shm:0 4px 16px rgba(0,0,0,.12);--shl:0 12px 32px rgba(0,0,0,.15)}
+:root{
+  /* Brand — teal refinado */
+  --p:#0D9488;--pd:#0F766E;--pl:#E6FAF8;--pm:#5EEAD4;--pdk:#134E4A;
+  /* Superfícies */
+  --bg:#F4F7F9;--s:#FFFFFF;--s2:#F1F5F8;--s3:#E8EDF2;
+  /* Bordas */
+  --b:#DDE3EA;--b2:#B0BDC8;
+  /* Texto */
+  --t:#0F172A;--t2:#3D5166;--t3:#8FA3B5;
+  /* Semântico */
+  --red:#DC2626;--rbg:#FFF0F0;--rbd:#FECACA;
+  --org:#D97706;--obg:#FFFBEB;
+  --grn:#059669;--gbg:#EDFAF4;--gborder:#6EE7B7;
+  --vio:#7C3AED;--viobg:#F0EDFE;
+  /* Geometria e sombras */
+  --rad:14px;--rads:9px;
+  --shsm:0 1px 3px rgba(15,23,42,.06);
+  --sh:0 2px 8px rgba(15,23,42,.08);
+  --shm:0 4px 18px rgba(15,23,42,.11);
+  --shl:0 10px 32px rgba(15,23,42,.14)
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);font-size:15px;line-height:1.5}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;transition:opacity .18s,transform .18s}
 .screen.hidden{opacity:0;pointer-events:none;transform:translateX(14px)}
 input,textarea,select{font-family:inherit;font-size:14px;color:var(--t);background:var(--s2);border:1.5px solid var(--b);border-radius:var(--rads);padding:9px 11px;width:100%;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
@@ -48,7 +70,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .diag2-row input{font-size:12px;padding:7px 10px}
 .empty-st{text-align:center;padding:20px;color:var(--t3);font-size:13px}
 /* Patient info bar */
-.pt-info-bar{background:linear-gradient(135deg,var(--pd),var(--p));color:#fff;padding:9px 13px;flex-shrink:0}
+.pt-info-bar{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);color:#fff;padding:9px 13px;flex-shrink:0}
 .pt-info-name{font-size:15px;font-weight:800;letter-spacing:-.2px;margin-bottom:4px}
 .pt-info-meta{display:flex;flex-wrap:wrap;gap:5px}
 .pt-info-pill{background:rgba(255,255,255,.18);border-radius:7px;padding:2px 8px;font-size:10px;font-weight:600}
@@ -64,7 +86,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .add-form-title{font-size:11px;font-weight:700;margin-bottom:13px;color:var(--t2);text-transform:uppercase;letter-spacing:.06em}
 /* Dashboard */
 #s-dashboard{background:var(--bg)}
-.dash-header{background:linear-gradient(135deg,var(--pd),var(--p));flex-shrink:0;box-shadow:var(--shm)}
+.dash-header{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);flex-shrink:0;box-shadow:var(--shm)}
 .dash-top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 0}
 .dash-center{text-align:center;padding:2px 14px 10px}
 .clock-big{font-family:'SF Mono','Fira Code',monospace;font-size:44px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1}
@@ -78,7 +100,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .cards-track::-webkit-scrollbar{display:none}
 .pt-card{flex:0 0 min(calc(100vw - 92px),380px);scroll-snap-align:center;background:var(--s);border-radius:var(--rad);border:1px solid var(--b);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shm)}
 .pt-card.has-alert{border:2px solid var(--red)}
-.pc-hdr{background:linear-gradient(135deg,var(--pd),var(--p));padding:13px 14px;color:#fff;flex-shrink:0}
+.pc-hdr{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);padding:13px 14px;color:#fff;flex-shrink:0}
 .pc-name{font-size:18px;font-weight:800;letter-spacing:-.3px;margin-bottom:5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .pc-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:5px}
 .pc-meta-item{font-size:10px;opacity:.88}
@@ -109,7 +131,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .btn-discharge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:var(--rads);font-size:10px;font-weight:700;cursor:pointer;padding:3px 7px;color:#fff;white-space:nowrap}
 /* Detail */
 #s-detail{background:var(--bg)}
-.det-hdr{background:linear-gradient(135deg,var(--pd),var(--p));padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.det-hdr{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0}
 .det-title{font-size:14px;font-weight:800;color:#fff;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tab-bar{background:var(--s);border-bottom:1px solid var(--b);display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
 .tab-bar::-webkit-scrollbar{display:none}
@@ -228,7 +250,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .nb-via{background:var(--pl);color:var(--pd)}
 /* About */
 #s-about .wrap{max-width:500px;margin:0 auto;padding:14px 14px 40px}
-.about-hdr{background:linear-gradient(135deg,var(--pd),var(--p));padding:10px 13px;display:flex;align-items:center;gap:9px;flex-shrink:0}
+.about-hdr{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);padding:10px 13px;display:flex;align-items:center;gap:9px;flex-shrink:0}
 .about-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);margin-bottom:11px;overflow:hidden;box-shadow:var(--shsm)}
 .about-body{padding:13px 15px}
 .about-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--b);font-size:13px}.about-row:last-child{border-bottom:none}
@@ -236,7 +258,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .api-note{font-size:11px;color:var(--t3);margin-top:5px;line-height:1.6}
 /* Histórico */
 #s-historico{background:var(--bg)}
-.hist-hdr{background:linear-gradient(135deg,var(--pd),var(--p));padding:10px 13px;display:flex;align-items:center;gap:9px;flex-shrink:0}
+.hist-hdr{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);padding:10px 13px;display:flex;align-items:center;gap:9px;flex-shrink:0}
 .hist-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);margin-bottom:9px;overflow:hidden;box-shadow:var(--shsm)}
 .hist-status{padding:3px 9px;border-radius:10px;font-size:10px;font-weight:800;text-transform:uppercase}
 .hist-status.alta{background:var(--gbg);color:var(--grn)}
@@ -276,7 +298,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 /* Setup modes */
 .setup-mode-btn{display:flex;align-items:center;gap:13px;background:var(--s);border:1.5px solid var(--b);border-radius:var(--rad);padding:15px 16px;width:100%;cursor:pointer;transition:all .15s;text-align:left;font-family:inherit;margin-bottom:10px;box-shadow:var(--shsm)}
 .setup-mode-btn:active{transform:scale(.98);background:var(--s2)}
-.setup-mode-btn.primary{border-color:var(--p);background:var(--pl)}
+.setup-mode-btn.primary{border-color:var(--p);background:var(--pl);border-width:2px}
 .smode-icon{font-size:28px;flex-shrink:0;width:40px;text-align:center}
 .smode-title{font-size:14px;font-weight:800;color:var(--t)}
 .smode-sub{font-size:12px;color:var(--t2);margin-top:3px;line-height:1.4}
@@ -321,7 +343,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
           <div>
             <div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
-            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v2.3</div>
+            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v2.3.0</div>
           </div>
         </div>
         <div id="wl-status-home" style="display:flex;justify-content:center;margin-bottom:4px"></div>
@@ -552,11 +574,12 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
         </div>
         <div style="padding:0 15px 15px">
-          <div class="about-row"><span>Versão</span><span class="about-val">2.2.0</span></div>
-          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v2.2</span></div>
+          <div class="about-row"><span>Versão</span><span class="about-val">2.3.0</span></div>
+          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v2.3</span></div>
           <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
           <div class="about-row"><span>IA</span><span class="about-val">Groq LLaMA via Cloudflare Worker</span></div>
           <div class="about-row"><span>Idioma</span><span class="about-val">Português (PT)</span></div>
+          <div class="about-row"><span>Ecrã activo</span><span class="about-val" id="wakelock-status">—</span></div>
           <div class="about-row"><span>Compilação</span><span class="about-val" id="build-date"></span></div>
         </div>
       </div>
@@ -581,7 +604,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
       <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:11px" onclick="resetLearn()">Resetar Módulo de Aprendizagem</button>
-      <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v2.3.1 © 2025 · Todos os direitos reservados</div>
+      <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v2.3.0 © 2025 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
@@ -766,6 +789,9 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 
 <script>
 'use strict';
+// ── Utilitários base ───────────────────────────
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const el=id=>document.getElementById(id);
 // ══════════════════════════════════════════════
 // MODULE: DATA
 // ══════════════════════════════════════════════
@@ -865,7 +891,6 @@ let ST={patients:[],shiftStart:null,idx:0,screen:'s-setup',prevScreen:null,detTa
 let LEARN={meds:{},tasks:{},todos:{}};
 
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-const el=id=>document.getElementById(id);
 const ft=d=>(d?new Date(d):new Date()).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
 const fd=d=>(d?new Date(d):new Date()).toLocaleDateString('pt-PT',{day:'2-digit',month:'2-digit',year:'numeric'});
 const fdt=d=>fd(d)+' '+ft(d);
@@ -937,9 +962,23 @@ function rmTag(arrKey,i,tagId){ST[arrKey].splice(i,1);renderTags(tagId,arrKey);}
 function addPt(sc){
   const isM=sc==='m';
   const g=id=>el(isM?'m-'+id:'f-'+id)?.value;
-  const name=(g('name')||'').trim(),bed=(g('bed')||'').trim(),age=(g('age')||'').trim(),wt=parseFloat(g('wt'))||null,alrg=(g('alrg')||'').trim(),diag=(g('diag')||'').trim();
+  const name=(g('name')||'').trim(),bed=(g('bed')||'').trim(),age=(g('age')||'').trim(),wt=(()=>{const _w=parseFloat(g('wt'));return _w?Math.round(_w*1000)/1000:null;})(),alrg=(g('alrg')||'').trim(),diag=(g('diag')||'').trim();
   const igW=parseInt(g('ig-w'))||null,igD=parseInt(g('ig-d'))||0,dnasc=g('dnasc')||null;
   if(!name||!age){alert('Preencha o nome e a idade.');return;}
+  // Validate age
+  const _ageNum=parseInt(age);
+  if(isNaN(_ageNum)||_ageNum<0){alert('Idade inválida.');return;}
+  // Validate gestational age
+  if(igW!==null){
+    if(igW<22||igW>44){alert('Idade gestacional deve ser entre 22 e 44 semanas.');return;}
+  }
+  // Validate birthdate not in future
+  if(dnasc){
+    const _bd=new Date(dnasc);
+    if(_bd>new Date()){alert('Data de nascimento não pode ser no futuro.');return;}
+  }
+  // Validate weight
+  if(wt!==null&&(wt<=0||wt>200)){alert('Peso inválido (0.001–200 kg).');return;}
   const u=isM?ST.ageUM:ST.ageU,arrKey=isM?'sdm':'sd';
   ST.patients.push(mkPt({name,bed,ageDays:ageToDays(age,u),wt,alrg,diag,diagSec:[...ST[arrKey]],gestWeeks:igW,gestDays:igD,birthDate:dnasc}));
   ST[arrKey]=[];
@@ -1115,6 +1154,7 @@ function updBadge(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p)
 const TABS=['vitais','cuidados','medicacao','alimentacao','isbar'];
 function swTab(tab){
   ST.detTab=tab;
+  if(tab!=='notas')clrQ();
   document.querySelectorAll('.tab-item').forEach((e,i)=>e.classList.toggle('active',TABS[i]===tab));
   document.querySelectorAll('.tab-pane').forEach(e=>e.classList.remove('active'));
   const pane=el('tab-'+tab);if(pane)pane.classList.add('active');
@@ -1185,12 +1225,41 @@ function focusNoteInp(){const e=el('note-inp-enf');if(e){e.focus();e.scrollIntoV
 function addNoteEnf(){const inp=el('note-inp-enf');if(!inp||!inp.value.trim())return;addNoteText(inp.value.trim());inp.value='';showToast('Nota registada ✓','ok');renEnf();}
 function addNoteText(txt){const p=ST.patients[ST.idx];if(!p)return;p.notes.unshift({id:uid(),text:txt,timestamp:new Date().toISOString()});save();}
 let _abcT={};function saveABCDE(k,v){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcde)p.abcde={};p.abcde[k]=v;clearTimeout(_abcT[k]);_abcT[k]=setTimeout(()=>save(),600);}
-function tglUC(i){const p=ST.patients[ST.idx];if(!p)return;if(!p.unitCheck)p.unitCheck={};p.unitCheck[i]=!p.unitCheck[i];save();renEnf();}
+function tglUC(i){
+  const p=ST.patients[ST.idx];if(!p)return;
+  if(!p.unitCheck)p.unitCheck={};
+  p.unitCheck[i]=!p.unitCheck[i];
+  save();
+  // Patch DOM directly to avoid losing ABCDE textarea focus
+  const chk=document.querySelector('[onclick="tglUC('+i+')"]');
+  if(chk){
+    const done=p.unitCheck[i];
+    chk.className='task-chk'+(done?' done':'');
+    chk.innerHTML=done?'<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>':'';
+    const lbl=chk.closest('.task-it')?.querySelector('.task-lbl');
+    if(lbl)lbl.className='task-lbl'+(done?' done':'');
+  } else {renEnf();}
+}
 function tglTask(tid){
   const p=ST.patients[ST.idx];if(!p)return;
   const t=p.tasks.find(x=>String(x.id)===String(tid));if(!t)return;
   t.done=!t.done;t.doneAt=t.done?new Date().toISOString():null;
-  if(t.done)learnTask(t.text);save();renEnf();
+  if(t.done){learnTask(t.text);showToast(t.text.slice(0,30)+' ✓','ok');}
+  save();
+  // Patch DOM directly — keeps ABCDE textarea focus
+  const chkEl=document.querySelector('[onclick="tglTask(\''+tid+'\')"]');
+  if(chkEl){
+    const row=chkEl.closest('.task-it');
+    if(row){
+      chkEl.className='task-chk'+(t.done?' done':'');
+      chkEl.innerHTML=t.done?'<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>':'';
+      const lbl=row.querySelector('.task-lbl');
+      if(lbl)lbl.className='task-lbl'+(t.done?' done':'');
+      const old_time=row.querySelector('.task-time');
+      if(t.done&&!old_time){const d=document.createElement('div');d.className='task-time';d.textContent='✓ '+new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});if(lbl)lbl.insertAdjacentElement('afterend',d);}
+      if(!t.done&&old_time)old_time.remove();
+    }
+  } else {renEnf();}
 }
 function addCustomTask(){const inp=el('new-task-inp');if(!inp||!inp.value.trim())return;const p=ST.patients[ST.idx];if(!p)return;p.tasks.push({id:uid(),text:inp.value.trim(),done:false,doneAt:null});learnTask(inp.value.trim());inp.value='';save();renEnf();}
 
@@ -1631,6 +1700,27 @@ async function callAI(payload){
 // ══════════════════════════════════════════════
 // CLOCK + INIT
 // ══════════════════════════════════════════════
+// ── Wake Lock — keeps screen on ──────────────────────────────────────────────
+let _wl=null;
+async function reqWakeLock(){
+  try{
+    if('wakeLock' in navigator){
+      _wl=await navigator.wakeLock.request('screen');
+      _wl.addEventListener('release',()=>{
+        _wl=null;
+        // Auto-retry after 3s if page still visible
+        if(!document.hidden)setTimeout(reqWakeLock,3000);
+      });
+      const _ws=el('wakelock-status');if(_ws)_ws.textContent='Activo ✓';
+      const badge=el('wl-status-home');
+      if(badge)badge.innerHTML='<span style="font-size:11px;background:#ECFDF5;color:#059669;padding:3px 9px;border-radius:10px;font-weight:700">&#128274; Ecrã activo</span>';
+    }
+  }catch(e){/* wake lock unavailable in this browser */}
+}
+// Periodic check every 30s in case it was silently revoked
+setInterval(()=>{if(!document.hidden&&(!_wl||_wl.released))reqWakeLock();},30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!_wl||_wl.released))reqWakeLock();});
+
 function updateClock(){
   const now=new Date();
   const c=el('clock-big');if(c)c.textContent=now.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
@@ -1707,6 +1797,7 @@ function startScan(){
       vid.srcObject=stream;
       vid.play();
       if(status)status.textContent='A aguardar QR Code...';
+      _loadJsQR(()=>{});
       _scanTimer=setInterval(_scanFrame,350);
     })
     .catch(err=>{
@@ -1719,6 +1810,16 @@ function stopScan(){
   const vid=document.getElementById('scan-video');
   if(vid&&vid.srcObject){vid.srcObject=null;}
 }
+// jsQR loaded on demand for Firefox/Safari fallback
+let _jsQRLoaded=false;
+function _loadJsQR(cb){
+  if(typeof jsQR!=='undefined'){cb();return;}
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js';
+  s.onload=()=>{_jsQRLoaded=true;cb();};
+  s.onerror=()=>{const st=document.getElementById('scan-status');if(st)st.textContent='Erro ao carregar leitor QR.';};
+  document.head.appendChild(s);
+}
 function _scanFrame(){
   if(_scanLock)return;
   const vid=document.getElementById('scan-video');
@@ -1727,11 +1828,23 @@ function _scanFrame(){
   canvas.width=vid.videoWidth;canvas.height=vid.videoHeight;
   const ctx=canvas.getContext('2d');
   ctx.drawImage(vid,0,0);
+  // Try BarcodeDetector first (Chrome/Edge), fall back to jsQR (Firefox/Safari)
   if('BarcodeDetector' in window){
     new BarcodeDetector({formats:['qr_code']}).detect(canvas)
       .then(codes=>{if(codes.length){_scanLock=true;_onQRCode(codes[0].rawValue);}})
-      .catch(()=>{});
+      .catch(()=>_scanFrameJsQR(ctx,canvas));
+  } else {
+    _scanFrameJsQR(ctx,canvas);
   }
+}
+function _scanFrameJsQR(ctx,canvas){
+  if(typeof jsQR==='undefined'){
+    if(!_jsQRLoaded)_loadJsQR(()=>{});
+    return;
+  }
+  const img=ctx.getImageData(0,0,canvas.width,canvas.height);
+  const code=jsQR(img.data,img.width,img.height,{inversionAttempts:'dontInvert'});
+  if(code&&code.data){_scanLock=true;_onQRCode(code.data);}
 }
 function _onQRCode(raw){
   stopScan();
@@ -1883,6 +1996,7 @@ function finArchiveAll(){
 }
 
 // ── Boot sequence ──────────────────────────────────────────────────────────
+reqWakeLock();
 loadData();
 if(ST.patients.filter(p=>p.status==='internado').length&&ST.shiftStart){
   renderDash();
