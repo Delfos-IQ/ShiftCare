@@ -667,7 +667,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
 
-            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v2.3.0 © 2025 · Todos os direitos reservados</div>
+            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v2.4.0 © 2026 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
@@ -1838,11 +1838,11 @@ function continuarTurno(){
 
 // ── QR Scanner ─────────────────────────────────────────────────────────────
 let _scanStream=null,_scanTimer=null,_scanLock=false;
-function startScan(){
+function startScan(autoRestart){
   const vid=document.getElementById('scan-video');
   const status=document.getElementById('scan-status');
   const res=document.getElementById('scan-results');
-  if(res)res.style.display='none';
+  if(!autoRestart&&res)res.style.display='none';
   _scanLock=false;
   if(!vid)return;
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
@@ -1938,10 +1938,10 @@ function _onQRCode(raw){
     }
     if(resWrap)resWrap.style.display='block';
     if(status)status.textContent='Lido! Aponte para outro QR Code...';
-    setTimeout(()=>{_scanLock=false;startScan();},1200);
+    setTimeout(()=>{_scanLock=false;startScan(true);},1200);
   }catch(e){
     if(status)status.textContent='Erro ao ler QR. Tente novamente.';
-    setTimeout(()=>{_scanLock=false;startScan();},1500);
+    setTimeout(()=>{_scanLock=false;startScan(true);},1500);
   }
 }
 function startShiftAfterScan(){
