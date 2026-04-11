@@ -3,10 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ShiftCare">
 <meta name="theme-color" content="#0F766E" id="meta-theme-color">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
 <title>ShiftCare — Gestão de Turno</title>
 <style>
@@ -404,9 +407,83 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .scan-wrap{position:relative;border-radius:var(--rads);overflow:hidden;background:#000;min-height:260px}
 .scan-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
 .scan-frame{width:200px;height:200px;border:3px solid var(--p);border-radius:12px;box-shadow:0 0 0 2000px rgba(0,0,0,.5)}
+/* Privacy lock */
+#privacy-overlay{position:fixed;inset:0;z-index:9990;background:rgba(15,23,42,0.82);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .35s}
+#privacy-overlay.visible{opacity:1;pointer-events:all}
+.priv-icon{font-size:48px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.priv-msg{color:#fff;font-size:17px;font-weight:700;letter-spacing:-.2px}
+.priv-sub{color:rgba(255,255,255,.6);font-size:13px}
+/* Field action buttons (OCR + Voice) */
+.field-actions{display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap}
+.btn-field-act{display:flex;align-items:center;gap:5px;padding:7px 12px;font-size:12px;font-weight:700;border:1.5px solid var(--b);border-radius:20px;background:var(--s);color:var(--t1);cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-field-act:active{transform:scale(.96)}
+.btn-field-act.recording{background:#FEE2E2;border-color:#F87171;color:#991B1B}
+.btn-field-act.loading{opacity:.6;pointer-events:none}
+/* ── PWA Install Banner ── */
+#pwa-banner{
+  position:fixed;bottom:0;left:0;right:0;z-index:9999;
+  background:var(--pd);color:#fff;
+  padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 -2px 16px rgba(0,0,0,0.4);
+  transform:translateY(100%);transition:transform .35s ease;
+}
+#pwa-banner.show{transform:translateY(0)}
+#pwa-banner .pwa-icon{font-size:22px;flex-shrink:0}
+#pwa-banner .pwa-txt{flex:1;min-width:0}
+#pwa-banner .pwa-txt strong{display:block;font-size:13px;font-weight:700}
+#pwa-banner .pwa-txt span{font-size:11px;opacity:.85}
+#pwa-banner .pwa-btn{
+  background:#fff;color:var(--pd);
+  border:none;border-radius:20px;
+  padding:7px 14px;font-size:12px;font-weight:700;
+  cursor:pointer;white-space:nowrap;flex-shrink:0
+}
+#pwa-banner .pwa-close{
+  background:none;border:none;color:#fff;font-size:18px;
+  cursor:pointer;padding:0 4px;opacity:.7;flex-shrink:0
+}
+/* iOS hint */
+#ios-hint{
+  position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(120%);
+  z-index:9999;background:var(--s2);color:var(--t);
+  border:1px solid var(--b2);border-radius:12px;
+  padding:12px 16px;font-size:12px;text-align:center;
+  max-width:280px;box-shadow:var(--shm);
+  transition:transform .35s ease;
+}
+#ios-hint.show{transform:translateX(-50%) translateY(0)}
+#ios-hint .ios-arrow{font-size:20px;display:block;margin-top:4px}
+#ios-hint .ios-close{
+  display:block;margin-top:8px;font-size:11px;
+  color:var(--t2);cursor:pointer;text-decoration:underline
+}
 </style>
 </head>
 <body>
+<div id="privacy-overlay" onclick="deactivatePrivacy()" role="button" aria-label="Ecrã bloqueado — toque para desbloquear">
+  <div class="priv-icon">🔒</div>
+  <div class="priv-msg">Ecrã bloqueado</div>
+  <div class="priv-sub">Toque para desbloquear</div>
+</div>
+
+<!-- ═══ PWA INSTALL BANNER (Android/Chrome) ═══ -->
+<div id="pwa-banner" role="complementary" aria-label="Instalar aplicação">
+  <div class="pwa-icon">📲</div>
+  <div class="pwa-txt">
+    <strong>Instalar ShiftCare</strong>
+    <span>Adicionar ao ecrã inicial</span>
+  </div>
+  <button class="pwa-btn" onclick="pwaTriggerInstall()">Instalar</button>
+  <button class="pwa-close" onclick="pwaDismiss()" aria-label="Fechar">×</button>
+</div>
+
+<!-- ═══ IOS INSTALL HINT ═══ -->
+<div id="ios-hint" role="complementary">
+  Para instalar: toque em <strong>Partilhar</strong> e depois <strong>"Adicionar ao ecrã inicial"</strong>
+  <span class="ios-arrow">⬆️</span>
+  <span class="ios-close" onclick="iosDismiss()">Fechar</span>
+</div>
 
 <!-- ═══ SETUP ═══ -->
 <div id="s-setup" class="screen">
@@ -1190,7 +1267,7 @@ function resetLearn(){if(!confirm('Resetar dados de aprendizagem?'))return;LEARN
 // ══════════════════════════════════════════════
 // MODULE: NAVIGATION
 // ══════════════════════════════════════════════
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));const e=el(id);if(e){e.classList.remove('hidden');ST.screen=id;}}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));const e=el(id);if(e){e.classList.remove('hidden');ST.screen=id;}if(id==='s-dashboard'||id==='s-detail')resetPrivacyTimer();else{if(_privTimer)clearTimeout(_privTimer);document.getElementById('privacy-overlay')?.classList.remove('visible');}}
 function openM(id){const e=el(id);if(e)e.classList.add('open');}
 function closeM(id){const e=el(id);if(e)e.classList.remove('open');}
 function goBack(){
@@ -1266,7 +1343,30 @@ function renderSetup(){
     }
   }
 }
-function startShift(){if(!ST.patients.filter(p=>p.status==='internado').length)return;if(!ST.shiftStart)ST.shiftStart=new Date().toISOString();save();renderDash();showScreen('s-dashboard');}
+function startShift(){if(!ST.patients.filter(p=>p.status==='internado').length)return;if(!ST.shiftStart)ST.shiftStart=new Date().toISOString();save();renderDash();showScreen('s-dashboard');resetPrivacyTimer();}
+
+// ─── Privacy lock ─────────────────────────────
+const PRIVACY_MS=2*60*1000; // 2 minutes
+let _privTimer=null;
+function resetPrivacyTimer(){
+  if(_privTimer)clearTimeout(_privTimer);
+  document.getElementById('privacy-overlay')?.classList.remove('visible');
+  if(ST.screen==='s-dashboard'||ST.screen==='s-detail'){
+    _privTimer=setTimeout(activatePrivacy,PRIVACY_MS);
+  }
+}
+function activatePrivacy(){
+  const ov=document.getElementById('privacy-overlay');
+  if(ov)ov.classList.add('visible');
+}
+function deactivatePrivacy(){resetPrivacyTimer();}
+(function(){
+  ['click','touchstart','keydown','scroll'].forEach(ev=>{
+    document.addEventListener(ev,function(){
+      if(ST.screen==='s-dashboard'||ST.screen==='s-detail')resetPrivacyTimer();
+    },{passive:true});
+  });
+})();
 
 // ══════════════════════════════════════════════
 // MODULE: DASHBOARD
@@ -1691,7 +1791,7 @@ function renVentCard(p){
   }).join('');
   let paramsHTML='';
   if(m==='o2'){
-    const flows=['2','2.5','3','3.5','4'];
+    const flows=['0.5','1','1.5','2','2.5','3','3.5','4'];
     paramsHTML=`<div class="vent-params"><span class="vent-plbl">Flow:</span>${flows.map(f=>`<button class="vent-chip${q.flow===f?' active':''}" onclick="setVentParam('flow','${f}')">${f} L/min</button>`).join('')}</div>`;
   } else if(m==='venturi'){
     const fio2s=['24','28','31','35','40','60'];
@@ -2242,12 +2342,76 @@ function openISBARSec(s){ST.isbarSec=s;renISBARDetail(s);}
 function renISBARDetail(s){
   const p=ST.patients[ST.idx];if(!p)return;
   const back=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:13px"><button class="btn btn-o btn-sm" onclick="ST.isbarSec=null;renISBAR()">← Voltar</button><div style="font-weight:700;font-size:14px">${s==='ap'?'Antecedentes Pessoais':s==='hda'?'HDA':'Relatório ISBAR'}</div></div>`;
-  if(s==='ap'){el('tab-isbar').innerHTML=`${back}<textarea id="ap-inp" rows="14" style="font-size:13px;line-height:1.7" placeholder="Alergias:&#10;Patologias crónicas:&#10;Cirurgias:&#10;Medicação habitual:&#10;Vacinação:&#10;Antecedentes familiares:">${p.antecedentes||''}</textarea><button class="btn btn-p" style="width:100%;margin-top:9px" onclick="saveAP()">Guardar</button>`;}
-  else if(s==='hda'){el('tab-isbar').innerHTML=`${back}<textarea id="hda-inp" rows="14" style="font-size:13px;line-height:1.7" placeholder="Data de início dos sintomas:&#10;Motivo de internamento:&#10;Evolução clínica:&#10;Exames realizados:&#10;Intervenções efectuadas:">${p.hda||''}</textarea><button class="btn btn-p" style="width:100%;margin-top:9px" onclick="saveHDA()">Guardar</button>`;}
+  if(s==='ap'){el('tab-isbar').innerHTML=`${back}
+    <div class="field-actions">
+      <button class="btn-field-act" id="fa-cam-ap" onclick="ocrImageToField('ap-inp','fa-cam-ap')">📷 Câmara / Foto</button>
+      <button class="btn-field-act" id="fa-mic-ap" onclick="voiceToField('ap-inp','fa-mic-ap')">🎤 Voz</button>
+    </div>
+    <textarea id="ap-inp" rows="12" style="font-size:13px;line-height:1.7" placeholder="Alergias:&#10;Patologias crónicas:&#10;Cirurgias:&#10;Medicação habitual:&#10;Vacinação:&#10;Antecedentes familiares:">${p.antecedentes||''}</textarea>
+    <button class="btn btn-p" style="width:100%;margin-top:9px" onclick="saveAP()">Guardar</button>`;}
+  else if(s==='hda'){el('tab-isbar').innerHTML=`${back}
+    <div class="field-actions">
+      <button class="btn-field-act" id="fa-cam-hda" onclick="ocrImageToField('hda-inp','fa-cam-hda')">📷 Câmara / Foto</button>
+      <button class="btn-field-act" id="fa-mic-hda" onclick="voiceToField('hda-inp','fa-mic-hda')">🎤 Voz</button>
+    </div>
+    <textarea id="hda-inp" rows="12" style="font-size:13px;line-height:1.7" placeholder="Data de início dos sintomas:&#10;Motivo de internamento:&#10;Evolução clínica:&#10;Exames realizados:&#10;Intervenções efectuadas:">${p.hda||''}</textarea>
+    <button class="btn btn-p" style="width:100%;margin-top:9px" onclick="saveHDA()">Guardar</button>`;}
   else{el('tab-isbar').innerHTML=`${back}<div style="background:var(--gbg);border:1px solid var(--gborder);border-radius:var(--rads);padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--t2);line-height:1.7"><strong>ISBAR</strong> — I·S·B·A·R &nbsp;<span style="color:var(--grn);font-weight:700">IA integrada ✓</span></div><button class="btn btn-p" style="width:100%;margin-bottom:9px" onclick="genISBAR(false)">⚡ ISBAR deste doente</button><button class="btn btn-o" style="width:100%;margin-bottom:12px" onclick="genISBAR(true)">📋 ISBAR de todos os doentes</button><div id="isbar-out" style="display:none"><div class="sbar-out" id="isbar-text"></div><button class="btn btn-o" style="width:100%;margin-top:8px" onclick="copyISBAR()">Copiar Relatório</button></div>`;}
 }
 function saveAP(){const p=ST.patients[ST.idx];if(!p)return;p.antecedentes=el('ap-inp').value;save();showToast('Antecedentes guardados ✓','ok');ST.isbarSec=null;renISBAR();}
 function saveHDA(){const p=ST.patients[ST.idx];if(!p)return;p.hda=el('hda-inp').value;save();showToast('HDA guardada ✓','ok');ST.isbarSec=null;renISBAR();}
+
+// ─── OCR de câmara para campo de texto ────────
+function ocrImageToField(fieldId,btnId){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';inp.capture='environment';
+  inp.onchange=async function(){
+    const file=this.files[0];if(!file)return;
+    const btn=el(btnId);if(btn){btn.classList.add('loading');btn.textContent='⏳ A ler...';}
+    try{
+      const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
+      const mt=file.type||'image/jpeg';
+      const msgs=[
+        {role:'system',content:'Extrai todo o texto visível nesta imagem de documento clínico (pode ser foto de folha impressa, ecrã ou documento escrito à mão). Devolve APENAS o texto extraído, preservando a estrutura por linhas. Sem comentários ou explicações adicionais.'},
+        {role:'user',content:[{type:'image',source:{type:'base64',media_type:mt,data:b64}},{type:'text',text:'Extrai o texto desta imagem clínica.'}]}
+      ];
+      const result=await callAI({type:'isbar',messages:msgs});
+      const txt=(result.text||'').trim();
+      if(txt){
+        const ta=el(fieldId);
+        if(ta){ta.value=(ta.value?ta.value+'\n\n':'')+txt;ta.dispatchEvent(new Event('input'));}
+        showToast('Texto extraído ✓ — reveja e guarde','ok');
+      } else {showToast('Sem texto reconhecido na imagem','err');}
+    }catch(e){showToast('Erro OCR: '+e.message,'err');}
+    finally{if(btn){btn.classList.remove('loading');btn.textContent='📷 Câmara / Foto';}}
+  };
+  inp.click();
+}
+
+// ─── Voz para campo de texto ──────────────────
+function voiceToField(fieldId,btnId){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('Reconhecimento de voz não suportado','err');return;}
+  const btn=el(btnId);
+  const rec=new SR();rec.lang='pt-PT';rec.continuous=false;rec.interimResults=false;
+  if(btn){btn.classList.add('recording');btn.textContent='🔴 A ouvir...';}
+  showToast('A ouvir... fale agora 🎤','ok');
+  rec.onresult=function(e){
+    const txt=Array.from(e.results).map(r=>r[0].transcript).join(' ').trim();
+    if(txt){
+      const ta=el(fieldId);
+      if(ta){ta.value=(ta.value?ta.value+'\n':'')+txt;ta.dispatchEvent(new Event('input'));}
+      showToast('Texto ditado ✓','ok');
+    }
+    if(btn){btn.classList.remove('recording');btn.textContent='🎤 Voz';}
+  };
+  rec.onerror=function(e){
+    showToast('Erro de microfone: '+e.error,'err');
+    if(btn){btn.classList.remove('recording');btn.textContent='🎤 Voz';}
+  };
+  rec.onend=function(){if(btn){btn.classList.remove('recording');btn.textContent='🎤 Voz';}};
+  rec.start();
+}
 function buildSum(p){
   const R=vRanges(p.ageDays);
   const ca=correctedAge(p);
@@ -2727,9 +2891,8 @@ function showQRFor(ri){
   if(disp)disp.style.display='none';
   if(hwbox)hwbox.style.display='none';
   if(loading)loading.style.display='block';
-  const payload=_buildQRPayload(p,null);
-  const fullPayload=_buildQRPayload(p,null,'full');
-  const fallback='BULK|'+(typeof LZString==='object'?LZString.compressToBase64(JSON.stringify({v:'3.0',patients:[fullPayload]})):JSON.stringify({v:'3.0',patients:[fullPayload]}));
+  const payload=_buildQRPayload(p,null,'full');
+  const fallback='BULK|'+(typeof LZString==='object'?LZString.compressToBase64(JSON.stringify({v:'3.0',patients:[payload]})):JSON.stringify({v:'3.0',patients:[payload]}));
   _doRenderQR(payload,p.name+' · Cama '+p.bed,null,fallback);
 }
 
@@ -2750,19 +2913,37 @@ async function showQRForAI(ri){
   const vAlerts=VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&R[v.k]&&vSt(val,R[v.k])==='alrt';}).map(v=>`${v.label}=${p.vitals[v.k]}${v.unit} [ALERTA]`);
   const vWarns=VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&R[v.k]&&vSt(val,R[v.k])==='warn';}).map(v=>`${v.label}=${p.vitals[v.k]}${v.unit} [ATENÇÃO]`);
   const vNorm=VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&(!R[v.k]||vSt(val,R[v.k])==='ok');}).map(v=>`${v.label}=${p.vitals[v.k]}${v.unit}`);
-  const pend=p.tasks.filter(t=>!t.done).map(t=>t.text).slice(0,5);
-  const meds=(p.medications||[]).slice(0,5).map(m=>`${m.name} ${m.dose}${m.unit} ${m.freq}`);
-  const recentNotes=p.notes.slice(0,3).map(n=>n.text);
-  const devs=(p.devices||[]).slice(0,4).map(d=>d.label+(d.location?' '+d.location:''));
-  const sumData=`Doente: ${p.name}, Cama ${p.bed}, ${ageLabel(p)}${p.weightKg?', '+p.weightKg+'kg':''}\nDX: ${p.diagMain||'n/e'}\nAlergias: ${p.allergies||'NKDA'}\nVitais alterados: ${[...vAlerts,...vWarns].join(' | ')||'Nenhum'}\nVitais normais: ${vNorm.join(' | ')||'n/r'}\nDispositivos: ${devs.join(', ')||'nenhum'}\nMedicação activa: ${meds.join('; ')||'n/r'}\nTarefas pendentes: ${pend.join('; ')||'nenhuma'}\nNotas recentes: ${recentNotes.join(' / ')||'sem notas'}`;
+  const pend=p.tasks.filter(t=>!t.done).map(t=>t.text);
+  const meds=(p.medications||[]).map(m=>`${m.name} ${m.dose}${m.unit} ${m.freq==='Contínua'?'cont.':m.freq}${m.suspended?' [SUSPENSO]':''}`);
+  const recentNotes=p.notes.slice(0,6).map(n=>`[${ft(n.timestamp)}] ${n.text}`);
+  const devs=(p.devices||[]).map(d=>d.label+(d.location?' '+d.location:'')+(d.gauge&&d.gauge!=='N/A'?' '+d.gauge:''));
+  const ventLbl=getVentLabel(p)||'Ar Ambiente';
+  const ventQ=p.vent?.params||{};
+  const ventDetail=[ventQ.flow&&`${ventQ.flow}L/min`,ventQ.fio2&&`FiO₂${ventQ.fio2}%`,ventQ.sub,ventQ.cpap&&`CPAP${ventQ.cpap}cmH₂O`,ventQ.ipap&&`IPAP${ventQ.ipap}`,ventQ.no&&'NO'].filter(Boolean).join(' ');
+  const abcdeStr=ABCDE_DEF.map(a=>p.abcde?.[a.key]?`${a.key}: ${p.abcde[a.key]}`:'').filter(Boolean).join(' | ');
+  const todosPend=(p.todos||[]).filter(t=>!t.done).map(t=>t.text);
+  const sumData=`DOENTE: ${p.name}, Cama ${p.bed}, ${ageLabel(p)}${p.weightKg?', '+p.weightKg+'kg':''}
+DX: ${p.diagMain||'n/e'}${p.diagSec?.length?' | '+p.diagSec.join(', '):''}
+Alergias: ${p.allergies||'NKDA'}
+VENTILAÇÃO: ${ventLbl}${ventDetail?' ('+ventDetail+')':''}
+Posição: ${p.positioning||'n/r'}
+VITAIS ALTERADOS: ${[...vAlerts,...vWarns].join(' | ')||'Nenhum'}
+Vitais: ${vNorm.join(' | ')||'n/r'}
+Dispositivos: ${devs.join(', ')||'nenhum'}
+ABCDE: ${abcdeStr||'n/r'}
+Medicação: ${meds.join('; ')||'n/r'}
+Cuidados pendentes: ${pend.join('; ')||'nenhum'}
+To-Do pendente: ${todosPend.join('; ')||'nenhum'}
+HDA: ${(p.hda||'n/r').slice(0,200)}
+Notas do turno: ${recentNotes.join(' || ')||'sem notas'}`;
   const msgs=[
-    {role:'system',content:'És enfermeiro especialista em UCIP/UCIN. Gera um resumo de passagem de turno CONCISO (máx 420 caracteres) em PT-PT. Estrutura: 1) estado geral em 1 frase, 2) ALERTAS se existirem (em maiúsculas), 3) o que NÃO PODE FALHAR no próximo turno. Sem títulos, sem bullets, texto corrido. Sê directo e clínico.'},
-    {role:'user',content:'Resumo passagem de turno:\n\n'+sumData}
+    {role:'system',content:'És enfermeiro especialista em UCIP/UCIN pediátrica. Gera um resumo estruturado de passagem de turno em PT-PT (máx 700 caracteres). Usa este formato:\n[ESTADO] frase única sobre o estado geral.\n[VENTILAÇÃO] modo e parâmetros actuais.\n[ALERTAS] só se existirem — em maiúsculas.\n[PENDENTE] máx 3 itens críticos que NÃO PODEM FALHAR.\n[NOTA] última nota relevante do turno.\nSê directo, clínico e objectivo.'},
+    {role:'user',content:'Dados para passagem de turno:\n\n'+sumData}
   ];
   let hwText='';
   try{
     const res=await callAI({type:'isbar',messages:msgs});
-    hwText=(res.text||'').trim().slice(0,500);
+    hwText=(res.text||'').trim().slice(0,700);
   }catch(e){
     if(ailoading)ailoading.style.display='none';
     if(err){err.style.display='block';err.textContent='Erro IA: '+e.message+'. Use transferência sem IA.';}
@@ -2875,6 +3056,62 @@ if(ST.patients.filter(p=>p.status==='internado').length&&ST.shiftStart){
 } else {
   renderSetup();
   showScreen('s-setup');
+}
+
+/* ── PWA: Service Worker ── */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg=>console.log('[ShiftCare SW] registered, scope:',reg.scope))
+      .catch(err=>console.warn('[ShiftCare SW] registration failed:',err));
+  });
+}
+
+/* ── PWA: Install Banner ── */
+let _pwaPrompt=null;
+const _pwaKey='sc_pwa_dismissed';
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  _pwaPrompt=e;
+  /* Show banner only if not recently dismissed */
+  const dismissed=localStorage.getItem(_pwaKey);
+  if(!dismissed||(Date.now()-parseInt(dismissed,10))>7*24*3600*1000){
+    setTimeout(()=>document.getElementById('pwa-banner')?.classList.add('show'),2500);
+  }
+});
+
+function pwaTriggerInstall(){
+  if(!_pwaPrompt)return;
+  _pwaPrompt.prompt();
+  _pwaPrompt.userChoice.then(r=>{
+    if(r.outcome==='accepted') console.log('[ShiftCare] PWA installed');
+    _pwaPrompt=null;
+    document.getElementById('pwa-banner')?.classList.remove('show');
+  });
+}
+function pwaDismiss(){
+  document.getElementById('pwa-banner')?.classList.remove('show');
+  localStorage.setItem(_pwaKey,Date.now().toString());
+}
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('pwa-banner')?.classList.remove('show');
+  console.log('[ShiftCare] App installed to home screen');
+});
+
+/* ── PWA: iOS hint ── */
+const _isIos=()=>/iphone|ipad|ipod/i.test(navigator.userAgent);
+const _isStandalone=()=>('standalone' in window.navigator)&&window.navigator.standalone;
+const _iosKey='sc_ios_hint_dismissed';
+if(_isIos()&&!_isStandalone()){
+  const dismissed=localStorage.getItem(_iosKey);
+  if(!dismissed||(Date.now()-parseInt(dismissed,10))>14*24*3600*1000){
+    setTimeout(()=>document.getElementById('ios-hint')?.classList.add('show'),3000);
+  }
+}
+function iosDismiss(){
+  document.getElementById('ios-hint')?.classList.remove('show');
+  localStorage.setItem(_iosKey,Date.now().toString());
 }
 </script>
 </body>
