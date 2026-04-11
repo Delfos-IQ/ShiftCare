@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ShiftCare">
 <meta name="theme-color" content="#0F766E" id="meta-theme-color">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
 <title>ShiftCare — Gestão de Turno</title>
 <style>
 /* ── ShiftCare theme variables ── */
@@ -200,6 +201,36 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .task-time{font-size:10px;color:var(--t3);margin-top:2px}
 .task-add{display:flex;gap:6px;padding:9px 13px;border-top:1px solid var(--b)}
 .task-add input{font-size:12px;padding:7px 10px}
+/* Lateralidade */
+.pos-wrap{display:flex;flex-wrap:wrap;gap:7px;padding:12px 13px}
+.pos-btn{padding:8px 13px;font-size:12px;font-weight:600;border:2px solid var(--b);border-radius:20px;background:var(--s);color:var(--t1);cursor:pointer;transition:all .15s}
+.pos-btn.active{background:var(--p);border-color:var(--p);color:#fff}
+.pos-current{padding:4px 13px 12px;font-size:11px;color:var(--t2)}
+/* Quick-voice mic on patient card */
+.btn-mic-card{background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.35);border-radius:50%;width:32px;height:32px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;line-height:1}
+.btn-mic-card:active{transform:scale(0.92)}
+.btn-mic-card.recording{background:rgba(239,68,68,0.35);border-color:#F87171;animation:pulse-mic 1s infinite}
+/* Ventilation */
+.vent-modes{display:flex;flex-wrap:wrap;gap:5px;padding:10px 13px 8px}
+.vent-btn{padding:6px 11px;font-size:11px;font-weight:700;border:2px solid var(--b);border-radius:14px;background:var(--s);color:var(--t1);cursor:pointer;transition:all .15s;white-space:nowrap}
+.vent-btn.active{background:#0EA5E9;border-color:#0EA5E9;color:#fff}
+.vent-btn.active-aa{background:#10B981;border-color:#10B981;color:#fff}
+.vent-params{padding:8px 13px 12px;border-top:1px solid var(--b);display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.vent-plbl{font-size:11px;font-weight:700;color:var(--t2)}
+.vent-pinp{font-size:12px;padding:4px 8px;border:1.5px solid var(--b);border-radius:8px;background:var(--s);color:var(--t1);width:75px}
+.vent-chip{padding:5px 10px;font-size:11px;font-weight:700;border:2px solid var(--b);border-radius:12px;background:var(--s);color:var(--t1);cursor:pointer;transition:all .15s}
+.vent-chip.active{background:#0EA5E9;border-color:#0EA5E9;color:#fff}
+.vent-badge{display:inline-flex;align-items:center;gap:4px;background:#E0F2FE;color:#0369A1;border:1px solid #BAE6FD;border-radius:10px;padding:3px 8px;font-size:11px;font-weight:700;margin-top:5px}
+/* Voice button */
+.btn-mic{background:var(--s);border:1.5px solid var(--b);border-radius:20px;padding:5px 10px;font-size:14px;cursor:pointer;transition:all .2s;line-height:1}
+.btn-mic.recording{background:#FEE2E2;border-color:#F87171;animation:pulse-mic 1s infinite}
+@keyframes pulse-mic{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+/* Todo time pickers */
+.task-times{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.time-tag{font-size:10px;padding:2px 6px;border-radius:8px;font-weight:600}
+.time-tag.plan{background:#EFF6FF;color:#1D4ED8}
+.time-tag.done-ok{background:#F0FDF4;color:#15803D}
+.task-sched-inp{font-size:11px;padding:3px 7px;border:1.5px solid var(--b);border-radius:8px;background:var(--s);color:var(--t1);margin-top:4px;width:90px}
 /* ABCDE */
 .abcde-item{padding:10px 13px;border-bottom:1px solid var(--b)}.abcde-item:last-child{border-bottom:none}
 .abcde-hdr{display:flex;gap:9px;margin-bottom:6px;align-items:flex-start}
@@ -352,6 +383,23 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .qr-pt-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--b)}
 .qr-pt-row:last-child{border-bottom:none}
 .qr-canvas-area{background:#fff;border-radius:var(--rads);padding:12px;border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;margin:10px 0}
+/* QR AI Handover */
+.qr-pt-pair{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
+.qr-pt-pair-name{font-size:11px;color:var(--t2);font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:0 2px}
+.qr-pt-pair-btns{display:flex;gap:6px}
+.qr-pt-pair-btns .btn{flex:1;font-size:12px;padding:8px 6px}
+.qr-hw-box{background:var(--s2);border:1px solid var(--pm);border-radius:var(--rads);padding:12px;margin-top:10px}
+.qr-hw-box-hdr{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.qr-hw-box-icon{font-size:16px}
+.qr-hw-box-title{font-size:12px;font-weight:700;color:var(--pm)}
+.qr-hw-box-sub{font-size:11px;color:var(--t3);margin-left:auto}
+.qr-hw-text{font-size:12px;color:var(--t);line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.qr-hw-alert{background:var(--rbg);border:1px solid rgba(239,68,68,.25);border-radius:var(--rads);padding:8px 10px;margin-bottom:8px;font-size:12px;color:var(--red);font-weight:600}
+/* Receiver side — handover card in scan results */
+.scan-hw-card{background:var(--s2);border:1px solid var(--pm);border-radius:var(--rads);padding:12px;margin-bottom:10px}
+.scan-hw-card-hdr{font-size:12px;font-weight:700;color:var(--pm);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.scan-hw-card-body{font-size:12px;color:var(--t);line-height:1.75;white-space:pre-wrap;word-break:break-word}
+.scan-hw-patient{font-size:13px;font-weight:700;color:var(--t);margin-bottom:5px}
 /* Scanner */
 .scan-wrap{position:relative;border-radius:var(--rads);overflow:hidden;background:#000;min-height:260px}
 .scan-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
@@ -382,7 +430,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
           <div>
             <div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
-            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v2.4.0</div>
+            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.0.0</div>
           </div>
         </div>
         <div id="wl-status-home" style="display:flex;justify-content:center;margin-bottom:8px"></div>
@@ -480,6 +528,13 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
             </div>
             <canvas id="scan-canvas" style="display:none"></canvas>
             <div id="scan-status" style="text-align:center;padding:10px 0;font-size:13px;color:var(--t2)">A iniciar câmara...</div>
+          <div style="margin-top:13px;padding:10px;background:var(--s2);border-radius:var(--rads);border:1px solid var(--b)">
+            <div style="font-size:11px;color:var(--t2);margin-bottom:8px;font-weight:700">Ou cole um código de transferência:</div>
+            <div style="display:flex;gap:8px">
+              <input type="text" id="paste-transfer-code" placeholder="Cole o código aqui..." style="flex:1;font-size:12px">
+              <button class="btn btn-p btn-sm" onclick="importPastedCode()">Importar</button>
+            </div>
+          </div>
           </div>
         </div>
         <div id="scan-results" style="display:none">
@@ -617,8 +672,8 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
         </div>
         <div style="padding:0 15px 15px">
-          <div class="about-row"><span>Versão</span><span class="about-val">2.3.0</span></div>
-          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v2.4</span></div>
+          <div class="about-row"><span>Versão</span><span class="about-val">3.0.0</span></div>
+          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v3.0</span></div>
           <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
           <div class="about-row"><span>IA</span><span class="about-val">Integrada · Activa</span></div>
           <div class="about-row"><span>Idioma</span><span class="about-val">Português (PT)</span></div>
@@ -643,7 +698,10 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           <strong style="color:var(--t)">Privacidade</strong><br>Dados do doente nunca saem do dispositivo. O módulo de aprendizagem armazena apenas padrões anónimos (nomes de fármacos, procedimentos).
         </div>
       </div>
-      <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:11px" onclick="resetLearn()">Resetar Módulo de Aprendizagem</button>
+      <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:8px" onclick="resetLearn()">Resetar Módulo de Aprendizagem</button>
+      <button class="btn btn-p" style="width:100%;font-size:12px;margin-bottom:8px" onclick="exportBackup()">💾 Exportar Backup</button>
+      <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:11px" onclick="document.getElementById('backup-import-input').click()">📥 Importar Backup</button>
+      <input type="file" id="backup-import-input" accept=".json" style="display:none" onchange="importBackup(event)">
       <!-- Finalidade -->
       <div class="about-card" style="border-left:3px solid var(--p);border-radius:0 var(--rad) var(--rad) 0">
         <div class="about-body">
@@ -667,7 +725,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
 
-            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v2.4.0 © 2026 · Todos os direitos reservados</div>
+            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.0.0 © 2026 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
@@ -812,6 +870,13 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           <div class="fin-opt-sub">Reinicia o turno mantendo todos os doentes activos. Os cuidados ficam registados.</div>
         </div>
       </div>
+      <div class="fin-opt" onclick="exportShiftReport()">
+        <span class="fin-opt-icon">📄</span>
+        <div>
+          <div class="fin-opt-title">Exportar Relatório do Turno</div>
+          <div class="fin-opt-sub">Gera relatório completo em texto para copiar ou enviar.</div>
+        </div>
+      </div>
       <div class="fin-opt" onclick="finArchiveAll()">
         <span class="fin-opt-icon">📁</span>
         <div>
@@ -831,18 +896,31 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
       <button class="close-btn" onclick="closeM('modal-qr')">✕</button>
     </div>
     <div class="modal-body">
-      <div style="font-size:12px;color:var(--t2);margin-bottom:13px;line-height:1.6">
-        Seleccione o doente para gerar o QR Code. O colega abre a app, escolhe <strong>Receber de Colega</strong> e aponta a câmara.
+      <div style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.6">
+        <strong>Método recomendado:</strong> use <strong>📦 Transferir Todos</strong> — gera um código que o colega cola no painel e importa todos os doentes com dados completos.<br>
+        <strong>QR por doente:</strong> leitura rápida com câmara, sem dados clínicos completos. Se o QR falhar, aparece botão 📋 para copiar.
       </div>
-      <div id="qr-patient-tabs" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px"></div>
+      <div style="display:flex;gap:8px;margin-bottom:13px;flex-wrap:wrap">
+        <button class="btn btn-p" onclick="bulkTransferAllPatients()">📦 Transferir Todos (recomendado)</button>
+      </div>
+      <div id="qr-patient-tabs" style="margin-bottom:13px"></div>
       <div id="qr-display" style="display:none">
         <div class="qr-canvas-area" id="qr-canvas-area">
           <div id="qr-canvas-inner"></div>
         </div>
         <div id="qr-pt-info" style="text-align:center;font-size:12px;color:var(--t2);margin-top:5px"></div>
         <div style="font-size:11px;color:var(--t3);text-align:center;margin-top:4px">Um QR por doente · Aponte a câmara do colega para este ecrã</div>
+        <div id="qr-handover-box" style="display:none" class="qr-hw-box">
+          <div class="qr-hw-box-hdr">
+            <span class="qr-hw-box-icon">🤖</span>
+            <span class="qr-hw-box-title">Resumo IA · Passagem de Turno</span>
+            <span class="qr-hw-box-sub" id="qr-hw-chars"></span>
+          </div>
+          <div class="qr-hw-text" id="qr-hw-text"></div>
+        </div>
       </div>
       <div id="qr-loading" style="display:none;text-align:center;padding:20px;font-size:13px;color:var(--t3)">A gerar QR Code...</div>
+      <div id="qr-ai-loading" style="display:none;text-align:center;padding:10px;font-size:13px;color:var(--pm)">🤖 A gerar resumo com IA...</div>
       <div id="qr-error" style="display:none;background:var(--rbg);border-radius:var(--rads);padding:10px;font-size:12px;color:var(--red);margin-top:9px"></div>
     </div>
   </div>
@@ -853,6 +931,72 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 <script>
 'use strict';
 // ── IA integrada ──────────────────────────────
+
+// ════════════════════════════════════════════════════════════
+// PEDIATRIC DOSE CALCULATOR - Common medications with ranges
+// ════════════════════════════════════════════════════════════
+const PEDI_DOSES = {
+  'morfina': {min:0.05, max:0.2, unit:'mg/kg', maxSingle:15, freq:'4/4h', warn:'Depressão respiratória'},
+  'fentanil': {min:1, max:4, unit:'mcg/kg', maxSingle:100, freq:'1/1h', warn:'Rigidez torácica'},
+  'midazolam': {min:0.05, max:0.15, unit:'mg/kg', maxSingle:10, freq:'SOS'},
+  'paracetamol': {min:10, max:15, unit:'mg/kg', maxSingle:1000, freq:'6/6h', warn:'Hepatotoxicidade'},
+  'ibuprofeno': {min:5, max:10, unit:'mg/kg', maxSingle:400, freq:'8/8h'},
+  'amoxicilina': {min:25, max:100, unit:'mg/kg/dia', maxSingle:3000},
+  'ampicilina': {min:50, max:200, unit:'mg/kg/dia', maxSingle:12000},
+  'gentamicina': {min:4, max:7, unit:'mg/kg/dia', maxSingle:500, warn:'Nefrotoxicidade/Ototoxicidade'},
+  'meropenem': {min:20, max:40, unit:'mg/kg', maxSingle:2000, freq:'8/8h'},
+  'vancomicina': {min:10, max:15, unit:'mg/kg', maxSingle:1000, freq:'6/6h', warn:'Síndrome do Homem Vermelho'},
+  'furosemida': {min:0.5, max:2, unit:'mg/kg', maxSingle:40, freq:'6/6h'},
+  'dexametasona': {min:0.15, max:0.6, unit:'mg/kg', maxSingle:16},
+  'hidrocortisona': {min:1, max:5, unit:'mg/kg', maxSingle:100},
+  'adrenalina': {min:0.01, max:0.1, unit:'mg/kg', maxSingle:1, warn:'Usar com monitorização contínua'},
+  'noradrenalina': {min:0.05, max:2, unit:'mcg/kg/min', warn:'Ajustar conforme resposta hemodinâmica'},
+  'dopamina': {min:2, max:20, unit:'mcg/kg/min', warn:'Efeitos dose-dependentes'},
+  'dobutamina': {min:2, max:20, unit:'mcg/kg/min'},
+  'fenobarbital': {min:3, max:5, unit:'mg/kg/dia', maxSingle:300},
+  'cafeína': {min:5, max:10, unit:'mg/kg', maxSingle:500, warn:'Dose de manutenção; carga=20mg/kg'},
+  'insulina': {min:0.05, max:0.1, unit:'UI/kg/h', warn:'Monitorizar glicemia capilar'},
+};
+
+function getDoseAlert(medName, doseValue, weightKg) {
+  if (!medName || !doseValue || !weightKg) return null;
+  const key = medName.toLowerCase().trim();
+  const doseData = PEDI_DOSES[key];
+  if (!doseData) return null;
+
+  const dose = parseFloat(doseValue);
+  if (isNaN(dose)) return null;
+
+  const dosePerKg = dose / weightKg;
+  const minDose = doseData.min;
+  const maxDose = doseData.max;
+  const maxSingle = doseData.maxSingle;
+
+  let status = 'ok';
+  let message = `${dose}mg = ${dosePerKg.toFixed(2)}${doseData.unit.substring(0,4)}`;
+
+  // Check if within range
+  if (dosePerKg < minDose) {
+    status = 'low';
+    message += ` (mín: ${minDose})`;
+  } else if (dosePerKg > maxDose) {
+    status = 'high';
+    message += ` (máx: ${maxDose})`;
+  }
+
+  // Check single dose limit
+  if (maxSingle && dose > maxSingle) {
+    status = 'danger';
+    message += ` ⚠ Dose única > ${maxSingle}mg`;
+  }
+
+  if (doseData.warn) {
+    message += ` · ${doseData.warn}`;
+  }
+
+  return { status, message, dosePerKg, range: `${minDose}-${maxDose}` };
+}
+
 const WORKER_URL='https://shiftcare.pedicode-app.workers.dev';
 async function callAI(payload){
   const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
@@ -970,6 +1114,8 @@ function mkPt(o){
     weightKg:o.wt||null,allergies:o.alrg||'',diagMain:o.diag||'',diagSec:[...(o.diagSec||[])],
     gestWeeks:o.gestWeeks||null,gestDays:o.gestDays||0,birthDate:o.birthDate||null,
     antecedentes:'',hda:'',
+    positioning:'',
+    vent:{mode:'',params:{}},
     vitals:{hr:'',spo2:'',rr:'',temp:'',sbp:'',gluc:'',lastUp:null},
     tasks:DEF_TASKS.map((t,i)=>({id:i,text:t,done:false,doneAt:null})),
     abcde:{A:'',B:'',C:'',D:'',E:''},unitCheck:{},
@@ -998,6 +1144,47 @@ function loadData(){try{
 function learnMed(n){if(!n)return;LEARN.meds[n.toLowerCase()]=(LEARN.meds[n.toLowerCase()]||0)+1;save();}
 function learnTask(t){LEARN.tasks[t]=(LEARN.tasks[t]||0)+1;save();}
 function medSugg(q){if(!q)return[];q=q.toLowerCase();const learned=Object.entries(LEARN.meds||{}).filter(([k])=>k.includes(q)).sort(([,a],[,b])=>b-a).slice(0,4).map(([k])=>COMMON_MEDS.find(m=>m.toLowerCase()===k)||k);const stat=COMMON_MEDS.filter(m=>m.toLowerCase().includes(q)).slice(0,5);return[...new Set([...learned,...stat])].slice(0,6);}
+
+function exportBackup(){
+  const data={
+    version:'3.0.0',
+    timestamp:new Date().toISOString(),
+    patients:ST.patients,
+    shiftStart:ST.shiftStart,
+    learn:LEARN
+  };
+  const json=JSON.stringify(data,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='shiftcare-backup-'+new Date().toISOString().split('T')[0]+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Backup exportado ✓','ok');
+}
+
+function importBackup(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(data.patients){ST.patients=data.patients;}
+      if(data.shiftStart){ST.shiftStart=data.shiftStart;}
+      if(data.learn){LEARN=data.learn;}
+      save();
+      showToast('Backup importado ✓','ok');
+      location.reload();
+    }catch(err){
+      alert('Erro ao importar backup: '+err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value='';
+}
+
 function resetLearn(){if(!confirm('Resetar dados de aprendizagem?'))return;LEARN={meds:{},tasks:{},todos:{}};save();alert('Dados eliminados.');}
 
 // ══════════════════════════════════════════════
@@ -1116,7 +1303,9 @@ function dashCard(p,ri){
           </div>
           ${p.diagMain?`<div class="pc-diag">${esc(p.diagMain)}</div>`:''}
           ${alrg?`<div class="pc-alrg">⚠ Alergia: ${alrg}</div>`:''}
+          ${getVentLabel(p)?`<div class="vent-badge">🫁 ${getVentLabel(p)}</div>`:''}
         </div>
+        <button class="btn-mic-card" data-voice-btn="${ri}" onclick="quickVoiceNote(${ri})" title="Nota rápida por voz">🎤</button>
       </div>
     </div>
     <div class="pc-body">
@@ -1131,6 +1320,23 @@ function dashCard(p,ri){
 
 function dashSituacao(p){
   const groups=[];
+
+  // ── Ventilação ────────────────────────────────────
+  const ventLbl=getVentLabel(p);
+  if(ventLbl){
+    const v=p.vent||{};const q=v.params||{};
+    const details=[];
+    if(q.flow)details.push(q.flow+(v.mode==='o2'?' L/min':'L'));
+    if(q.fio2)details.push('FiO₂ '+q.fio2+'%');
+    if(q.sub)details.push(q.sub);
+    if(q.cpap)details.push('CPAP '+q.cpap+' cmH₂O');
+    if(q.ipap)details.push('IPAP '+q.ipap);
+    if(q.epap)details.push('EPAP '+q.epap);
+    if(q.modeLabel)details.push(q.modeLabel);
+    if(q.no)details.push('+ NO');
+    const pill=`<span class="sit-pill" style="background:#E0F2FE;color:#0369A1;border-color:#BAE6FD">🫁 ${ventLbl}${details.length?' · '+details.join(' · '):''}</span>`;
+    groups.push({label:'Ventilação',pills:[pill]});
+  }
 
   // ── Alertas de sinais vitais ──────────────────────
   const R=vRanges(p.ageDays);
@@ -1264,32 +1470,37 @@ function renCsec(s){if(s==='enf')renEnf();if(s==='dev')renDev();if(s==='todo')re
 function renEnf(){
   const p=ST.patients[ST.idx];if(!p)return;
   const chkSvg='<svg class="chk-svg" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const abcde=ABCDE_DEF.map(a=>`<div class="abcde-item"><div class="abcde-hdr"><div class="abcde-key">${a.key}</div><div><div class="abcde-title">${a.title}</div><div class="abcde-desc">${a.desc}</div></div></div><textarea class="abcde-inp" rows="2" placeholder="Observações..." oninput="saveABCDE('${a.key}',this.value)">${p.abcde?.[a.key]||''}</textarea></div>`).join('');
-  const tasks=p.tasks.map(t=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTask('${t.id}')">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${esc(t.text)}</div>${t.done&&t.doneAt?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div></div>`).join('');
-  const uc=UNIT_CHECK.map((item,i)=>{const done=p.unitCheck?.[i]||false;return`<div class="task-it"><div class="task-chk ${done?'done':''}" onclick="tglUC(${i})">${done?chkSvg:''}</div><div class="task-lbl ${done?'done':''}">${item}</div></div>`;}).join('');
+  // 1. Notes (first)
   const notes=p.notes.length?p.notes.map(n=>`<div class="note-it"><span class="note-t">${ft(n.timestamp)}</span><span class="note-txt">${esc(n.text)}</span></div>`).join(''):'<div class="empty-st">Sem notas</div>';
+  // 2. ABCDE (second)
+  const abcde=ABCDE_DEF.map(a=>`<div class="abcde-item"><div class="abcde-hdr"><div class="abcde-key">${a.key}</div><div><div class="abcde-title">${a.title}</div><div class="abcde-desc">${a.desc}</div></div></div><textarea class="abcde-inp" rows="2" placeholder="Observações..." oninput="saveABCDE('${a.key}',this.value)">${p.abcde?.[a.key]||''}</textarea></div>`).join('');
+  // 3. Cuidados (third)
+  const tasks=p.tasks.map(t=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTask('${t.id}')">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${esc(t.text)}</div>${t.done&&t.doneAt?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div></div>`).join('');
+  // 4. Lateralidade (fourth — new)
+  const pos=p.positioning||'';
+  const posOpts=['Direita','Esquerda','Dorsal','Semi-Fowler','Ventral'];
+  const posButtons=posOpts.map(o=>`<button class="pos-btn${pos===o?' active':''}" onclick="setPositioning('${o}')">${o}</button>`).join('');
   el('csec-enf').innerHTML=`
-    <div class="sub-card"><div class="sub-card-hdr">Avaliação ABCDE</div>${abcde}</div>
-    <div class="sub-card"><div class="sub-card-hdr">Lista de Cuidados</div>${tasks}<div class="task-add"><input id="new-task-inp" type="text" placeholder="Adicionar cuidado..."><button class="btn btn-o btn-sm" onclick="addCustomTask()">+</button></div></div>
-    <div class="sub-card"><div class="sub-card-hdr">Estado da Unidade</div>${uc}</div>
     <div class="sub-card">
       <div class="sub-card-hdr">Notas do Turno
-        <button class="btn btn-o btn-sm" onclick="focusNoteInp()">+ Nota</button>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn-mic${_voiceActive?' recording':''}" id="voice-btn" onclick="tglVoice()" title="Nota por voz">🎤</button>
+          <button class="btn btn-o btn-sm" onclick="focusNoteInp()">+ Nota</button>
+        </div>
       </div>
+      <div id="voice-status" style="display:${_voiceActive?'block':'none'};padding:6px 13px;background:#FEF3C7;font-size:11px;color:#92400E;border-bottom:1px solid var(--b)">🎤 A ouvir... toque 🎤 para parar</div>
       <div style="padding:9px 13px;display:flex;gap:7px;border-bottom:1px solid var(--b)">
         <input id="note-inp-enf" type="text" placeholder="Nota rápida..." style="font-size:12px">
         <button class="btn btn-p btn-sm" onclick="addNoteEnf()">+</button>
       </div>
       <div style="padding:0 13px">${notes}</div>
     </div>
-    <div class="sub-card"><div class="sub-card-hdr">Registo Rápido</div>
-      <div style="padding:9px 13px">
-        <input type="text" id="quick-search" placeholder="Pesquisar..." oninput="filtQ(this.value)" style="font-size:12px;margin-bottom:8px">
-        <div id="qbuilder" class="qbuilder"><div class="qb-prev" id="qb-prev"></div><div class="qb-acts"><button class="btn btn-p btn-sm" onclick="confQ()">Registar</button><button class="btn btn-o btn-sm" onclick="clrQ()">Limpar</button></div></div>
-        <div id="quick-cats"></div>
-      </div>
+    <div class="sub-card"><div class="sub-card-hdr">Avaliação ABCDE</div>${abcde}</div>
+    <div class="sub-card"><div class="sub-card-hdr">Lista de Cuidados</div>${tasks}<div class="task-add"><input id="new-task-inp" type="text" placeholder="Adicionar cuidado..."><button class="btn btn-o btn-sm" onclick="addCustomTask()">+</button></div></div>
+    <div class="sub-card"><div class="sub-card-hdr">Lateralidade</div>
+      <div class="pos-wrap">${posButtons}</div>
+      ${pos?`<div class="pos-current">Posição actual: <strong>${pos}</strong></div>`:''}
     </div>`;
-  renQCats('');
 }
 function focusNoteInp(){const e=el('note-inp-enf');if(e){e.focus();e.scrollIntoView({behavior:'smooth'});}}
 function addNoteEnf(){const inp=el('note-inp-enf');if(!inp||!inp.value.trim())return;addNoteText(inp.value.trim());inp.value='';showToast('Nota registada ✓','ok');renEnf();}
@@ -1308,7 +1519,7 @@ function tglUC(i){
     chk.innerHTML=done?'<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>':'';
     const lbl=chk.closest('.task-it')?.querySelector('.task-lbl');
     if(lbl)lbl.className='task-lbl'+(done?' done':'');
-  } else {renEnf();}
+  } else {renTodo();}
 }
 function tglTask(tid){
   const p=ST.patients[ST.idx];if(!p)return;
@@ -1333,13 +1544,84 @@ function tglTask(tid){
 }
 function addCustomTask(){const inp=el('new-task-inp');if(!inp||!inp.value.trim())return;const p=ST.patients[ST.idx];if(!p)return;p.tasks.push({id:uid(),text:inp.value.trim(),done:false,doneAt:null});learnTask(inp.value.trim());inp.value='';save();renEnf();}
 
+// ─── Lateralidade ────────────────────────────
+function setPositioning(val){
+  const p=ST.patients[ST.idx];if(!p)return;
+  p.positioning=(p.positioning===val)?'':val; // toggle off if same
+  save();renEnf();
+}
+
+// ─── Voz ─────────────────────────────────────
+let _voiceActive=false,_voiceRec=null;
+function tglVoice(){
+  if(_voiceActive){stopVoice();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('Reconhecimento de voz não suportado neste browser','err');return;}
+  _voiceRec=new SR();
+  _voiceRec.lang='pt-PT';
+  _voiceRec.continuous=false;
+  _voiceRec.interimResults=false;
+  _voiceRec.onresult=function(e){
+    const txt=Array.from(e.results).map(r=>r[0].transcript).join(' ').trim();
+    if(txt){addNoteText(txt);showToast('Nota de voz registada ✓','ok');}
+    stopVoice();renEnf();
+  };
+  _voiceRec.onerror=function(e){showToast('Erro de microfone: '+e.error,'err');stopVoice();renEnf();};
+  _voiceRec.onend=function(){if(_voiceActive){stopVoice();renEnf();}};
+  _voiceRec.start();
+  _voiceActive=true;
+  renEnf();
+}
+function stopVoice(){
+  _voiceActive=false;
+  if(_voiceRec){try{_voiceRec.stop();}catch(e){}}_voiceRec=null;
+}
+
+// Quick voice note from dashboard card (no tab navigation needed)
+function quickVoiceNote(ri){
+  const p=ST.patients[ri];if(!p)return;
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('Reconhecimento de voz não suportado neste browser','err');return;}
+  const btn=document.querySelector('[data-voice-btn="'+ri+'"]');
+  if(btn){btn.textContent='🔴';btn.classList.add('recording');}
+  const rec=new SR();
+  rec.lang='pt-PT';rec.continuous=false;rec.interimResults=false;
+  rec.onresult=function(e){
+    const txt=Array.from(e.results).map(r=>r[0].transcript).join(' ').trim();
+    if(txt){
+      p.notes.unshift({id:uid(),text:txt,timestamp:new Date().toISOString()});
+      save();
+      showToast(p.name+': nota de voz registada ✓','ok');
+    }
+    if(btn){btn.textContent='🎤';btn.classList.remove('recording');}
+    renderDash();
+  };
+  rec.onerror=function(e){
+    showToast('Erro de microfone: '+e.error,'err');
+    if(btn){btn.textContent='🎤';btn.classList.remove('recording');}
+  };
+  rec.onend=function(){if(btn){btn.textContent='🎤';btn.classList.remove('recording');}};
+  rec.start();
+  showToast('A ouvir... fale agora 🎤','ok');
+}
+
+// ─── Todo scheduled time ──────────────────────
+function setTodoSched(i,val){
+  const p=ST.patients[ST.idx];if(!p||!p.todos[i])return;
+  p.todos[i].scheduledAt=val||null;
+  save();
+  // patch DOM directly to avoid full re-render
+  const inp=document.querySelectorAll('.task-sched-inp')[i];
+  if(inp)inp.value=val||'';
+}
+
 // Quick notes
 let _qSel=[];
 function renQCats(filter){const e=el('quick-cats');if(!e)return;const q=filter.toLowerCase();e.innerHTML=QCATS.map(c=>{const items=q?c.items.filter(i=>i.toLowerCase().includes(q)||c.cat.toLowerCase().includes(q)):c.items;if(q&&!items.length)return'';return`<div class="cat-wrap"><div class="cat-hdr${q?' open':''}" onclick="tglCat(this)"><span class="cat-hdr-name">${c.cat}</span><span class="cat-arr">›</span></div><div class="cat-items${q?' open':''}">${items.map(item=>{const sel=_qSel.some(s=>s.cat===c.cat&&s.item===item);return`<button class="i-chip${sel?' sel':''}" onclick="selQ('${c.cat}','${item}')">${item}</button>`;}).join('')}</div></div>`;}).join('');}
 function tglCat(hdr){hdr.classList.toggle('open');const it=hdr.nextElementSibling;if(it)it.classList.toggle('open');}
 function selQ(cat,item){const i=_qSel.findIndex(s=>s.cat===cat&&s.item===item);if(i>=0)_qSel.splice(i,1);else _qSel.push({cat,item});updQB();renQCats(el('quick-search')?.value||'');}
 function updQB(){const b=el('qbuilder'),pv=el('qb-prev');if(!b||!pv)return;if(!_qSel.length){b.classList.remove('vis');return;}b.classList.add('vis');pv.textContent=_qSel.map(s=>`${s.cat} › ${s.item}`).join(' | ');}
-function confQ(){if(!_qSel.length)return;addNoteText(_qSel.map(s=>`${s.cat} › ${s.item}`).join(' | '));clrQ();renEnf();}
+function confQ(){if(!_qSel.length)return;addNoteText(_qSel.map(s=>`${s.cat} › ${s.item}`).join(' | '));showToast('Nota registada ✓','ok');clrQ();renTodo();}
 function clrQ(){_qSel=[];updQB();renQCats(el('quick-search')?.value||'');}
 function filtQ(v){renQCats(v);}
 
@@ -1355,12 +1637,82 @@ function renDev(){
   const inactList=p.devInactive.map((d,i)=>`<div class="dev-item" style="opacity:.6"><span class="dev-icon" style="opacity:.5">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl" style="text-decoration:line-through">${esc(d.label)}</div>${d.location?`<div class="dev-sub">${esc(d.location)}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${esc(d.gauge)}${d.side?' · '+d.side:''}</div>`:''}<div class="dev-removed-lbl">Retirado: ${d.removedAt?fd(d.removedAt):'—'}</div></div><button class="rm-btn" onclick="delInactiveDev(${i})" title="Eliminar">🗑</button></div>`).join('');
   const chips=DEV_TYPES.filter(dt=>!dt.neo||cat==='neo').map(dt=>{const a=p.devices.some(d=>d.typeId===dt.id);return`<button class="i-chip${a?' sel':''}" onclick="tglDevQ('${dt.id}')" style="font-size:11px;padding:5px 9px">${dt.icon} ${dt.label.split(' ').slice(-1)[0]}</button>`;}).join('');
   el('csec-dev').innerHTML=`
+    ${renVentCard(p)}
     <div class="sub-card"><div class="sub-card-hdr">Dispositivos Activos<button class="btn btn-o btn-sm" onclick="openDevModal()">+ Adicionar</button></div>${devList}</div>
     <div class="sub-card"><div class="sub-card-hdr">Figura do Doente</div>
       <div style="display:flex;justify-content:center;padding:14px"><svg viewBox="0 0 100 100" width="160" height="160" style="overflow:visible">${fig}${activeDots}<text x="5" y="97" font-size="7" font-weight="700" fill="#0F766E" font-family="system-ui,sans-serif">D</text><text x="89" y="97" font-size="7" font-weight="700" fill="#0F766E" font-family="system-ui,sans-serif">E</text></svg></div>
       <div style="padding:0 13px 13px;display:flex;flex-wrap:wrap;gap:5px">${chips}</div>
     </div>
     ${p.devInactive.length?`<div class="sub-card"><div class="sub-card-hdr">Dispositivos Retirados</div>${inactList}</div>`:''}`;
+}
+// ─── Ventilação ──────────────────────────────
+const VENT_MODES=[
+  {id:'aa',  label:'Ar Ambiente'},
+  {id:'o2',  label:'O₂ óculos/máscara'},
+  {id:'venturi', label:'Venturi'},
+  {id:'caf', label:'CAF'},
+  {id:'vni', label:'VNI'},
+  {id:'vmi', label:'VMI'},
+  {id:'vaf', label:'VAF'}
+];
+function getVentLabel(p){
+  const v=p.vent;if(!v||!v.mode)return null;
+  const m=v.mode,q=v.params||{};
+  if(m==='aa')return'Ar Ambiente';
+  if(m==='o2')return'O₂'+(q.flow?' '+q.flow+' L/min':'');
+  if(m==='venturi')return'Venturi'+(q.fio2?' '+q.fio2+'%':'');
+  if(m==='caf'){const p2=[];if(q.flow)p2.push(q.flow+'L');if(q.fio2)p2.push(q.fio2+'%');return'CAF'+(p2.length?' '+p2.join('/'):'');}
+  if(m==='vni')return'VNI'+(q.sub?' '+q.sub:'');
+  if(m==='vmi')return'VMI'+(q.modeLabel?' '+q.modeLabel:'');
+  if(m==='vaf')return'VAF'+(q.no?' + NO':'');
+  return m.toUpperCase();
+}
+function setVentMode(mode){
+  const p=ST.patients[ST.idx];if(!p)return;
+  if(!p.vent)p.vent={mode:'',params:{}};
+  p.vent.mode=(p.vent.mode===mode)?'':mode;
+  p.vent.params={};
+  save();renDev();
+}
+function setVentParam(key,val){
+  const p=ST.patients[ST.idx];if(!p)return;
+  if(!p.vent)p.vent={mode:'',params:{}};
+  if(!p.vent.params)p.vent.params={};
+  p.vent.params[key]=val;
+  save();renDev();
+}
+function renVentCard(p){
+  if(!p.vent)p.vent={mode:'',params:{}};
+  const m=p.vent.mode,q=p.vent.params||{};
+  const modeButtons=VENT_MODES.map(v=>{
+    const isAA=v.id==='aa';
+    const cls='vent-btn'+(m===v.id?(isAA?' active-aa':' active'):'');
+    return`<button class="${cls}" onclick="setVentMode('${v.id}')">${v.label}</button>`;
+  }).join('');
+  let paramsHTML='';
+  if(m==='o2'){
+    const flows=['2','2.5','3','3.5','4'];
+    paramsHTML=`<div class="vent-params"><span class="vent-plbl">Flow:</span>${flows.map(f=>`<button class="vent-chip${q.flow===f?' active':''}" onclick="setVentParam('flow','${f}')">${f} L/min</button>`).join('')}</div>`;
+  } else if(m==='venturi'){
+    const fio2s=['24','28','31','35','40','60'];
+    paramsHTML=`<div class="vent-params"><span class="vent-plbl">FiO₂:</span>${fio2s.map(f=>`<button class="vent-chip${q.fio2===f?' active':''}" onclick="setVentParam('fio2','${f}')">${f}%</button>`).join('')}</div>`;
+  } else if(m==='caf'){
+    paramsHTML=`<div class="vent-params"><span class="vent-plbl">Flow:</span><input type="number" class="vent-pinp" value="${q.flow||''}" min="1" max="80" placeholder="L/min" onchange="setVentParam('flow',this.value)"><span class="vent-plbl">FiO₂:</span><input type="number" class="vent-pinp" value="${q.fio2||''}" min="21" max="100" placeholder="%" onchange="setVentParam('fio2',this.value)"><span class="vent-plbl" style="font-size:10px">%</span></div>`;
+  } else if(m==='vni'){
+    const subs=['CPAP','BiLevel'];
+    const subButtons=subs.map(s=>`<button class="vent-chip${q.sub===s?' active':''}" onclick="setVentParam('sub','${s}')">${s}</button>`).join('');
+    const extraP=q.sub==='CPAP'
+      ?`<span class="vent-plbl">P:</span><input type="number" class="vent-pinp" value="${q.cpap||''}" min="3" max="20" placeholder="cmH₂O" onchange="setVentParam('cpap',this.value)">`
+      :q.sub==='BiLevel'
+        ?`<span class="vent-plbl">IPAP:</span><input type="number" class="vent-pinp" value="${q.ipap||''}" placeholder="cmH₂O" onchange="setVentParam('ipap',this.value)"><span class="vent-plbl">EPAP:</span><input type="number" class="vent-pinp" value="${q.epap||''}" placeholder="cmH₂O" onchange="setVentParam('epap',this.value)">`
+        :'';
+    paramsHTML=`<div class="vent-params"><span class="vent-plbl">Modo:</span>${subButtons}${extraP}<span class="vent-plbl">FiO₂:</span><input type="number" class="vent-pinp" value="${q.fio2||''}" min="21" max="100" placeholder="%" onchange="setVentParam('fio2',this.value)"><span class="vent-plbl" style="font-size:10px">%</span></div>`;
+  } else if(m==='vmi'){
+    paramsHTML=`<div class="vent-params"><span class="vent-plbl">Modo:</span><input type="text" class="vent-pinp" style="width:90px" value="${q.modeLabel||''}" placeholder="PC/VC/SIMV…" onchange="setVentParam('modeLabel',this.value)"><span class="vent-plbl">FiO₂:</span><input type="number" class="vent-pinp" value="${q.fio2||''}" min="21" max="100" placeholder="%" onchange="setVentParam('fio2',this.value)"><span class="vent-plbl" style="font-size:10px">%</span></div>`;
+  } else if(m==='vaf'){
+    paramsHTML=`<div class="vent-params"><span class="vent-plbl">Óxido Nítrico:</span><button class="vent-chip${q.no?' active':''}" onclick="setVentParam('no',${!q.no})">${q.no?'✓ Com NO':'Sem NO'}</button></div>`;
+  }
+  return`<div class="sub-card"><div class="sub-card-hdr">🫁 Suporte Ventilatório</div><div class="vent-modes">${modeButtons}</div>${paramsHTML}</div>`;
 }
 function tglDevQ(typeId){const p=ST.patients[ST.idx];if(!p)return;const idx=p.devices.findIndex(d=>d.typeId===typeId);if(idx>=0){retireDev(idx);}else{const dt=DEV_TYPES.find(d=>d.id===typeId);if(!dt)return;if(!p.devices)p.devices=[];p.devices.push({id:uid(),typeId,label:dt.label,icon:dt.icon,location:'',gauge:'',side:''});save();renDev();}}
 function retireDev(i){const p=ST.patients[ST.idx];if(!p)return;if(!p.devInactive)p.devInactive=[];const d={...p.devices[i],removedAt:new Date().toISOString()};p.devInactive.unshift(d);p.devices.splice(i,1);save();renDev();}
@@ -1377,12 +1729,32 @@ function confDev(){const p=ST.patients[ST.idx];if(!p)return;const typeId=el('dev
 function renTodo(){
   const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];
   const chkSvg='<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const listH=p.todos.map((t,i)=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTodo(${i})">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${esc(t.text)}</div>${t.done?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div><button class="rm-btn" onclick="rmTodo(${i})">×</button></div>`).join('')||'<div class="empty-st">Sem tarefas</div>';
+  // To-do list with planned-at + done-at time pickers
+  const listH=p.todos.map((t,i)=>{
+    const timeTags=(t.scheduledAt?`<span class="time-tag plan">⏰ ${t.scheduledAt}</span>`:'')+
+                  (t.done&&t.doneAt?`<span class="time-tag done-ok">✓ ${ft(t.doneAt)}</span>`:'');
+    const schedInput=!t.done?`<input type="time" class="task-sched-inp" value="${t.scheduledAt||''}" onchange="setTodoSched(${i},this.value)" title="Hora planeada">`:'';
+    return `<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTodo(${i})">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${esc(t.text)}</div>${timeTags?`<div class="task-times">${timeTags}</div>`:''}${schedInput}</div><button class="rm-btn" onclick="rmTodo(${i})">×</button></div>`;
+  }).join('')||'<div class="empty-st">Sem tarefas</div>';
+  // Unit Check (moved from Enfermagem)
+  const uc=UNIT_CHECK.map((item,i)=>{const done=p.unitCheck?.[i]||false;return`<div class="task-it"><div class="task-chk ${done?'done':''}" onclick="tglUC(${i})">${done?chkSvg:''}</div><div class="task-lbl ${done?'done':''}">${item}</div></div>`;}).join('');
+  // Acesso Rápido (pre-defined to-do items)
   const qH=TODO_ITEMS.map(c=>`<div style="margin-bottom:9px"><div class="sect-lbl">${c.cat}</div><div style="display:flex;flex-wrap:wrap;gap:5px">${c.items.map(item=>`<button class="i-chip" onclick="addTodoQ('${item}')">${item}</button>`).join('')}</div></div>`).join('');
-  el('csec-todo').innerHTML=`<div class="sub-card"><div class="sub-card-hdr">To-Do do Turno</div>${listH}<div class="task-add"><input id="todo-inp" type="text" placeholder="Adicionar tarefa..."><button class="btn btn-o btn-sm" onclick="addTodoC()">+</button></div></div><div class="sub-card"><div class="sub-card-hdr">Acesso Rápido</div><div style="padding:12px">${qH}</div></div>`;
+  el('csec-todo').innerHTML=`
+    <div class="sub-card"><div class="sub-card-hdr">To-Do do Turno</div>${listH}<div class="task-add"><input id="todo-inp" type="text" placeholder="Adicionar tarefa..."><button class="btn btn-o btn-sm" onclick="addTodoC()">+</button></div></div>
+    <div class="sub-card"><div class="sub-card-hdr">Estado da Unidade</div>${uc}</div>
+    <div class="sub-card"><div class="sub-card-hdr">Registo Rápido</div>
+      <div style="padding:9px 13px">
+        <input type="text" id="quick-search" placeholder="Pesquisar..." oninput="filtQ(this.value)" style="font-size:12px;margin-bottom:8px">
+        <div id="qbuilder" class="qbuilder"><div class="qb-prev" id="qb-prev"></div><div class="qb-acts"><button class="btn btn-p btn-sm" onclick="confQ()">Registar</button><button class="btn btn-o btn-sm" onclick="clrQ()">Limpar</button></div></div>
+        <div id="quick-cats"></div>
+      </div>
+    </div>
+    <div class="sub-card"><div class="sub-card-hdr">Acesso Rápido</div><div style="padding:12px">${qH}</div></div>`;
+  renQCats('');
 }
-function addTodoQ(text){const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];if(p.todos.find(t=>t.text===text&&!t.done))return;p.todos.push({id:uid(),text,done:false,doneAt:null});save();renTodo();}
-function addTodoC(){const inp=el('todo-inp');if(!inp||!inp.value.trim())return;addTodoQ(inp.value.trim());inp.value='';}
+function addTodoQ(text){const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];if(p.todos.find(t=>t.text===text&&!t.done))return;p.todos.push({id:uid(),text,done:false,doneAt:null,scheduledAt:null});save();renTodo();}
+function addTodoC(){const inp=el('todo-inp');if(!inp||!inp.value.trim())return;const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];p.todos.push({id:uid(),text:inp.value.trim(),done:false,doneAt:null,scheduledAt:null});inp.value='';save();renTodo();}
 function tglTodo(i){const p=ST.patients[ST.idx];if(!p)return;p.todos[i].done=!p.todos[i].done;p.todos[i].doneAt=p.todos[i].done?new Date().toISOString():null;save();renTodo();}
 function rmTodo(i){const p=ST.patients[ST.idx];if(!p)return;p.todos.splice(i,1);save();renTodo();}
 
@@ -1443,6 +1815,146 @@ function openMedModal(type){
 }
 function onMedName(v){const sugg=medSugg(v);const ac=el('med-autocomplete');if(!ac)return;ac.innerHTML=sugg.map(s=>`<div class="ac-item" onclick="selMed('${s}')">${s}</div>`).join('');}
 function selMed(n){if(el('med-name'))el('med-name').value=n;el('med-autocomplete').innerHTML='';}
+
+// ════════════════════════════════════════════════════════════
+// BULK QR TRANSFER - Multiple patients with compression
+// ════════════════════════════════════════════════════════════
+function gen12hReport(){
+  if(!ST.patients||!ST.patients.length)return 'Sem doentes activos.';
+  const elapsed=ST.shiftStart?Math.floor((Date.now()-new Date(ST.shiftStart).getTime())/3600000):0;
+  const mins=ST.shiftStart?Math.round((Date.now()-new Date(ST.shiftStart))/60000)%60:0;
+  const now=new Date().toLocaleString('pt-PT');
+  const active=ST.patients.filter(p=>p.status==='internado');
+  let lines=['═══ RESUMO DO TURNO — ShiftCare v3.0 ═══',
+    'Hora: '+now+' | Duração: '+elapsed+'h'+mins+'min | Doentes: '+active.length,''];
+  active.forEach(p=>{
+    const R=vRanges(p.ageDays);
+    const alerts=VITALS_DEF.filter(v=>p.vitals[v.k]&&R[v.k]&&vSt(p.vitals[v.k],R[v.k])==='alrt');
+    const warns=VITALS_DEF.filter(v=>p.vitals[v.k]&&R[v.k]&&vSt(p.vitals[v.k],R[v.k])==='warn');
+    lines.push('► '+p.name+' | Cama '+p.bed+' | '+ageLabel(p)+(p.weightKg?' | '+p.weightKg+'kg':''));
+    if(p.diagMain)lines.push('  DX: '+p.diagMain);
+    if(p.allergies)lines.push('  ⚠ Alergia: '+p.allergies);
+    const vStr=VITALS_DEF.map(v=>v.label+'='+(p.vitals[v.k]||'—')).join(' | ');
+    lines.push('  Vitais: '+vStr);
+    if(alerts.length)lines.push('  🔴 ALERTAS: '+alerts.map(v=>v.label+'='+p.vitals[v.k]+v.unit).join(', '));
+    if(warns.length)lines.push('  🟡 Atenção: '+warns.map(v=>v.label+'='+p.vitals[v.k]+v.unit).join(', '));
+    const activeMeds=(p.medications||[]).filter(m=>!m.suspended);
+    if(activeMeds.length)lines.push('  💊 Med: '+activeMeds.map(m=>m.name+' '+m.dose+m.unit+' '+m.freq).join(' | '));
+    const activeDevs=(p.devices||[]);
+    if(activeDevs.length)lines.push('  🔧 Disp: '+activeDevs.map(d=>d.label+(d.location?' '+d.location:'')).join(', '));
+    const nutr=nutrSummary(p);
+    if(nutr&&nutr!=='Sem alimentação activa')lines.push('  🍼 Alim: '+nutr);
+    const pendTodos=(p.todos||[]).filter(t=>!t.done);
+    if(pendTodos.length)lines.push('  📋 Pendente: '+pendTodos.map(t=>t.text).join(' | '));
+    const recentNotes=(p.notes||[]).slice(0,3);
+    if(recentNotes.length)recentNotes.forEach(n=>lines.push('  ['+ft(n.timestamp)+'] '+n.text));
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+
+function bulkTransferAllPatients(){
+  if(ST.patients.length===0){alert('Sem doentes para transferir.');return;}
+
+  const bulkData={
+    timestamp:new Date().toISOString(),
+    shiftStart:ST.shiftStart,
+    numPatients:ST.patients.length,
+    patients:ST.patients.map(p=>_buildQRPayload(p,null,'full'))
+  };
+
+  const compressed=typeof LZString==='object'&&LZString.compressToBase64
+    ?LZString.compressToBase64(JSON.stringify(bulkData))
+    :JSON.stringify(bulkData);
+
+  const code='BULK|'+compressed;
+
+  // Show report
+  const report=gen12hReport();
+  const disp=document.getElementById('qr-display');
+  if(disp){
+    disp.innerHTML=`
+      <div style="padding:15px;background:var(--s2);border-radius:var(--rads);margin-bottom:13px">
+        <div style="font-size:12px;color:var(--t2);white-space:pre-wrap;font-family:monospace;max-height:200px;overflow-y:auto">${esc(report)}</div>
+      </div>
+      <div style="padding:10px;background:var(--gbg);border:1px solid var(--gborder);border-radius:var(--rads);font-size:12px;color:var(--grn)">
+        ✅ Transferência em massa preparada: ${ST.patients.length} doentes
+      </div>
+      <button class="btn btn-p" style="width:100%;margin-top:10px" onclick="copyTransferCode()">Copiar Código de Transferência</button>
+      <button class="btn btn-o" style="width:100%;margin-top:8px" onclick="closeM('modal-qr')">Fechar</button>
+    `;
+    disp.style.display='block';
+  }
+
+  // Store current transfer code
+  window._currentTransferCode=code;
+}
+
+function copyTransferCode(){
+  if(!window._currentTransferCode){alert('Sem código de transferência.');return;}
+  try{
+    navigator.clipboard.writeText(window._currentTransferCode).then(()=>{
+      showToast('Código copiado para a área de transferência ✓','ok');
+    }).catch(()=>{
+      alert('Não foi possível copiar. Tente novamente.');
+    });
+  }catch(e){
+    alert('Erro ao copiar: '+e.message);
+  }
+}
+
+function pasteTransferCode(){
+  const code=prompt('Cole o código de transferência:');
+  if(!code)return;
+
+  try{
+    let data;
+    if(code.startsWith('BULK|')){
+      const compressed=code.substring(5);
+      if(typeof LZString==='object'&&LZString.decompressFromBase64){
+        const decompressed=LZString.decompressFromBase64(compressed);
+        data=JSON.parse(decompressed);
+        // Import all patients
+        if(data.patients&&Array.isArray(data.patients)){
+          let count=0;
+          data.patients.forEach(pData=>{
+            try{
+              const pObj=typeof pData==='string'?JSON.parse(pData):pData;
+              if(pObj.name&&!ST.patients.some(p=>p.name===pObj.name&&p.bed===pObj.bed)){
+                ST.patients.push(mkPt({...pObj}));
+                const np=ST.patients[ST.patients.length-1];
+                if(pObj.antecedentes)np.antecedentes=pObj.antecedentes;
+                if(pObj.hda)np.hda=pObj.hda;
+                if(pObj.vitals)np.vitals=pObj.vitals;
+                if(pObj.devices)np.devices=pObj.devices;
+                if(pObj.medications)np.medications=pObj.medications;
+                if(pObj.nutrition)np.nutrition=pObj.nutrition;
+                if(pObj.notes)np.notes=pObj.notes;
+                if(pObj.todos)np.todos=pObj.todos;
+                if(pObj.abcde)np.abcde=pObj.abcde;
+                if(pObj.positioning)np.positioning=pObj.positioning;
+                if(pObj.vent&&pObj.vent.mode)np.vent=pObj.vent;
+                if(pObj.tasks&&pObj.tasks.length)np.tasks=pObj.tasks;
+                if(pObj.unitCheck)np.unitCheck=pObj.unitCheck;
+                if(pObj.devInactive&&pObj.devInactive.length)np.devInactive=pObj.devInactive;
+                if(pObj.medHistory&&pObj.medHistory.length)np.medHistory=pObj.medHistory;
+                count++;
+              }
+            }catch(e){}
+          });
+          save();
+          showToast(`${count} doentes importados ✓`,'ok');
+          return;
+        }
+      }
+    }
+    alert('Código inválido ou incompatível.');
+  }catch(e){
+    alert('Erro ao importar: '+e.message);
+  }
+}
+
+
 function confMed(){
   const p=ST.patients[ST.idx];if(!p)return;
   const name=el('med-name').value.trim(),dose=el('med-dose').value.trim();
@@ -1451,6 +1963,22 @@ function confMed(){
   const notes=el('med-notes')?.value.trim()||'',vel=el('med-vel')?.value.trim()||'';
   const startAt=el('med-start')?.value||new Date().toISOString();
   if(!p.medications)p.medications=[];
+    // Check pediatric dose before pushing
+  const weightKg=p.weightKg;
+  if(weightKg&&name){
+    const doseAlert=getDoseAlert(name,dose,weightKg);
+    if(doseAlert){
+      if(doseAlert.status==='danger'){
+        if(!confirm('⚠️ ALERTA DE DOSE ELEVADA!\n\n'+doseAlert.message+'\n\nTem a certeza que deseja adicionar esta medicação?'))return;
+      } else if(doseAlert.status==='high'){
+        if(!confirm('⚠️ Dose acima do intervalo recomendado:\n\n'+doseAlert.message+'\n\nContinuar?'))return;
+      } else if(doseAlert.status==='ok'){
+        showToast('✓ Dose dentro do intervalo: '+doseAlert.message,'ok');
+      } else if(doseAlert.status==='low'){
+        showToast('ℹ Dose abaixo do recomendado: '+doseAlert.message,'');
+      }
+    }
+  }
   p.medications.push({id:uid(),name,dose,unit:el('med-unit').value,route:el('med-route').value,freq,firstHour:8,administered:{},suspended:false,notes,vel,startAt});
   learnMed(name);save();showToast('Medicação adicionada ✓','ok');closeM('modal-med');renMsec(ST.msec);
 }
@@ -1908,12 +2436,35 @@ function _onQRCode(raw){
   stopScan();
   const status=document.getElementById('scan-status');
   try{
-    const data=JSON.parse(raw);
+    let data;
+
+    // Check if compressed (LZ-String marker)
+    if(raw.startsWith('LZ|')){
+      if(typeof LZString==='object'&&LZString.decompressFromBase64){
+        const compressed=raw.substring(3);
+        try{
+          const decompressed=LZString.decompressFromBase64(compressed);
+          data=JSON.parse(decompressed);
+        }catch(e){
+          if(status)status.textContent='Erro ao descomprimir QR. Tente novamente.';
+          setTimeout(()=>startScan(),1500);
+          return;
+        }
+      } else {
+        if(status)status.textContent='Biblioteca de compressão não carregada. Tente novamente.';
+        setTimeout(()=>startScan(),1500);
+        return;
+      }
+    } else {
+      data=JSON.parse(raw);
+    }
+
     if(!data||!data.name){
       if(status)status.textContent='QR inválido. Tente novamente.';
       setTimeout(()=>startScan(),1500);
       return;
     }
+
     // Avoid duplicate imports
     const exists=ST.patients.some(p=>p.name===data.name&&p.bed===data.bed&&p.status==='internado');
     if(!exists){
@@ -1922,19 +2473,41 @@ function _onQRCode(raw){
         wt:data.wt,alrg:data.alrg,diag:data.diag,diagSec:data.diagSec||[],
         gestWeeks:data.gestWeeks,gestDays:data.gestDays,birthDate:data.birthDate
       }));
-      // Restore clinical notes if present
+      // Restore full clinical data if present
       const p=ST.patients[ST.patients.length-1];
       if(data.antecedentes)p.antecedentes=data.antecedentes;
       if(data.hda)p.hda=data.hda;
+      if(data.vitals)p.vitals=data.vitals;
+      if(data.devices)p.devices=data.devices;
+      if(data.medications)p.medications=data.medications;
+      if(data.nutrition)p.nutrition=data.nutrition;
+      if(data.notes)p.notes=data.notes;
+      if(data.todos)p.todos=data.todos;
+      if(data.abcde)p.abcde=data.abcde;
+      if(data.positioning)p.positioning=data.positioning;
+      if(data.vent&&data.vent.mode)p.vent=data.vent;
+      if(data.tasks&&data.tasks.length)p.tasks=data.tasks;
+      if(data.unitCheck)p.unitCheck=data.unitCheck;
+      if(data.devInactive&&data.devInactive.length)p.devInactive=data.devInactive;
+      if(data.medHistory&&data.medHistory.length)p.medHistory=data.medHistory;
       save();
     }
+
     const resList=document.getElementById('scan-results-list');
     const resWrap=document.getElementById('scan-results');
     if(resList){
-      const div=document.createElement('div');
-      div.style.cssText='padding:5px 0;font-size:13px;display:flex;align-items:center;gap:6px';
-      div.innerHTML=(exists?'⚠ Já importado: ':'✅ Importado: ')+'<strong>'+data.name+'</strong> — Cama '+(data.bed||'—');
-      resList.appendChild(div);
+      const wrap=document.createElement('div');
+      wrap.style.cssText='margin-bottom:10px';
+      if(data.hw){
+        wrap.innerHTML=`<div class="scan-hw-card">
+          <div class="scan-hw-card-hdr">🤖 Resumo do colega · ${esc(data.name)} · Cama ${esc(data.bed)}</div>
+          <div class="scan-hw-card-body">${esc(data.hw)}</div>
+        </div>
+        <div style="padding:4px 2px;font-size:13px;display:flex;align-items:center;gap:6px">${exists?'⚠ Já importado: ':'✅ Importado: '}<strong>${esc(data.name)}</strong> — Cama ${esc(data.bed||'—')}</div>`;
+      } else {
+        wrap.innerHTML=`<div style="padding:5px 0;font-size:13px;display:flex;align-items:center;gap:6px">${exists?'⚠ Já importado: ':'✅ Importado: '}<strong>${esc(data.name)}</strong> — Cama ${esc(data.bed||'—')}</div>`;
+      }
+      resList.appendChild(wrap);
     }
     if(resWrap)resWrap.style.display='block';
     if(status)status.textContent='Lido! Aponte para outro QR Code...';
@@ -1944,6 +2517,65 @@ function _onQRCode(raw){
     setTimeout(()=>{_scanLock=false;startScan(true);},1500);
   }
 }
+
+function importPastedCode(){
+  const input=document.getElementById('paste-transfer-code');
+  if(!input)return;
+  const code=input.value.trim();
+  if(!code){alert('Cole um código válido.');return;}
+
+  try{
+    let count=0;
+    if(code.startsWith('BULK|')){
+      const compressed=code.substring(5);
+      if(typeof LZString==='object'&&LZString.decompressFromBase64){
+        const decompressed=LZString.decompressFromBase64(compressed);
+        const data=JSON.parse(decompressed);
+        if(data.patients&&Array.isArray(data.patients)){
+          data.patients.forEach(pStr=>{
+            try{
+              const pObj=typeof pStr==='string'?JSON.parse(pStr):pStr;
+              if(pObj.name&&!ST.patients.some(p=>p.name===pObj.name&&p.bed===pObj.bed)){
+                ST.patients.push(mkPt(pObj));
+                const np2=ST.patients[ST.patients.length-1];
+                ['antecedentes','hda','vitals','devices','medications','nutrition','notes','todos','abcde','positioning','vent','tasks','unitCheck','devInactive','medHistory'].forEach(k=>{if(pObj[k]!==undefined&&pObj[k]!==null&&pObj[k]!=='')np2[k]=pObj[k];});
+                count++;
+              }
+            }catch(e){}
+          });
+          save();
+          showToast(`${count} doentes importados ✓`,'ok');
+          input.value='';
+          renderDash();
+          showScreen('s-dashboard');
+          return;
+        }
+      }
+    }
+    // Single patient code
+    let pObj=code.startsWith('LZ|')?JSON.parse(typeof LZString==='object'?LZString.decompressFromBase64(code.substring(3)):code):JSON.parse(code);
+    if(pObj.name){
+      if(!ST.patients.some(p=>p.name===pObj.name&&p.bed===pObj.bed)){
+        ST.patients.push(mkPt(pObj));
+        const np3=ST.patients[ST.patients.length-1];
+        ['antecedentes','hda','vitals','devices','medications','nutrition','notes','todos','abcde','positioning','vent','tasks','unitCheck','devInactive','medHistory'].forEach(k=>{if(pObj[k]!==undefined&&pObj[k]!==null&&pObj[k]!=='')np3[k]=pObj[k];});
+        save();
+        count=1;
+      }
+    }
+    if(count>0){
+      showToast(`${count} doente(s) importado(s) ✓`,'ok');
+      input.value='';
+      renderDash();
+      showScreen('s-dashboard');
+    } else {
+      alert('Código inválido ou doente já existe.');
+    }
+  }catch(e){
+    alert('Erro ao importar: '+e.message);
+  }
+}
+
 function startShiftAfterScan(){
   if(!ST.patients.filter(p=>p.status==='internado').length)return;
   if(!ST.shiftStart)ST.shiftStart=new Date().toISOString();
@@ -1956,10 +2588,14 @@ function renderQRTabs(){
   const disp=document.getElementById('qr-display');
   const err=document.getElementById('qr-error');
   const loading=document.getElementById('qr-loading');
+  const ailoading=document.getElementById('qr-ai-loading');
+  const hwbox=document.getElementById('qr-handover-box');
   if(!tabs)return;
   if(disp)disp.style.display='none';
   if(err)err.style.display='none';
   if(loading)loading.style.display='none';
+  if(ailoading)ailoading.style.display='none';
+  if(hwbox)hwbox.style.display='none';
   const active=ST.patients.filter(p=>p.status==='internado');
   if(!active.length){
     tabs.innerHTML='<div style="font-size:13px;color:var(--t2)">Sem doentes activos para transferir.</div>';
@@ -1967,48 +2603,177 @@ function renderQRTabs(){
   }
   tabs.innerHTML=active.map(p=>{
     const ri=ST.patients.indexOf(p);
-    return`<button class="btn btn-o btn-sm" onclick="showQRFor(${ri})">${esc(p.name)} · Cama ${esc(p.bed)}</button>`;
+    return`<div class="qr-pt-pair">
+      <div class="qr-pt-pair-name">${esc(p.name)} · Cama ${esc(p.bed)}</div>
+      <div class="qr-pt-pair-btns">
+        <button class="btn btn-o" onclick="showQRFor(${ri})">📋 Dados</button>
+        <button class="btn btn-p" onclick="showQRForAI(${ri})">🤖 + IA</button>
+      </div>
+    </div>`;
   }).join('');
 }
-function showQRFor(ri){
-  const p=ST.patients[ri];if(!p)return;
+
+function _buildQRPayload(p, handoverText, mode='basic'){
+  // mode: 'basic' = single QR, 'full' = bulk transfer with all clinical data
+  const obj={
+    name:p.name,bed:p.bed,ageDays:p.ageDays,wt:p.weightKg,
+    alrg:p.allergies,diag:p.diagMain,diagSec:p.diagSec,
+    gestWeeks:p.gestWeeks,gestDays:p.gestDays,birthDate:p.birthDate,
+    antecedentes:(p.antecedentes||'').slice(0,mode==='full'?2000:250),
+    hda:(p.hda||'').slice(0,mode==='full'?2000:250)
+  };
+
+  // In 'full' mode, include all clinical data
+  if(mode==='full'){
+    if(p.vitals)obj.vitals=p.vitals;
+    if(p.devices)obj.devices=p.devices;
+    if(p.medications)obj.medications=p.medications;
+    if(p.nutrition)obj.nutrition=p.nutrition;
+    if(p.notes)obj.notes=p.notes;
+    if(p.todos)obj.todos=p.todos;
+    if(p.abcde)obj.abcde=p.abcde;
+    if(p.positioning)obj.positioning=p.positioning;
+    if(p.vent&&p.vent.mode)obj.vent=p.vent;
+    if(p.tasks&&p.tasks.length)obj.tasks=p.tasks;
+    if(p.unitCheck&&Object.keys(p.unitCheck).length)obj.unitCheck=p.unitCheck;
+    if(p.devInactive&&p.devInactive.length)obj.devInactive=p.devInactive;
+    if(p.medHistory&&p.medHistory.length)obj.medHistory=p.medHistory;
+  }
+
+  // AI summary: trim to 350 chars in QR payload (full text shown in UI separately)
+  if(handoverText)obj.hw=handoverText.slice(0,350);
+
+  const jsonStr=JSON.stringify(obj);
+
+  // Compress with LZ-String if available
+  if(typeof LZString==='object'&&LZString.compressToBase64){
+    try{
+      const compressed=LZString.compressToBase64(jsonStr);
+      // Return with marker to indicate compression
+      return 'LZ|'+compressed;
+    }catch(e){
+      console.warn('Compression failed, using uncompressed',e);
+    }
+  }
+
+  return jsonStr;
+}
+
+let _qrFallback='';
+function copyQRFallback(){
+  if(!_qrFallback)return;
+  navigator.clipboard.writeText(_qrFallback)
+    .then(()=>showToast('Código copiado ✓ — cole no painel do colega','ok'))
+    .catch(()=>{const txt=prompt('Copie este código e envie ao colega:',_qrFallback);});
+}
+function _doRenderQR(payload, label, hwText, fallbackCode){
+  _qrFallback=fallbackCode||'';
   const disp=document.getElementById('qr-display');
   const inner=document.getElementById('qr-canvas-inner');
   const info=document.getElementById('qr-pt-info');
   const loading=document.getElementById('qr-loading');
+  const ailoading=document.getElementById('qr-ai-loading');
   const err=document.getElementById('qr-error');
-  if(err)err.style.display='none';
-  if(disp)disp.style.display='none';
-  if(loading)loading.style.display='block';
-  if(inner)inner.innerHTML='';
-  // Compact payload — only essential clinical data for transfer
-  const payload=JSON.stringify({
-    name:p.name,bed:p.bed,ageDays:p.ageDays,wt:p.weightKg,
-    alrg:p.allergies,diag:p.diagMain,diagSec:p.diagSec,
-    gestWeeks:p.gestWeeks,gestDays:p.gestDays,birthDate:p.birthDate,
-    antecedentes:(p.antecedentes||'').slice(0,300),
-    hda:(p.hda||'').slice(0,300)
-  });
-  const doRender=()=>{
+  const hwbox=document.getElementById('qr-handover-box');
+  const hwel=document.getElementById('qr-hw-text');
+  const hwchars=document.getElementById('qr-hw-chars');
+
+  const render=()=>{
     if(loading)loading.style.display='none';
+    if(ailoading)ailoading.style.display='none';
     if(inner)inner.innerHTML='';
     try{
+      // Try QR encoding
       new QRCode(inner,{text:payload,width:220,height:220,colorDark:'#0F172A',colorLight:'#FFFFFF',correctLevel:QRCode.CorrectLevel.L});
-      if(info)info.textContent=p.name+' · Cama '+p.bed;
+      if(info)info.textContent=label;
+      if(hwText&&hwbox&&hwel){
+        hwel.textContent=hwText;
+        if(hwchars)hwchars.textContent=hwText.length+' chars';
+        hwbox.style.display='block';
+      } else if(hwbox){
+        hwbox.style.display='none';
+      }
       if(disp)disp.style.display='block';
     }catch(e){
-      if(err){err.style.display='block';err.textContent='Dados demasiado grandes para QR. Reduza as notas do doente.';}
+      // QR overflow — always offer copy-paste fallback
+      if(err){
+        err.innerHTML='Dados demasiado grandes para QR.'
+          +(_qrFallback
+            ?' <button class="btn btn-p btn-sm" style="margin-left:6px;margin-top:6px" onclick="copyQRFallback()">📋 Copiar código completo</button>'
+            :'<br>Use "📦 Transferir Todos" para enviar via código.');
+        err.style.display='block';
+      }
     }
   };
+
   if(typeof QRCode==='undefined'){
     const s=document.createElement('script');
     s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-    s.onload=doRender;
-    s.onerror=()=>{if(loading)loading.style.display='none';if(err){err.style.display='block';err.textContent='Será necessária ligação à internet para gerar QR (primeira utilização).';}};
+    s.onload=render;
+    s.onerror=()=>{if(loading)loading.style.display='none';if(ailoading)ailoading.style.display='none';if(err){err.style.display='block';err.textContent='Será necessária ligação à internet para gerar QR (primeira utilização)';}};
     document.head.appendChild(s);
   } else {
-    doRender();
+    render();
   }
+}
+
+function showQRFor(ri){
+  const p=ST.patients[ri];if(!p)return;
+  const disp=document.getElementById('qr-display');
+  const loading=document.getElementById('qr-loading');
+  const err=document.getElementById('qr-error');
+  const hwbox=document.getElementById('qr-handover-box');
+  if(err)err.style.display='none';
+  if(disp)disp.style.display='none';
+  if(hwbox)hwbox.style.display='none';
+  if(loading)loading.style.display='block';
+  const payload=_buildQRPayload(p,null);
+  const fullPayload=_buildQRPayload(p,null,'full');
+  const fallback='BULK|'+(typeof LZString==='object'?LZString.compressToBase64(JSON.stringify({v:'3.0',patients:[fullPayload]})):JSON.stringify({v:'3.0',patients:[fullPayload]}));
+  _doRenderQR(payload,p.name+' · Cama '+p.bed,null,fallback);
+}
+
+async function showQRForAI(ri){
+  const p=ST.patients[ri];if(!p)return;
+  const disp=document.getElementById('qr-display');
+  const loading=document.getElementById('qr-loading');
+  const ailoading=document.getElementById('qr-ai-loading');
+  const err=document.getElementById('qr-error');
+  const hwbox=document.getElementById('qr-handover-box');
+  if(err)err.style.display='none';
+  if(disp)disp.style.display='none';
+  if(hwbox)hwbox.style.display='none';
+  if(loading)loading.style.display='none';
+  if(ailoading)ailoading.style.display='block';
+  // Build focused prompt for handover narrative
+  const R=vRanges(p.ageDays);
+  const vAlerts=VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&R[v.k]&&vSt(val,R[v.k])==='alrt';}).map(v=>`${v.label}=${p.vitals[v.k]}${v.unit} [ALERTA]`);
+  const vWarns=VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&R[v.k]&&vSt(val,R[v.k])==='warn';}).map(v=>`${v.label}=${p.vitals[v.k]}${v.unit} [ATENÇÃO]`);
+  const vNorm=VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&(!R[v.k]||vSt(val,R[v.k])==='ok');}).map(v=>`${v.label}=${p.vitals[v.k]}${v.unit}`);
+  const pend=p.tasks.filter(t=>!t.done).map(t=>t.text).slice(0,5);
+  const meds=(p.medications||[]).slice(0,5).map(m=>`${m.name} ${m.dose}${m.unit} ${m.freq}`);
+  const recentNotes=p.notes.slice(0,3).map(n=>n.text);
+  const devs=(p.devices||[]).slice(0,4).map(d=>d.label+(d.location?' '+d.location:''));
+  const sumData=`Doente: ${p.name}, Cama ${p.bed}, ${ageLabel(p)}${p.weightKg?', '+p.weightKg+'kg':''}\nDX: ${p.diagMain||'n/e'}\nAlergias: ${p.allergies||'NKDA'}\nVitais alterados: ${[...vAlerts,...vWarns].join(' | ')||'Nenhum'}\nVitais normais: ${vNorm.join(' | ')||'n/r'}\nDispositivos: ${devs.join(', ')||'nenhum'}\nMedicação activa: ${meds.join('; ')||'n/r'}\nTarefas pendentes: ${pend.join('; ')||'nenhuma'}\nNotas recentes: ${recentNotes.join(' / ')||'sem notas'}`;
+  const msgs=[
+    {role:'system',content:'És enfermeiro especialista em UCIP/UCIN. Gera um resumo de passagem de turno CONCISO (máx 420 caracteres) em PT-PT. Estrutura: 1) estado geral em 1 frase, 2) ALERTAS se existirem (em maiúsculas), 3) o que NÃO PODE FALHAR no próximo turno. Sem títulos, sem bullets, texto corrido. Sê directo e clínico.'},
+    {role:'user',content:'Resumo passagem de turno:\n\n'+sumData}
+  ];
+  let hwText='';
+  try{
+    const res=await callAI({type:'isbar',messages:msgs});
+    hwText=(res.text||'').trim().slice(0,500);
+  }catch(e){
+    if(ailoading)ailoading.style.display='none';
+    if(err){err.style.display='block';err.textContent='Erro IA: '+e.message+'. Use transferência sem IA.';}
+    return;
+  }
+  if(ailoading)ailoading.style.display='none';
+  if(loading)loading.style.display='block';
+  const payload=_buildQRPayload(p,hwText);
+  const fullPayload=_buildQRPayload(p,hwText,'full');
+  const fallback='BULK|'+(typeof LZString==='object'?LZString.compressToBase64(JSON.stringify({v:'3.0',patients:[fullPayload]})):JSON.stringify({v:'3.0',patients:[fullPayload]}));
+  _doRenderQR(payload,p.name+' · Cama '+p.bed+' · Resumo IA ✓',hwText,fallback);
 }
 
 // ── Finalizar turno ────────────────────────────────────────────────────────
@@ -2039,6 +2804,20 @@ function finNewShiftSamePatients(){
   showToast('Novo turno iniciado ✓','ok');
   setTimeout(()=>{renderDash();showScreen('s-dashboard');},260);
 }
+
+function exportShiftReport(){
+  const report=gen12hReport();
+  try{
+    navigator.clipboard.writeText(report).then(()=>{
+      showToast('Relatório copiado para a área de transferência ✓','ok');
+    }).catch(()=>{
+      alert('Não foi possível copiar.\n\n'+report);
+    });
+  }catch(e){
+    alert('Erro: '+e.message+'\n\n'+report);
+  }
+}
+
 function finArchiveAll(){
   const active=ST.patients.filter(p=>p.status==='internado');
   if(!active.length){showToast('Sem doentes activos.','error');return;}
