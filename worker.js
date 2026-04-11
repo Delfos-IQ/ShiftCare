@@ -11,8 +11,8 @@ const CORS = {
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODELS = {
   isbar:        'llama-3.3-70b-versatile',
-  vitals_image: 'llama-3.2-11b-vision-preview',
-  ocr:          'llama-3.2-11b-vision-preview',  // NEW — extracção de texto de imagens
+  vitals_image: 'meta-llama/llama-4-scout-17b-16e-instruct',  // substituiu llama-3.2-11b-vision-preview
+  ocr:          'meta-llama/llama-4-scout-17b-16e-instruct',
   default:      'llama-3.1-8b-instant',
 };
 
