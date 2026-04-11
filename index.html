@@ -2371,11 +2371,8 @@ function ocrImageToField(fieldId,btnId){
     try{
       const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
       const mt=file.type||'image/jpeg';
-      const msgs=[
-        {role:'system',content:'Extrai todo o texto visível nesta imagem de documento clínico (pode ser foto de folha impressa, ecrã ou documento escrito à mão). Devolve APENAS o texto extraído, preservando a estrutura por linhas. Sem comentários ou explicações adicionais.'},
-        {role:'user',content:[{type:'image_url',image_url:{url:`data:${mt};base64,${b64}`}},{type:'text',text:'Extrai o texto desta imagem clínica.'}]}
-      ];
-      const result=await callAI({type:'isbar',messages:msgs});
+      /* Usa endpoint 'ocr' dedicado no worker (modelo de visão, prompt de extracção de texto) */
+      const result=await callAI({type:'ocr', b64, mt});
       const txt=(result.text||'').trim();
       if(txt){
         const ta=el(fieldId);
