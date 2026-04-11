@@ -1,18 +1,6 @@
-// ════════════════════════════════════════════════════════
-//  ShiftCare v2.0 — worker.js (Cloudflare Worker)
-//
-//  Deploy: wrangler deploy worker.js
-//  Env var required: GROQ_API_KEY
-//
-//  Endpoints (POST /):
-//    { type: 'isbar',        messages: [...] }
-//    { type: 'vitals_image', messages: [...] }
-//    { type: 'suggest',      context: '...' }
-//
-//  PRIVACY: This worker acts as a proxy. It does NOT log
-//  or store any patient data. Only the Groq API receives
-//  the (already anonymised) payload from the app.
-// ════════════════════════════════════════════════════════
+// ShiftCare v2.1 — Cloudflare Worker
+// Deploy: wrangler deploy
+// Env var required: GROQ_API_KEY
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -21,95 +9,72 @@ const CORS = {
 };
 
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
-
-// Model selection per task type
 const MODELS = {
   isbar:        'llama-3.3-70b-versatile',
-  vitals_image: 'llama-3.2-11b-vision-preview',   // vision model
-  suggest:      'llama-3.1-8b-instant',            // fast/cheap for suggestions
-};
-
-// Token limits per type
-const MAX_TOKENS = {
-  isbar:        1200,
-  vitals_image: 250,
-  suggest:      300,
+  vitals_image: 'llama-3.2-11b-vision-preview',
+  ocr:          'llama-3.2-11b-vision-preview',  // NEW — extracção de texto de imagens
+  default:      'llama-3.1-8b-instant',
 };
 
 export default {
   async fetch(request, env) {
+    if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
+    if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
 
-    // ── CORS preflight ──────────────────────────────────
-    if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: CORS });
-    }
-
-    if (request.method !== 'POST') {
-      return json({ error: 'Method not allowed' }, 405);
-    }
-
-    // ── Parse body ──────────────────────────────────────
     let body;
-    try { body = await request.json(); }
-    catch { return json({ error: 'Invalid JSON' }, 400); }
+    try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400); }
 
-    const { type, messages, context } = body;
-    if (!type) return json({ error: 'Missing type' }, 400);
+    const { type, messages, b64, mt } = body;
 
-    // ── Rate limiting (simple — Cloudflare KV optional) ─
-    // For production add: env.RATE_LIMITER.limit({ key: request.headers.get('CF-Connecting-IP') })
-
-    // ── Build Groq request ──────────────────────────────
-    const model = MODELS[type] || MODELS.isbar;
     let groqMessages = messages;
 
-    // For text suggestions (no patient data)
-    if (type === 'suggest' && context) {
+    // Sinais vitais a partir de imagem
+    if (type === 'vitals_image' && b64 && mt) {
       groqMessages = [
-        { role: 'system', content: 'És um assistente de enfermagem pediátrica. Sugere cuidados, medicações ou procedimentos relevantes com base no contexto clínico anónimo fornecido. Responde em PT-PT de forma concisa.' },
-        { role: 'user', content: context },
+        { role: 'system', content: 'Extrai sinais vitais de monitores clínicos. Responde APENAS com JSON: {"hr":"","spo2":"","rr":"","temp":"","sbp":"","gluc":""}. Só valores claramente visíveis. Sem texto adicional.' },
+        { role: 'user', content: [
+          { type: 'image_url', image_url: { url: `data:${mt};base64,${b64}` } },
+          { type: 'text', text: 'Extrai os sinais vitais. JSON apenas.' }
+        ]}
       ];
     }
 
-    if (!groqMessages || !Array.isArray(groqMessages)) {
-      return json({ error: 'Missing messages' }, 400);
+    // OCR — extracção de texto de documentos/folhas clínicas (NEW)
+    if (type === 'ocr' && b64 && mt) {
+      groqMessages = [
+        { role: 'system', content: 'És um sistema de OCR clínico. Extrai todo o texto visível na imagem (pode ser folha impressa, ecrã de monitor ou escrita à mão). Devolve APENAS o texto extraído, preservando a estrutura por linhas e parágrafos. Sem comentários, sem explicações adicionais.' },
+        { role: 'user', content: [
+          { type: 'image_url', image_url: { url: `data:${mt};base64,${b64}` } },
+          { type: 'text', text: 'Extrai todo o texto visível nesta imagem clínica.' }
+        ]}
+      ];
     }
 
-    // ── Call Groq ───────────────────────────────────────
-    let groqRes;
+    if (!groqMessages || !Array.isArray(groqMessages)) return json({ error: 'Missing messages' }, 400);
+
+    const model = MODELS[type] || MODELS.default;
+    const maxTokens = type === 'vitals_image' ? 200
+                    : type === 'ocr'          ? 1500
+                    : 1200;
+
     try {
-      groqRes = await fetch(GROQ_URL, {
+      const r = await fetch(GROQ_URL, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${env.GROQ_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model,
-          messages: groqMessages,
-          max_tokens: MAX_TOKENS[type] || 900,
-          temperature: 0.3,
-        }),
+        headers: { 'Authorization': `Bearer ${env.GROQ_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model, messages: groqMessages, max_tokens: maxTokens, temperature: 0.2 }),
       });
+      if (!r.ok) {
+        const err = await r.json().catch(() => ({}));
+        return json({ error: err.error?.message || 'Groq error' }, r.status);
+      }
+      const d = await r.json();
+      return json({ text: d.choices?.[0]?.message?.content || '' });
     } catch (e) {
-      return json({ error: 'Failed to reach Groq API', detail: e.message }, 502);
+      return json({ error: e.message }, 502);
     }
-
-    if (!groqRes.ok) {
-      const errBody = await groqRes.json().catch(() => ({}));
-      return json({ error: 'Groq API error', detail: errBody?.error?.message || groqRes.status }, groqRes.status);
-    }
-
-    const groqData = await groqRes.json();
-    const text = groqData.choices?.[0]?.message?.content || '';
-
-    return json({ text });
   }
 };
 
 function json(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json', ...CORS },
-  });
+  return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json', ...CORS } });
 }
