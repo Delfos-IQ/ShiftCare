@@ -3309,6 +3309,44 @@ if(ST.patients.filter(p=>p.status==='internado').length&&ST.shiftStart){
   showScreen('s-setup');
 }
 
+/* ── Auto-activação premium via URL (redirect do Lemon Squeezy) ──
+   LS redireciona para: https://...ShiftCare/?activate={license_key}
+   A app detecta o parâmetro, pré-preenche o modal e activa automaticamente. */
+(async function checkUrlLicense(){
+  const params=new URLSearchParams(window.location.search);
+  const key=params.get('activate')||params.get('license_key')||params.get('license');
+  if(!key)return;
+  /* Limpa o parâmetro da URL sem recarregar a página */
+  window.history.replaceState({},'',window.location.pathname);
+  /* Se já tem premium, não faz nada */
+  if(isPremium())return;
+  /* Tenta activar automaticamente */
+  showToast('🔑 A activar código premium…','ok');
+  await new Promise(r=>setTimeout(r,800));
+  /* Primeiro verifica hashes locais */
+  const hash=await _hashStr(key.toUpperCase().trim());
+  if(PREMIUM_CODE_HASHES.has(hash)){_activatePremium();return;}
+  /* Depois valida contra LS API */
+  try{
+    const res=await callAI({type:'validate_license',license_key:key.trim()});
+    if(res.valid){_activatePremium();}
+    else{
+      /* Falha silenciosa — abre modal com a key pré-preenchida */
+      setTimeout(()=>{
+        showPremiumModal('voice');
+        const inp=el('prem-code-inp');
+        if(inp){inp.value=key.trim();}
+      },500);
+    }
+  }catch(e){
+    setTimeout(()=>{
+      showPremiumModal('voice');
+      const inp=el('prem-code-inp');
+      if(inp){inp.value=key.trim();}
+    },500);
+  }
+})();
+
 /* ── PWA: Service Worker ── */
 if('serviceWorker' in navigator){
   window.addEventListener('load',async()=>{
