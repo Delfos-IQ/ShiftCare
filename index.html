@@ -92,7 +92,16 @@
 .light .theme-btn{background:rgba(0,0,0,.08);border-color:rgba(0,0,0,.15);color:var(--t)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  background:var(--bg);color:var(--t);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  /* Safe area para Dynamic Island / notch / barra de estado iOS */
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+  padding-left:env(safe-area-inset-left);
+  padding-right:env(safe-area-inset-right);
+}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;transition:opacity .18s,transform .18s}
 .screen.hidden{opacity:0;pointer-events:none;transform:translateX(14px)}
 input,textarea,select{font-family:inherit;font-size:14px;color:var(--t);background:var(--s2);border:1.5px solid var(--b2);border-radius:var(--rads);padding:9px 11px;width:100%;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
@@ -191,7 +200,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .btn-discharge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:var(--rads);font-size:10px;font-weight:700;cursor:pointer;padding:3px 7px;color:#fff;white-space:nowrap}
 /* Detail */
 #s-detail{background:var(--bg)}
-.det-hdr{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.det-hdr{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;/* safe area já tratado pelo body */}
 .det-title{font-size:14px;font-weight:800;color:#fff;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tab-bar{background:var(--s);border-bottom:1px solid var(--b);display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
 .tab-bar::-webkit-scrollbar{display:none}
@@ -1915,7 +1924,15 @@ function tglVoice(){
     if(txt){addNoteText(txt);showToast('Nota de voz registada ✓','ok');}
     stopVoice();renEnf();
   };
-  _voiceRec.onerror=function(e){showToast('Erro de microfone: '+e.error,'err');stopVoice();renEnf();};
+  _voiceRec.onerror=function(e){
+    if(e.error==='not-allowed'||e.error==='permission-denied'){
+      showToast('🎤 Permissão negada — activa o microfone em Definições do browser','err');
+      _showPermHelp('mic');
+    } else {
+      showToast('Erro de microfone: '+e.error,'err');
+    }
+    stopVoice();renEnf();
+  };
   _voiceRec.onend=function(){if(_voiceActive){stopVoice();renEnf();}};
   _voiceRec.start();
   _voiceActive=true;
@@ -1947,7 +1964,10 @@ function quickVoiceNote(ri){
     renderDash();
   };
   rec.onerror=function(e){
-    showToast('Erro de microfone: '+e.error,'err');
+    if(e.error==='not-allowed'||e.error==='permission-denied'){
+      showToast('🎤 Permissão negada — activa o microfone nas Definições','err');
+      _showPermHelp('mic');
+    } else { showToast('Erro de microfone: '+e.error,'err'); }
     if(btn){btn.textContent='🎤';btn.classList.remove('recording');}
   };
   rec.onend=function(){if(btn){btn.textContent='🎤';btn.classList.remove('recording');}};
@@ -2655,7 +2675,10 @@ function voiceToField(fieldId,btnId){
     if(btn){btn.classList.remove('recording');btn.textContent='🎤 Voz';}
   };
   rec.onerror=function(e){
-    showToast('Erro de microfone: '+e.error,'err');
+    if(e.error==='not-allowed'||e.error==='permission-denied'){
+      showToast('🎤 Permissão negada — activa o microfone nas Definições','err');
+      _showPermHelp('mic');
+    } else { showToast('Erro de microfone: '+e.error,'err'); }
     if(btn){btn.classList.remove('recording');btn.textContent='🎤 Voz';}
   };
   rec.onend=function(){if(btn){btn.classList.remove('recording');btn.textContent='🎤 Voz';}};
@@ -2760,6 +2783,26 @@ function showToast(msg,type){
   t.textContent=msg;t.className='show '+(type||'');
   if(_toastTimer)clearTimeout(_toastTimer);
   _toastTimer=setTimeout(()=>{t.className='';},2800);
+}
+
+function _showPermHelp(type){
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isMic=type==='mic';
+  const feature=isMic?'microfone':'câmara';
+  let instructions='';
+  if(isIOS){
+    instructions=isMic
+      ?'iOS: Definições → Safari → Microfone → Permitir'
+      :'iOS: Definições → Safari → Câmara → Permitir';
+  } else {
+    instructions=`Chrome: toca no ícone 🔒 na barra de endereço → ${feature} → Permitir`;
+  }
+  /* Reutiliza o showToast com duração maior */
+  const t=document.getElementById('sc-toast');if(!t)return;
+  t.textContent='⚙️ '+instructions;
+  t.className='show err';
+  if(_toastTimer)clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>{t.className='';},6000);
 }
 
 // ── Setup panels ───────────────────────────────────────────────────────────
