@@ -2,16 +2,33 @@
 <html lang="pt-PT">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+
+<!-- PWA: identidade e manifest -->
+<meta name="application-name" content="ShiftCare">
+<meta name="description" content="Gestão clínica de turno em cuidados intensivos pediátricos.">
+<link rel="manifest" href="manifest.json">
+
+<!-- PWA: theme color (dark mode default) -->
+<meta name="theme-color" content="#0D9488" id="meta-theme-color">
+<meta name="color-scheme" content="dark light">
+
+<!-- PWA: Android / Chrome -->
 <meta name="mobile-web-app-capable" content="yes">
+
+<!-- PWA: iOS Safari -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ShiftCare">
-<meta name="theme-color" content="#0F766E" id="meta-theme-color">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<!-- splash screens iOS (gerados automaticamente pelo browser com manifest) -->
+
+<!-- Favicons -->
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+
 <title>ShiftCare — Gestão de Turno</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
 <style>
 /* ── ShiftCare theme variables ── */
 :root{
@@ -458,6 +475,59 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
   display:block;margin-top:8px;font-size:11px;
   color:var(--t2);cursor:pointer;text-decoration:underline
 }
+/* ── Premium: modal de desbloqueio ── */
+#premium-modal{
+  position:fixed;inset:0;z-index:10000;
+  background:rgba(0,0,0,0.72);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-end;justify-content:center;
+  padding:0 0 env(safe-area-inset-bottom,0);
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+#premium-modal.show{opacity:1;pointer-events:all}
+#premium-modal .prem-sheet{
+  background:var(--s2);border-radius:24px 24px 0 0;
+  width:100%;max-width:480px;padding:24px 20px 32px;
+  transform:translateY(100%);transition:transform .3s ease;
+}
+#premium-modal.show .prem-sheet{transform:translateY(0)}
+.prem-handle{width:40px;height:4px;background:var(--b2);border-radius:4px;margin:0 auto 20px}
+.prem-feat-badge{
+  display:flex;align-items:center;gap:10px;
+  background:var(--pl);border:1px solid var(--pm);
+  border-radius:12px;padding:10px 14px;margin-bottom:16px;
+}
+.prem-feat-badge .pfi{font-size:22px}
+.prem-feat-badge .pft{font-size:13px;font-weight:700;color:var(--pm)}
+.prem-feat-badge .pfd{font-size:11px;color:var(--t2);margin-top:2px}
+.prem-title{font-size:17px;font-weight:800;color:var(--t);margin-bottom:6px}
+.prem-sub{font-size:12px;color:var(--t2);margin-bottom:18px;line-height:1.55}
+.prem-divider{display:flex;align-items:center;gap:8px;margin:16px 0;color:var(--t3);font-size:11px}
+.prem-divider::before,.prem-divider::after{content:'';flex:1;height:1px;background:var(--b2)}
+.prem-code-wrap{display:flex;gap:8px}
+.prem-code-wrap input{
+  flex:1;background:var(--s3);border:1.5px solid var(--b2);border-radius:10px;
+  padding:11px 13px;font-size:14px;color:var(--t);letter-spacing:.08em;
+  font-family:monospace;outline:none;
+}
+.prem-code-wrap input:focus{border-color:var(--pm)}
+.prem-activate-btn{
+  background:var(--p);color:#fff;border:none;border-radius:10px;
+  padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap
+}
+#prem-err{font-size:12px;color:var(--red);min-height:18px;margin-top:6px}
+.prem-gumroad-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;margin-top:14px;padding:13px;border-radius:12px;
+  background:var(--s3);border:1.5px solid var(--b2);
+  color:var(--t);font-size:14px;font-weight:700;text-decoration:none;
+}
+.prem-gumroad-btn span{font-size:11px;color:var(--t2);font-weight:400}
+.prem-close-lnk{
+  display:block;text-align:center;margin-top:14px;
+  font-size:12px;color:var(--t3);cursor:pointer
+}
+/* Lock badge on premium buttons when not unlocked */
+.prem-lock::after{content:' 🔒';font-size:10px;opacity:.7}
 </style>
 </head>
 <body>
@@ -483,6 +553,39 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
   Para instalar: toque em <strong>Partilhar</strong> e depois <strong>"Adicionar ao ecrã inicial"</strong>
   <span class="ios-arrow">⬆️</span>
   <span class="ios-close" onclick="iosDismiss()">Fechar</span>
+</div>
+
+<!-- ═══ PREMIUM MODAL ═══ -->
+<div id="premium-modal" role="dialog" aria-modal="true" aria-labelledby="prem-modal-title" onclick="if(event.target===this)closePremiumModal()">
+  <div class="prem-sheet">
+    <div class="prem-handle"></div>
+    <div class="prem-feat-badge">
+      <div class="pfi" id="prem-feat-icon">⭐</div>
+      <div>
+        <div class="pft" id="prem-feat-title">Funcionalidade Premium</div>
+        <div class="pfd" id="prem-feat-desc">Disponível no plano premium.</div>
+      </div>
+    </div>
+    <div class="prem-title" id="prem-modal-title">Acesso Premium</div>
+    <div class="prem-sub">
+      Esta funcionalidade faz parte do plano premium ShiftCare.<br>
+      Introduza o código que recebeu após a compra, ou adquira acesso abaixo.
+    </div>
+    <div class="prem-divider">tenho código</div>
+    <div class="prem-code-wrap">
+      <input id="prem-code-inp" type="text" placeholder="SHIFTCARE-XXXX-XXXX"
+             autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+             onkeydown="if(event.key==='Enter')activatePremiumCode()">
+      <button class="prem-activate-btn" onclick="activatePremiumCode()">Activar</button>
+    </div>
+    <div id="prem-err"></div>
+    <div class="prem-divider">não tenho código</div>
+    <a class="prem-gumroad-btn" href="https://shiftcare.gumroad.com/l/premium" target="_blank" rel="noopener">
+      🛒 Obter acesso premium
+      <span>pagamento único · ~10€</span>
+    </a>
+    <span class="prem-close-lnk" onclick="closePremiumModal()">Continuar com versão gratuita</span>
+  </div>
 </div>
 
 <!-- ═══ SETUP ═══ -->
@@ -778,6 +881,16 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
       <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:8px" onclick="resetLearn()">Resetar Módulo de Aprendizagem</button>
       <button class="btn btn-p" style="width:100%;font-size:12px;margin-bottom:8px" onclick="exportBackup()">💾 Exportar Backup</button>
       <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:11px" onclick="document.getElementById('backup-import-input').click()">📥 Importar Backup</button>
+      <!-- Premium status -->
+      <div id="prem-status-card" style="margin-bottom:11px;border-radius:var(--rads);padding:12px 14px;border:1.5px solid var(--b2);background:var(--s3)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div>
+            <div id="prem-status-lbl" style="font-size:13px;font-weight:700;color:var(--t)">⭐ Plano Premium</div>
+            <div id="prem-status-sub" style="font-size:11px;color:var(--t2);margin-top:2px"></div>
+          </div>
+          <button id="prem-status-btn" style="font-size:11px;padding:6px 12px;border-radius:20px;border:1.5px solid var(--b2);background:var(--s);color:var(--t);cursor:pointer;white-space:nowrap" onclick="premStatusAction()"></button>
+        </div>
+      </div>
       <input type="file" id="backup-import-input" accept=".json" style="display:none" onchange="importBackup(event)">
       <!-- Finalidade -->
       <div class="about-card" style="border-left:3px solid var(--p);border-radius:0 var(--rad) var(--rad) 0">
@@ -1080,6 +1193,97 @@ async function callAI(payload){
   if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.error||'Erro IA: '+r.status);}
   return r.json();
 }
+
+// ══════════════════════════════════════════════
+// MÓDULO: PREMIUM / FREEMIUM
+// ══════════════════════════════════════════════
+const PREMIUM_FEATURES={
+  voice: {
+    label:'Notas de Voz',icon:'🎤',
+    desc:'Ditação por microfone em notas de turno e antecedentes clínicos.'
+  },
+  camera:{
+    label:'Câmara / OCR',icon:'📷',
+    desc:'Fotografar documentos clínicos e monitores para extracção automática de texto e valores.'
+  },
+  isbar: {
+    label:'ISBAR com IA',icon:'🤖',
+    desc:'Geração automática de passagem de turno estruturada com inteligência artificial.'
+  },
+  qr_ai: {
+    label:'Transferência com IA',icon:'⚡',
+    desc:'Código QR enriquecido com resumo clínico gerado por IA para transferência de turno.'
+  },
+};
+
+/* ── Hashes SHA-256 dos códigos válidos (uppercase + trim).
+   Para gerar um novo hash, executar na consola do browser:
+   crypto.subtle.digest('SHA-256',new TextEncoder().encode('CODIGO'))
+     .then(b=>console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')))
+   ── */
+const PREMIUM_CODE_HASHES=new Set([
+  '711176afb98c215b7a7146214aff5b2cab7df2a557a97f58af66309cf3646b51', // SHIFTCARE-BETA-2025
+  'd81ee275fd533e7cb59eeeaa34445ac6e3ad42307a5d559d61d1868b97f0016f', // SHIFTCARE-PREM-0001
+  '01b17d050ed8e16fd5db034404f0979e67f9e2a0e6d9a4b3188d07c897fea7d2', // SHIFTCARE-PREM-0002
+  '0da582a908694294799f2acf03f186d5769ec43b52cfddd65fabe5a2906a125e', // SHIFTCARE-PREM-0003
+  'e86346bc39f349e952dea585a46a404d950ef48ad808882621723442093e2d49',  // SHIFTCARE-PREM-0004
+  '6dceca72a3a7a3b72f7ca0cde850747d8d863b1328d7bf631ef5ac9202253061', // SHIFTCARE-PREM-0005
+]);
+
+const _PREM_KEY='sc_premium_v1';
+
+function isPremium(){
+  return localStorage.getItem(_PREM_KEY)==='active';
+}
+
+async function _hashStr(s){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return[...new Uint8Array(buf)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
+async function activatePremiumCode(){
+  const inp=el('prem-code-inp');
+  const errEl=el('prem-err');
+  const code=(inp?.value||'').toUpperCase().trim();
+  if(!code){if(errEl)errEl.textContent='Introduza um código.';return;}
+  const hash=await _hashStr(code);
+  if(PREMIUM_CODE_HASHES.has(hash)){
+    localStorage.setItem(_PREM_KEY,'active');
+    closePremiumModal();
+    showToast('✅ Acesso premium activado!','ok');
+    if(ST.screen==='s-detail')renCsec(ST.csec);
+    renderDash&&renderDash();
+  } else {
+    if(errEl){errEl.textContent='Código inválido. Verifique e tente novamente.';}
+    inp?.select();
+  }
+}
+
+function showPremiumModal(featureKey){
+  const feat=PREMIUM_FEATURES[featureKey]||{label:'Funcionalidade Premium',icon:'⭐',desc:'Disponível no plano premium.'};
+  const iconEl=el('prem-feat-icon');
+  const titleEl=el('prem-feat-title');
+  const descEl=el('prem-feat-desc');
+  if(iconEl)iconEl.textContent=feat.icon;
+  if(titleEl)titleEl.textContent=feat.label;
+  if(descEl)descEl.textContent=feat.desc;
+  const inp=el('prem-code-inp');
+  const errEl=el('prem-err');
+  if(inp)inp.value='';
+  if(errEl)errEl.textContent='';
+  el('premium-modal')?.classList.add('show');
+  setTimeout(()=>inp?.focus(),350);
+}
+
+function closePremiumModal(){
+  el('premium-modal')?.classList.remove('show');
+}
+
+function deactivatePremium(){
+  if(!confirm('Desactivar o acesso premium neste dispositivo?'))return;
+  localStorage.removeItem(_PREM_KEY);
+  showToast('Acesso premium removido','ok');
+}
 // ── Utilitários base ──────────────────────────
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 const el=id=>document.getElementById(id);
@@ -1342,8 +1546,31 @@ function renderSetup(){
       btnCont.style.display='none';
     }
   }
+  _updPremStatus();
 }
 function startShift(){if(!ST.patients.filter(p=>p.status==='internado').length)return;if(!ST.shiftStart)ST.shiftStart=new Date().toISOString();save();renderDash();showScreen('s-dashboard');resetPrivacyTimer();}
+
+function _updPremStatus(){
+  const lbl=el('prem-status-lbl');
+  const sub=el('prem-status-sub');
+  const btn=el('prem-status-btn');
+  if(!lbl||!sub||!btn)return;
+  if(isPremium()){
+    lbl.innerHTML='<span style="color:var(--grn)">✅ Premium activo</span>';
+    sub.textContent='Todas as funcionalidades desbloqueadas neste dispositivo.';
+    btn.textContent='Remover';
+    btn.style.borderColor='var(--rbd)';btn.style.color='var(--red)';
+  } else {
+    lbl.innerHTML='⭐ <span style="color:var(--t)">Plano Premium</span>';
+    sub.textContent='Notas de voz, câmara OCR e ISBAR com IA.';
+    btn.textContent='Activar';
+    btn.style.borderColor='var(--pm)';btn.style.color='var(--pm)';
+  }
+}
+function premStatusAction(){
+  if(isPremium()) deactivatePremium();
+  else showPremiumModal('voice');
+}
 
 // ─── Privacy lock ─────────────────────────────
 const PRIVACY_MS=2*60*1000; // 2 minutes
@@ -1558,7 +1785,7 @@ function onVI(k,v){const p=ST.patients[ST.idx];if(!p)return;p.vitals[k]=v;p.vita
 function renVAlert(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);const e=el('vitals-alert');if(e)e.innerHTML=ac>0?`<div class="alert-ban" role="alert">⚠ ${ac} constante(s) fora do intervalo pediátrico normal</div>`:'';}
 function clearVit(){const p=ST.patients[ST.idx];if(!p||!confirm('Limpar sinais vitais?'))return;VITALS_DEF.forEach(v=>p.vitals[v.k]='');save();renVitals();}
 function openCam(){el('photo-input').click();}
-async function onPhoto(evt){const file=evt.target.files[0];if(!file)return;const r=new FileReader();r.onload=async e=>{const b64=e.target.result.split(',')[1],mt=file.type||'image/jpeg';el('capture-img').src=e.target.result;el('capture-preview-wrap').style.display='block';const btn=el('cam-btn');if(btn){btn.textContent='⏳ A interpretar...';btn.disabled=true;}try{const res=await callAI({type:'vitals_image',b64,mt});const vals=JSON.parse((res.text||'{}').replace(/```json|```/g,'').trim());const p=ST.patients[ST.idx];if(!p)return;VITALS_DEF.forEach(v=>{if(vals[v.k]!==undefined)p.vitals[v.k]=String(vals[v.k]);});p.vitals.lastUp=new Date().toISOString();save();renVitals();alert(`✅ ${Object.keys(vals).length} valor(es) interpretado(s). Verifique!`);}catch(err){alert('Erro ao interpretar: '+err.message);}finally{el('capture-preview-wrap').style.display='none';if(btn){btn.textContent='📷 Capturar Ecrã';btn.disabled=false;}}};r.readAsDataURL(file);evt.target.value='';}
+async function onPhoto(evt){if(!isPremium()){showPremiumModal('camera');evt.target.value='';return;}const file=evt.target.files[0];if(!file)return;const r=new FileReader();r.onload=async e=>{const b64=e.target.result.split(',')[1],mt=file.type||'image/jpeg';el('capture-img').src=e.target.result;el('capture-preview-wrap').style.display='block';const btn=el('cam-btn');if(btn){btn.textContent='⏳ A interpretar...';btn.disabled=true;}try{const res=await callAI({type:'vitals_image',b64,mt});const vals=JSON.parse((res.text||'{}').replace(/```json|```/g,'').trim());const p=ST.patients[ST.idx];if(!p)return;VITALS_DEF.forEach(v=>{if(vals[v.k]!==undefined)p.vitals[v.k]=String(vals[v.k]);});p.vitals.lastUp=new Date().toISOString();save();renVitals();alert(`✅ ${Object.keys(vals).length} valor(es) interpretado(s). Verifique!`);}catch(err){alert('Erro ao interpretar: '+err.message);}finally{el('capture-preview-wrap').style.display='none';if(btn){btn.textContent='📷 Capturar Ecrã';btn.disabled=false;}}};r.readAsDataURL(file);evt.target.value='';}
 
 // ══════════════════════════════════════════════
 // MODULE: CUIDADOS
@@ -1654,6 +1881,7 @@ function setPositioning(val){
 // ─── Voz ─────────────────────────────────────
 let _voiceActive=false,_voiceRec=null;
 function tglVoice(){
+  if(!isPremium()){showPremiumModal('voice');return;}
   if(_voiceActive){stopVoice();return;}
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){showToast('Reconhecimento de voz não suportado neste browser','err');return;}
@@ -1679,6 +1907,7 @@ function stopVoice(){
 
 // Quick voice note from dashboard card (no tab navigation needed)
 function quickVoiceNote(ri){
+  if(!isPremium()){showPremiumModal('voice');return;}
   const p=ST.patients[ri];if(!p)return;
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){showToast('Reconhecimento de voz não suportado neste browser','err');return;}
@@ -2363,6 +2592,7 @@ function saveHDA(){const p=ST.patients[ST.idx];if(!p)return;p.hda=el('hda-inp').
 
 // ─── OCR de câmara para campo de texto ────────
 function ocrImageToField(fieldId,btnId){
+  if(!isPremium()){showPremiumModal('camera');return;}
   const inp=document.createElement('input');
   inp.type='file';inp.accept='image/*';inp.capture='environment';
   inp.onchange=async function(){
@@ -2387,6 +2617,7 @@ function ocrImageToField(fieldId,btnId){
 
 // ─── Voz para campo de texto ──────────────────
 function voiceToField(fieldId,btnId){
+  if(!isPremium()){showPremiumModal('voice');return;}
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){showToast('Reconhecimento de voz não suportado','err');return;}
   const btn=el(btnId);
@@ -2433,6 +2664,7 @@ Feito:${done}|Pendente:${pend}
 Notas:${notes}`;
 }
 async function genISBAR(all){
+  if(!isPremium()){showPremiumModal('isbar');return;}
   const out=el('isbar-out'),txt=el('isbar-text');if(!out||!txt)return;
   out.style.display='block';txt.textContent='A gerar relatório ISBAR...';txt.style.opacity='.6';
   const pts=all?ST.patients.filter(p=>p.status==='internado'):[ST.patients[ST.idx]];
@@ -2894,6 +3126,7 @@ function showQRFor(ri){
 }
 
 async function showQRForAI(ri){
+  if(!isPremium()){showPremiumModal('qr_ai');return;}
   const p=ST.patients[ri];if(!p)return;
   const disp=document.getElementById('qr-display');
   const loading=document.getElementById('qr-loading');
@@ -3057,10 +3290,16 @@ if(ST.patients.filter(p=>p.status==='internado').length&&ST.shiftStart){
 
 /* ── PWA: Service Worker ── */
 if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg=>console.log('[ShiftCare SW] registered, scope:',reg.scope))
-      .catch(err=>console.warn('[ShiftCare SW] registration failed:',err));
+  window.addEventListener('load',async()=>{
+    try{
+      /* Verifica se o service worker está acessível antes de registar.
+         Em ambientes de preview (claudeusercontent.com, file://, etc.)
+         o ficheiro não existe — falha silenciosamente sem erros na consola. */
+      const probe=await fetch('./service-worker.js',{method:'HEAD'}).catch(()=>null);
+      if(!probe||!probe.ok)return;
+      const reg=await navigator.serviceWorker.register('./service-worker.js');
+      console.log('[ShiftCare SW] registado, scope:',reg.scope);
+    }catch(e){/* SW não disponível neste ambiente — app funciona normalmente sem ele */}
   });
 }
 
