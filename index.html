@@ -580,9 +580,9 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
     </div>
     <div id="prem-err"></div>
     <div class="prem-divider">não tenho código</div>
-    <a class="prem-gumroad-btn" href="https://shiftcare.gumroad.com/l/premium" target="_blank" rel="noopener">
+    <a class="prem-gumroad-btn" href="https://pedicode.lemonsqueezy.com/checkout/buy/3beb5567-8de8-44b9-8509-6bbdf6fb25b2" target="_blank" rel="noopener">
       🛒 Obter acesso premium
-      <span>pagamento único · ~10€</span>
+      <span>pagamento único · 5,99€</span>
     </a>
     <span class="prem-close-lnk" onclick="closePremiumModal()">Continuar com versão gratuita</span>
   </div>
@@ -1244,19 +1244,40 @@ async function _hashStr(s){
 async function activatePremiumCode(){
   const inp=el('prem-code-inp');
   const errEl=el('prem-err');
-  const code=(inp?.value||'').toUpperCase().trim();
+  const btn=document.querySelector('.prem-activate-btn');
+  const code=(inp?.value||'').trim();
   if(!code){if(errEl)errEl.textContent='Introduza um código.';return;}
-  const hash=await _hashStr(code);
+
+  /* 1. Verifica primeiro contra hashes locais (códigos legacy SHIFTCARE-PREM-XXXX) */
+  const hash=await _hashStr(code.toUpperCase());
   if(PREMIUM_CODE_HASHES.has(hash)){
-    localStorage.setItem(_PREM_KEY,'active');
-    closePremiumModal();
-    showToast('✅ Acesso premium activado!','ok');
-    if(ST.screen==='s-detail')renCsec(ST.csec);
-    renderDash&&renderDash();
-  } else {
-    if(errEl){errEl.textContent='Código inválido. Verifique e tente novamente.';}
-    inp?.select();
+    _activatePremium();return;
   }
+
+  /* 2. Se não encontrar localmente, valida contra a API do Lemon Squeezy via Worker */
+  if(errEl)errEl.textContent='A validar…';
+  if(btn){btn.textContent='⏳';btn.disabled=true;}
+  try{
+    const res=await callAI({type:'validate_license',license_key:code});
+    if(res.valid){
+      _activatePremium();
+    } else {
+      if(errEl)errEl.textContent=res.error||'Código inválido. Verifique e tente novamente.';
+      inp?.select();
+    }
+  }catch(e){
+    if(errEl)errEl.textContent='Erro de ligação. Verifique a internet e tente novamente.';
+  }finally{
+    if(btn){btn.textContent='Activar';btn.disabled=false;}
+  }
+}
+
+function _activatePremium(){
+  localStorage.setItem(_PREM_KEY,'active');
+  closePremiumModal();
+  showToast('✅ Acesso premium activado!','ok');
+  if(ST.screen==='s-detail')renCsec(ST.csec);
+  renderDash&&renderDash();
 }
 
 function showPremiumModal(featureKey){

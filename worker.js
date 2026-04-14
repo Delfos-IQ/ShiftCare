@@ -1,6 +1,6 @@
-// ShiftCare v2.2 — Cloudflare Worker
+// ShiftCare v2.3 — Cloudflare Worker
 // Deploy: wrangler deploy
-// Env var required: GROQ_API_KEY
+// Env vars required: GROQ_API_KEY, LS_API_KEY
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -36,6 +36,28 @@ export default {
     try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400); }
 
     const { type, messages, b64, mt } = body;
+
+    // ── validate_license: valida license key do Lemon Squeezy ──
+    if (type === 'validate_license') {
+      const licenseKey = (body.license_key || '').trim();
+      if (!licenseKey) return json({ valid: false, error: 'Chave em falta.' }, 400);
+      try {
+        const r = await fetch('https://api.lemonsqueezy.com/v1/licenses/validate', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${env.LS_API_KEY}`,
+            'Content-Type':  'application/json',
+            'Accept':        'application/json',
+          },
+          body: JSON.stringify({ license_key: licenseKey, instance_name: 'ShiftCare' }),
+        });
+        const d = await r.json();
+        const valid = d.valid === true;
+        return json({ valid, error: valid ? null : (d.error || 'Chave inválida.') });
+      } catch (e) {
+        return json({ valid: false, error: 'Erro ao validar chave: ' + e.message }, 502);
+      }
+    }
 
     let groqMessages = messages;
 
