@@ -868,6 +868,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           <div class="about-row"><span>Idioma</span><span class="about-val">Português (PT)</span></div>
           <div class="about-row"><span>Ecrã activo</span><span class="about-val" id="wakelock-status">—</span></div>
           <div class="about-row"><span>Compilação</span><span class="about-val" id="build-date"></span></div>
+          <div class="about-row"><span>Licença</span><span class="about-val" id="about-prem-status">—</span></div>
         </div>
       </div>
       <div class="about-card">
@@ -1260,7 +1261,7 @@ async function activatePremiumCode(){
   /* 1. Verifica primeiro contra hashes locais (códigos legacy SHIFTCARE-PREM-XXXX) */
   const hash=await _hashStr(code.toUpperCase());
   if(PREMIUM_CODE_HASHES.has(hash)){
-    _activatePremium();return;
+    _activatePremium(code);return;
   }
 
   /* 2. Se não encontrar localmente, valida contra a API do Lemon Squeezy via Worker */
@@ -1269,7 +1270,7 @@ async function activatePremiumCode(){
   try{
     const res=await callAI({type:'validate_license',license_key:code});
     if(res.valid){
-      _activatePremium();
+      _activatePremium(code);
     } else {
       if(errEl)errEl.textContent=res.error||'Código inválido. Verifique e tente novamente.';
       inp?.select();
@@ -1281,8 +1282,15 @@ async function activatePremiumCode(){
   }
 }
 
-function _activatePremium(){
+function _activatePremium(rawCode){
   localStorage.setItem(_PREM_KEY,'active');
+  /* Guarda versão mascarada do código para mostrar no About */
+  if(rawCode){
+    const c=rawCode.trim();
+    /* Mostra apenas os últimos 4 caracteres: ****-****-0012 */
+    const masked=c.length>4?'••••-'+c.slice(-4).toUpperCase():'••••';
+    localStorage.setItem(_PREM_KEY+'_masked',masked);
+  }
   closePremiumModal();
   showToast('✅ Acesso premium activado!','ok');
   if(ST.screen==='s-detail')renCsec(ST.csec);
@@ -1510,7 +1518,17 @@ function goBack(){
   else if(ST.screen==='s-about'){showScreen(ST.prevScreen||'s-dashboard');}
   else{showScreen('s-setup');}
 }
-function goAbout(){ST.prevScreen=ST.screen;showScreen('s-about');}
+function goAbout(){ST.prevScreen=ST.screen;_updAboutPremium();showScreen('s-about');}
+function _updAboutPremium(){
+  const el2=document.getElementById('about-prem-status');
+  if(!el2)return;
+  if(isPremium()){
+    const masked=localStorage.getItem(_PREM_KEY+'_masked')||'••••';
+    el2.innerHTML=`<span style="color:var(--grn);font-weight:700">✅ Premium activo</span> <span style="color:var(--t3);font-size:10px;font-family:monospace">${masked}</span>`;
+  } else {
+    el2.innerHTML=`<span style="color:var(--t2)">Gratuita</span> <span onclick="showPremiumModal('voice')" style="color:var(--pm);cursor:pointer;font-size:11px;text-decoration:underline">Activar ›</span>`;
+  }
+}
 function goHistorico(){renderHistorico();showScreen('s-historico');}
 document.querySelectorAll('.modal-ov').forEach(e=>{e.addEventListener('click',ev=>{if(ev.target===e)closeM(e.id);});});
 
@@ -3368,11 +3386,11 @@ if(ST.patients.filter(p=>p.status==='internado').length&&ST.shiftStart){
   await new Promise(r=>setTimeout(r,800));
   /* Primeiro verifica hashes locais */
   const hash=await _hashStr(key.toUpperCase().trim());
-  if(PREMIUM_CODE_HASHES.has(hash)){_activatePremium();return;}
+  if(PREMIUM_CODE_HASHES.has(hash)){_activatePremium(key);return;}
   /* Depois valida contra LS API */
   try{
     const res=await callAI({type:'validate_license',license_key:key.trim()});
-    if(res.valid){_activatePremium();}
+    if(res.valid){_activatePremium(key);}
     else{
       /* Falha silenciosa — abre modal com a key pré-preenchida */
       setTimeout(()=>{
