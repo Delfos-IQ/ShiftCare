@@ -2,7 +2,7 @@
 <html lang="pt-PT">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=cover">
 
 <!-- PWA: identidade e manifest -->
 <meta name="application-name" content="ShiftCare">
@@ -91,13 +91,17 @@
 .theme-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;padding:0;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;transition:all .2s}
 .light .theme-btn{background:rgba(0,0,0,.08);border-color:rgba(0,0,0,.15);color:var(--t)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
+:root{
+  --sat:0px; /* safe-area-inset-top — actualizado por JS */
+  --sab:0px; /* safe-area-inset-bottom */
+}
+html{height:100%;overflow:hidden;max-width:100%;width:100%}
 body{
+  height:100%;overflow:hidden;
+  max-width:100%;width:100%;
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
   background:var(--bg);color:var(--t);font-size:15px;line-height:1.5;
   -webkit-font-smoothing:antialiased;
-  /* Safe area para Dynamic Island / notch / barra de estado iOS */
-  /* safe area aplicado por elemento, não no body (position:absolute ignora padding do pai) */
 }
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;transition:opacity .18s,transform .18s}
 .screen.hidden{opacity:0;pointer-events:none;transform:translateX(14px)}
@@ -142,7 +146,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .pt-info-pill{background:rgba(255,255,255,.18);border-radius:7px;padding:2px 8px;font-size:10px;font-weight:600}
 .pt-info-pill.alrg{background:rgba(220,38,38,.35);font-weight:800}
 /* Setup */
-#s-setup .wrap{max-width:500px;margin:0 auto;padding:14px 14px 40px;padding-top:calc(14px + env(safe-area-inset-top,0px))}
+#s-setup .wrap{max-width:500px;margin:0 auto;padding:14px 14px 40px;padding-top:calc(14px + var(--sat))}
 .setup-hero{text-align:center;padding:18px 0 16px}
 .pt-item{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;gap:11px;box-shadow:var(--shsm)}
 .pti{flex:1;min-width:0}
@@ -153,7 +157,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 /* Dashboard */
 #s-dashboard{background:var(--bg)}
 .dash-header{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);flex-shrink:0;box-shadow:var(--shm)}
-.dash-top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 0;padding-top:calc(10px + env(safe-area-inset-top,0px))}
+.dash-top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 0;padding-top:calc(10px + var(--sat))}
 .dash-center{text-align:center;padding:2px 14px 10px}
 .clock-big{font-family:'SF Mono','Fira Code',monospace;font-size:44px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1}
 .date-big{font-size:15px;font-weight:600;color:rgba(255,255,255,.85);margin-top:3px;letter-spacing:.01em;text-transform:capitalize}
@@ -197,7 +201,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .btn-discharge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:var(--rads);font-size:10px;font-weight:700;cursor:pointer;padding:3px 7px;color:#fff;white-space:nowrap}
 /* Detail */
 #s-detail{background:var(--bg)}
-.det-hdr{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:8px;flex-shrink:0}
+.det-hdr{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);padding:8px 12px;padding-top:calc(8px + var(--sat));display:flex;align-items:center;gap:8px;flex-shrink:0}
 .det-title{font-size:14px;font-weight:800;color:#fff;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tab-bar{background:var(--s);border-bottom:1px solid var(--b);display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
 .tab-bar::-webkit-scrollbar{display:none}
@@ -345,7 +349,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .nb-freq{background:var(--viobg);color:var(--vio)}
 .nb-via{background:var(--pl);color:var(--pd)}
 /* About */
-#s-about .wrap{max-width:500px;margin:0 auto;padding:14px 14px 40px;padding-top:calc(14px + env(safe-area-inset-top,0px))}
+#s-about .wrap{max-width:500px;margin:0 auto;padding:14px 14px 40px;padding-top:calc(14px + var(--sat))}
 .about-hdr{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);padding:10px 13px;display:flex;align-items:center;gap:9px;flex-shrink:0}
 .about-card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);margin-bottom:11px;overflow:hidden;box-shadow:var(--shsm)}
 .about-body{padding:13px 15px}
@@ -890,13 +894,18 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
       <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:11px" onclick="document.getElementById('backup-import-input').click()">📥 Importar Backup</button>
       <!-- Permissões câmara e microfone -->
       <div style="margin-bottom:11px;border-radius:var(--rads);padding:12px 14px;border:1.5px solid var(--b2);background:var(--s3)">
-        <div style="font-size:12px;font-weight:700;color:var(--t);margin-bottom:6px">🎤 📷 Câmara e Microfone</div>
-        <div style="font-size:11px;color:var(--t2);margin-bottom:10px;line-height:1.6">Toca no botão para que o sistema peça permissão de acesso. Se aparecer um diálogo, selecciona <strong>Permitir</strong>.</div>
-        <div style="display:flex;gap:8px;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:700;color:var(--t);margin-bottom:10px">🎤 📷 Câmara e Microfone</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px">
           <div id="perm-mic-badge" style="flex:1;text-align:center;padding:8px;border-radius:var(--rads);background:var(--s);border:1px solid var(--b2);font-size:12px">🎤 —</div>
           <div id="perm-cam-badge" style="flex:1;text-align:center;padding:8px;border-radius:var(--rads);background:var(--s);border:1px solid var(--b2);font-size:12px">📷 —</div>
         </div>
-        <button id="req-perm-btn" class="btn btn-o" style="width:100%;font-size:12px" onclick="requestPermissions()">Pedir Permissões ao Sistema</button>
+        <button id="req-perm-btn" class="btn btn-p" style="width:100%;font-size:12px;margin-bottom:8px" onclick="requestPermissions()">Pedir permissão ao sistema</button>
+        <button class="btn btn-o" style="width:100%;font-size:12px" onclick="showPermInstructions()">📋 Ver instruções passo a passo</button>
+        <!-- Painel de instruções (oculto por defeito) -->
+        <div id="perm-instructions" style="display:none;margin-top:12px;border-top:1px solid var(--b2);padding-top:12px">
+          <div id="perm-instructions-content"></div>
+          <button id="perm-try-again-btn" class="btn btn-p" style="width:100%;font-size:12px;margin-top:10px" onclick="requestPermissions()">↩ Tentar de novo</button>
+        </div>
       </div>
       <!-- Premium status -->
       <div id="prem-status-card" style="margin-bottom:11px;border-radius:var(--rads);padding:12px 14px;border:1.5px solid var(--b2);background:var(--s3)">
@@ -1334,45 +1343,76 @@ async function requestPermissions(){
   const btn=document.getElementById('req-perm-btn');
   const micBadge=document.getElementById('perm-mic-badge');
   const camBadge=document.getElementById('perm-cam-badge');
-  if(btn){btn.disabled=true;btn.textContent='A pedir…';}
+  if(btn){btn.disabled=true;btn.textContent='⏳ A pedir…';}
 
-  /* Microfone */
-  let micOk=false;
-  try{
-    const s=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
-    s.getTracks().forEach(t=>t.stop());
-    micOk=true;
-  }catch(e){micOk=false;}
-  if(micBadge){
-    micBadge.textContent=micOk?'🎤 ✅ Activo':'🎤 ❌ Negado';
-    micBadge.style.background=micOk?'var(--gbg)':'var(--rbg)';
-    micBadge.style.borderColor=micOk?'var(--gborder)':'var(--rbd)';
-  }
+  let micOk=false,camOk=false;
+  try{const s=await navigator.mediaDevices.getUserMedia({audio:true,video:false});s.getTracks().forEach(t=>t.stop());micOk=true;}catch(e){}
+  try{const s=await navigator.mediaDevices.getUserMedia({video:true,audio:false});s.getTracks().forEach(t=>t.stop());camOk=true;}catch(e){}
 
-  /* Câmara */
-  let camOk=false;
-  try{
-    const s=await navigator.mediaDevices.getUserMedia({video:true,audio:false});
-    s.getTracks().forEach(t=>t.stop());
-    camOk=true;
-  }catch(e){camOk=false;}
-  if(camBadge){
-    camBadge.textContent=camOk?'📷 ✅ Activa':'📷 ❌ Negada';
-    camBadge.style.background=camOk?'var(--gbg)':'var(--rbg)';
-    camBadge.style.borderColor=camOk?'var(--gborder)':'var(--rbd)';
-  }
+  const setBadge=(el2,ok,label)=>{if(!el2)return;el2.textContent=ok?label+' ✅ Activo':label+' ❌ Negado';el2.style.background=ok?'var(--gbg)':'var(--rbg)';el2.style.borderColor=ok?'var(--gborder)':'var(--rbd)';};
+  setBadge(micBadge,micOk,'🎤');
+  setBadge(camBadge,camOk,'📷');
 
   if(micOk&&camOk){
     showToast('✅ Câmara e microfone activados!','ok');
+    document.getElementById('perm-instructions')?.style.setProperty('display','none');
   } else {
-    /* Instruções específicas por plataforma */
-    const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
-    const msg=isIOS
-      ?'iOS: Definições → Safari → Câmara / Microfone → Permitir'
-      :'Toca em 🔒 na barra do browser → Câmara/Mic → Permitir → recarrega';
-    showToast('⚙️ '+msg,'err');
+    showToast('❌ Permissão negada — segue as instruções abaixo','err');
+    showPermInstructions();
   }
-  if(btn){btn.disabled=false;btn.textContent='Pedir Permissões ao Sistema';}
+  if(btn){btn.disabled=false;btn.textContent='Pedir permissão ao sistema';}
+}
+
+function showPermInstructions(){
+  const panel=document.getElementById('perm-instructions');
+  const content=document.getElementById('perm-instructions-content');
+  if(!panel||!content)return;
+
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+
+  const step=(n,icon,text)=>
+    `<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--b)">
+      <div style="min-width:22px;height:22px;background:var(--p);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">${n}</div>
+      <div style="font-size:12px;color:var(--t);line-height:1.6">${icon} ${text}</div>
+    </div>`;
+
+  let steps='';
+  if(isIOS&&isStandalone){
+    // iOS PWA instalada
+    steps=`
+      <div style="font-size:11px;font-weight:700;color:var(--org);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">📱 iOS — App instalada</div>
+      ${step(1,'⚙️','Abre as <strong>Definições</strong> do iPhone')}
+      ${step(2,'⬇️','Desliza para baixo e procura <strong>ShiftCare</strong>')}
+      ${step(3,'🎤','Activa <strong>Microfone</strong> e <strong>Câmara</strong>')}
+      ${step(4,'↩️','Volta à app e toca em <strong>"Tentar de novo"</strong>')}`;
+  } else if(isIOS){
+    // iOS Safari browser
+    steps=`
+      <div style="font-size:11px;font-weight:700;color:var(--org);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">📱 iOS — Safari</div>
+      ${step(1,'⚙️','Abre as <strong>Definições</strong> do iPhone')}
+      ${step(2,'🌐','Toca em <strong>Apps → Safari</strong>')}
+      ${step(3,'🎤','Toca em <strong>Câmara</strong> e <strong>Microfone</strong> → selecciona <strong>Permitir</strong>')}
+      ${step(4,'↩️','Volta à app e toca em <strong>"Tentar de novo"</strong>')}`;
+  } else if(isStandalone){
+    // Android PWA instalada
+    steps=`
+      <div style="font-size:11px;font-weight:700;color:var(--org);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">🤖 Android — App instalada</div>
+      ${step(1,'📱','Abre as <strong>Definições</strong> do Android')}
+      ${step(2,'🔍','Vai a <strong>Apps → Chrome</strong>')}
+      ${step(3,'🎤','Toca em <strong>Permissões → Câmara / Microfone → Permitir</strong>')}
+      ${step(4,'↩️','Volta à app e toca em <strong>"Tentar de novo"</strong>')}`;
+  } else {
+    // Android Chrome browser
+    steps=`
+      <div style="font-size:11px;font-weight:700;color:var(--org);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">🤖 Android — Chrome</div>
+      ${step(1,'🔒','Toca no ícone <strong>🔒</strong> na barra de endereço')}
+      ${step(2,'⚙️','Toca em <strong>Permissões do site</strong>')}
+      ${step(3,'🎤','Activa <strong>Câmara</strong> e <strong>Microfone</strong>')}
+      ${step(4,'🔄','Toca em <strong>"Tentar de novo"</strong> abaixo')}`;
+  }
+  content.innerHTML=steps;
+  panel.style.display='block';
 }
 // ── Utilitários base ──────────────────────────
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -3409,6 +3449,22 @@ function _updThemeBtn(){
   const meta=document.getElementById('meta-theme-color');
   if(meta)meta.content=isDark?'#0F766E':'#0D9488';
 }
+
+// ── Safe area insets (lê o valor real do env() e aplica via CSS var) ────────
+function initSafeArea(){
+  // Cria elemento temporário para medir env(safe-area-inset-top)
+  const probe=document.createElement('div');
+  probe.style.cssText='position:fixed;top:0;left:0;width:0;height:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none';
+  document.body.appendChild(probe);
+  const cs=getComputedStyle(probe);
+  const sat=parseFloat(cs.paddingTop)||0;
+  const sab=parseFloat(cs.paddingBottom)||0;
+  document.body.removeChild(probe);
+  document.documentElement.style.setProperty('--sat',sat+'px');
+  document.documentElement.style.setProperty('--sab',sab+'px');
+}
+initSafeArea();
+window.addEventListener('orientationchange',()=>setTimeout(initSafeArea,300));
 
 // ── Boot sequence ──────────────────────────────────────────────────────────
 reqWakeLock();

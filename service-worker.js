@@ -1,10 +1,7 @@
-/* ══════════════════════════════════════════════════════════
-   ShiftCare — Service Worker  v3.1
-   Estratégia: cache-first para assets estáticos,
-               network-first para chamadas à API externa.
-   ══════════════════════════════════════════════════════════ */
+/* ShiftCare Service Worker v3.2
+   Cache-first para assets, network-first para API */
 
-const CACHE_NAME   = 'shiftcare-v3.1.0';
+const CACHE_NAME   = 'shiftcare-v3.2.0';
 const API_ORIGINS  = ['shiftcare.pedicode-app.workers.dev', 'api.groq.com'];
 
 /* Assets to precache on install */
@@ -78,21 +75,37 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // ③ App shell & static assets → cache-first, revalidate in background
+  // ③ index.html → network-first (garante versão sempre actualizada)
   if (event.request.method !== 'GET') return;
 
+  const isHTML = event.request.mode === 'navigate' ||
+                 url.pathname.endsWith('/') ||
+                 url.pathname.endsWith('.html');
+
+  if (isHTML) {
+    event.respondWith(
+      fetch(event.request).then(res => {
+        if (res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
+        }
+        return res;
+      }).catch(() => caches.match(event.request) || caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // ④ Outros assets estáticos → cache-first
   event.respondWith(
     caches.match(event.request).then(cached => {
-      const fetchPromise = fetch(event.request).then(res => {
+      if (cached) return cached;
+      return fetch(event.request).then(res => {
         if (res.ok && res.type !== 'opaque') {
           const clone = res.clone();
           caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
         }
         return res;
       }).catch(() => null);
-
-      // Return cache immediately; update in background (stale-while-revalidate)
-      return cached || fetchPromise || caches.match('./index.html');
     })
   );
 });
