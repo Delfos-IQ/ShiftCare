@@ -95,9 +95,9 @@
   --sat:0px; /* safe-area-inset-top — actualizado por JS */
   --sab:0px; /* safe-area-inset-bottom */
 }
-html{height:100%;overflow:hidden;max-width:100%;width:100%}
+html{height:100%;height:100dvh;overflow:hidden;max-width:100%;width:100%}
 body{
-  height:100%;overflow:hidden;
+  height:100%;height:100dvh;overflow:hidden;
   max-width:100%;width:100%;
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
   background:var(--bg);color:var(--t);font-size:13px;line-height:1.5;
@@ -166,9 +166,9 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .dash-right-btns{display:flex;gap:6px;align-items:center}
 /* Patient cards */
 .cards-wrap{position:relative;flex:1;overflow:hidden}
-.cards-track{display:flex;gap:10px;height:100%;padding:8px 34px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;align-items:stretch}
+.cards-track{display:flex;gap:10px;height:100%;padding:8px 28px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;align-items:stretch}
 .cards-track::-webkit-scrollbar{display:none}
-.pt-card{flex:0 0 min(calc(100vw - 92px),380px);scroll-snap-align:center;background:var(--s);border-radius:var(--rad);border:1px solid var(--b2);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shm)}
+.pt-card{flex:0 0 min(calc(100vw - 72px),380px);scroll-snap-align:center;background:var(--s);border-radius:var(--rad);border:1px solid var(--b2);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shm)}
 .pt-card.has-alert{border:2px solid var(--red)}
 .pc-hdr{background:linear-gradient(150deg,var(--pdk) 0%,var(--pd) 40%,var(--p) 100%);padding:10px 12px;color:#fff;flex-shrink:0}
 .pc-name{font-size:15px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
@@ -194,10 +194,10 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .prog-fill{height:100%;background:var(--p);border-radius:3px}
 .prog-txt{font-size:11px;font-weight:700;color:var(--t2);white-space:nowrap}
 .alert-ban{background:var(--rbg);border-left:3px solid var(--red);padding:7px 11px;margin:7px;border-radius:var(--rads);font-size:11px;font-weight:700;color:var(--red)}
-.nav-arr{position:absolute;top:50%;transform:translateY(-50%);z-index:50;width:38px;height:38px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);box-shadow:var(--shm);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--t);-webkit-user-select:none;user-select:none}
+.nav-arr{position:absolute;top:50%;transform:translateY(-50%);z-index:50;width:32px;height:32px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);box-shadow:var(--shm);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--t);-webkit-user-select:none;user-select:none;opacity:.85}
 .nav-arr:active{transform:translateY(-50%) scale(.9)}
-.nav-l{left:4px}.nav-r{right:4px}
-.fab{position:fixed;bottom:16px;right:14px;width:48px;height:48px;border-radius:50%;background:var(--p);color:#fff;border:none;font-size:22px;cursor:pointer;box-shadow:var(--shl);display:flex;align-items:center;justify-content:center;z-index:100}
+.nav-l{left:8px}.nav-r{right:8px}
+.fab{position:fixed;bottom:calc(16px + var(--sab));right:14px;width:44px;height:44px;border-radius:50%;background:var(--p);color:#fff;border:none;font-size:20px;cursor:pointer;box-shadow:var(--shl);display:flex;align-items:center;justify-content:center;z-index:100}
 .btn-discharge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:var(--rads);font-size:10px;font-weight:700;cursor:pointer;padding:3px 7px;color:#fff;white-space:nowrap}
 /* Detail */
 #s-detail{background:var(--bg)}
@@ -620,7 +620,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
           <div>
             <div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
-            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.2.2</div>
+            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.2.3</div>
           </div>
         </div>
         <div id="wl-status-home" style="display:flex;justify-content:center;margin-bottom:8px"></div>
@@ -862,7 +862,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
         </div>
         <div style="padding:0 15px 15px">
-          <div class="about-row"><span>Versão</span><span class="about-val">3.2.2</span></div>
+          <div class="about-row"><span>Versão</span><span class="about-val">3.2.3</span></div>
           <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v3.0</span></div>
           <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
           <div class="about-row"><span>IA</span><span class="about-val">Integrada · Activa</span></div>
@@ -941,7 +941,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
 
-            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.2.2 © 2026 · Todos os direitos reservados</div>
+            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.2.3 © 2026 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
@@ -1586,7 +1586,7 @@ function medSugg(q){if(!q)return[];q=q.toLowerCase();const learned=Object.entrie
 
 function exportBackup(){
   const data={
-    version:'3.2.2',
+    version:'3.2.3',
     timestamp:new Date().toISOString(),
     patients:ST.patients,
     shiftStart:ST.shiftStart,
@@ -3642,6 +3642,24 @@ function initSafeArea(){
 }
 initSafeArea();
 window.addEventListener('orientationchange',()=>setTimeout(initSafeArea,300));
+
+/* ── Viewport height fix para mobile Chrome (barras do browser) ──────────
+   100dvh resolve na maioria dos casos, mas em browsers mais antigos
+   usamos o visualViewport para garantir que o body não transborda.        */
+function fixVH(){
+  const h=(window.visualViewport?.height??window.innerHeight)+'px';
+  document.documentElement.style.setProperty('--real-vh',h);
+  // Força o body a ter exactamente a altura visível
+  document.documentElement.style.height=h;
+  document.body.style.height=h;
+}
+fixVH();
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',fixVH);
+} else {
+  window.addEventListener('resize',fixVH);
+}
+window.addEventListener('orientationchange',()=>setTimeout(fixVH,300));
 
 // ── Boot sequence ──────────────────────────────────────────────────────────
 reqWakeLock();
