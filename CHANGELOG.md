@@ -5,6 +5,20 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-PT/1.0.0/).
 
 ---
 
+## [3.2.1] — Abril 2026
+
+### Adicionado
+- **Crop de imagem antes do OCR** — após tirar a foto, o utilizador pode arrastar para seleccionar a região do texto a extrair antes de enviar para IA; sem selecção usa a imagem completa
+- **Campo "Diluição" nas perfusões** — campo dedicado para diluição (ex: 50mg em 50mL NaCl 0,9%); campo "Notas" mantido em separado
+- **Recuperação de acesso premium** — secção "Sobre" mostra aviso de recuperação quando sem licença, com botão directo para reintroduzir o código (disponível no e-mail de confirmação do Lemon Squeezy)
+
+### Corrigido
+- **Hora de início dos medicamentos** — `firstHour` agora extraído da hora de início seleccionada pelo utilizador em vez de fixo às 8h
+- **Velocidade de infusão** no card de perfusão agora exibida em destaque (fonte grande) na área colorida do card
+- Service Worker actualizado para `shiftcare-v3.2.1` para forçar atualização de cache
+
+---
+
 ## [3.1.0] — Abril 2025
 
 ### Adicionado

@@ -620,7 +620,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
           <div>
             <div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
-            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.0.0</div>
+            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.2.1</div>
           </div>
         </div>
         <div id="wl-status-home" style="display:flex;justify-content:center;margin-bottom:8px"></div>
@@ -862,7 +862,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
         </div>
         <div style="padding:0 15px 15px">
-          <div class="about-row"><span>Versão</span><span class="about-val">3.0.0</span></div>
+          <div class="about-row"><span>Versão</span><span class="about-val">3.2.1</span></div>
           <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v3.0</span></div>
           <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
           <div class="about-row"><span>IA</span><span class="about-val">Integrada · Activa</span></div>
@@ -941,7 +941,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
 
-            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.0.0 © 2026 · Todos os direitos reservados</div>
+            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.2.1 © 2026 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
@@ -1027,8 +1027,12 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         <select id="med-freq"><option>1/1h</option><option>2/2h</option><option>4/4h</option><option>6/6h</option><option selected>8/8h</option><option>12/12h</option><option>24/24h</option><option>36/36h</option><option>SOS</option></select>
       </div>
       <div id="med-notes-row" style="display:none;margin-bottom:10px">
-        <label>Notas / Diluição</label>
-        <input id="med-notes" type="text" placeholder="Ex: 50mg em 50mL NaCl 0.9%">
+        <label>Diluição</label>
+        <input id="med-diluicao" type="text" placeholder="Ex: 50mg em 50mL NaCl 0.9%">
+      </div>
+      <div id="med-notasperf-row" style="display:none;margin-bottom:10px">
+        <label>Notas</label>
+        <input id="med-notes" type="text" placeholder="Ex: proteger da luz, bomba de seringa nº2">
       </div>
       <div style="margin-bottom:10px">
         <label>Data de início</label>
@@ -1143,6 +1147,27 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 </div>
 
 <input type="file" id="photo-input" accept="image/*" capture="environment" onchange="onPhoto(event)">
+
+<!-- ═══ MODAL: Crop de imagem para OCR ═══ -->
+<div id="modal-ocr-crop" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.85);flex-direction:column;align-items:center;justify-content:flex-start;padding:0">
+  <div style="width:100%;max-width:500px;height:100%;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:var(--card);border-bottom:1px solid var(--b)">
+      <div>
+        <div style="font-weight:700;font-size:14px">Seleccionar região</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:1px">Arrasta para seleccionar o texto a extrair</div>
+      </div>
+      <button onclick="closeCropModal()" style="background:none;border:none;font-size:20px;color:var(--t);cursor:pointer;padding:4px">✕</button>
+    </div>
+    <div style="flex:1;overflow:hidden;position:relative;touch-action:none" id="crop-container">
+      <canvas id="crop-canvas" style="display:block;max-width:100%;max-height:100%;cursor:crosshair;touch-action:none"></canvas>
+      <canvas id="crop-overlay" style="position:absolute;inset:0;pointer-events:none;max-width:100%;max-height:100%"></canvas>
+    </div>
+    <div style="padding:10px 15px;background:var(--card);border-top:1px solid var(--b);display:flex;gap:8px">
+      <button class="btn btn-o" style="flex:1" onclick="resetCropSelection()">↺ Limpar</button>
+      <button class="btn btn-p" style="flex:2" id="crop-confirm-btn" onclick="confirmCrop()">✓ Extrair texto desta área</button>
+    </div>
+  </div>
+</div>
 
 <script>
 'use strict';
@@ -1314,7 +1339,10 @@ function _activatePremium(rawCode){
 }
 
 function showPremiumModal(featureKey){
-  const feat=PREMIUM_FEATURES[featureKey]||{label:'Funcionalidade Premium',icon:'⭐',desc:'Disponível no plano premium.'};
+  const isRecovery=featureKey==='recovery';
+  const feat=isRecovery
+    ?{label:'Recuperar Acesso Premium',icon:'🔑',desc:'Introduz o código da tua compra (está no e-mail de confirmação do Lemon Squeezy). O acesso é reactivado imediatamente.'}
+    :PREMIUM_FEATURES[featureKey]||{label:'Funcionalidade Premium',icon:'⭐',desc:'Disponível no plano premium.'};
   const iconEl=el('prem-feat-icon');
   const titleEl=el('prem-feat-title');
   const descEl=el('prem-feat-desc');
@@ -1558,7 +1586,7 @@ function medSugg(q){if(!q)return[];q=q.toLowerCase();const learned=Object.entrie
 
 function exportBackup(){
   const data={
-    version:'3.0.0',
+    version:'3.2.1',
     timestamp:new Date().toISOString(),
     patients:ST.patients,
     shiftStart:ST.shiftStart,
@@ -1619,7 +1647,17 @@ function _updAboutPremium(){
     el2.innerHTML=`<span style="color:var(--grn);font-weight:700">✅ Premium activo</span> <span style="color:var(--t3);font-size:10px;font-family:monospace">${masked}</span>`;
   } else {
     el2.innerHTML=`<span style="color:var(--t2)">Gratuita</span> <span onclick="showPremiumModal('voice')" style="color:var(--pm);cursor:pointer;font-size:11px;text-decoration:underline">Activar ›</span>`;
+    // show recovery note below
+    let recEl=document.getElementById('about-prem-recovery');
+    if(!recEl){
+      recEl=document.createElement('div');recEl.id='about-prem-recovery';
+      recEl.style.cssText='margin:8px 0 0;padding:10px 12px;background:var(--gbg);border:1px solid var(--gborder);border-radius:var(--rads);font-size:12px;color:var(--t2);line-height:1.6';
+      el2.closest('.about-row')?.insertAdjacentElement('afterend',recEl);
+    }
+    recEl.innerHTML=`<span style="font-size:13px">🔑 <strong style="color:var(--t)">Reinstalaste a app?</strong></span><br>O acesso premium está guardado localmente. Ao reinstalar, basta reintroduzir o código da tua compra (está no e-mail de confirmação). <span onclick="showPremiumModal('recovery')" style="color:var(--pm);cursor:pointer;font-weight:600;text-decoration:underline">Recuperar acesso ›</span>`;
   }
+  const oldRec=document.getElementById('about-prem-recovery');
+  if(isPremium()&&oldRec)oldRec.remove();
 }
 function goHistorico(){renderHistorico();showScreen('s-historico');}
 document.querySelectorAll('.modal-ov').forEach(e=>{e.addEventListener('click',ev=>{if(ev.target===e)closeM(e.id);});});
@@ -2275,7 +2313,10 @@ function medCardH(m,i){
 function perfCardH(m,i){
   const isEpi=m.route==='Epidural';
   const badge=isEpi?`<span class="perf-badge-epi">Epidural</span>`:`<span class="perf-badge-ev">EV</span>`;
-  return`<div class="med-card ${isEpi?'perf-card-epi':'perf-card-ev'}${m.suspended?' suspended':''}"><div class="med-card-hdr"><div><div class="med-name">${esc(m.name)} ${badge}</div><div class="med-meta">${m.dose} ${m.unit}/h${m.vel?' · '+m.vel:''} · ${m.route}</div>${m.notes?`<div class="med-meta">${esc(m.notes)}</div>`:''} ${m.suspended?'<div class="med-susp-lbl">SUSPENSO</div>':''}</div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-o btn-sm" style="font-size:11px" onclick="tglSusp(${i})">${m.suspended?'Reativar':'Suspender'}</button><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red)" onclick="archiveMed(${i})">▣ Parar</button><button class="rm-btn" onclick="rmMed(${i})">×</button></div></div><div style="padding:8px 12px;background:${isEpi?'var(--viobg)':'var(--pl)'};font-size:12px;color:${isEpi?'var(--vio)':'var(--pd)'}">💧 Perfusão contínua a ${m.dose} ${m.unit}/h ${m.vel?'· '+m.vel:''} ${m.suspended?'— SUSPENSA':'— A CORRER'}</div></div>`;
+  const velBig=m.vel?`<div style="font-size:18px;font-weight:800;letter-spacing:-.3px;color:${isEpi?'var(--vio)':'var(--pd)'};margin-top:2px">💧 ${esc(m.vel)}</div>`:'';
+  const doseRow=`<div style="font-size:11px;color:${isEpi?'var(--vio)':'var(--pd)'};opacity:.8">${m.dose} ${m.unit}/h${m.diluicao?' · Dil: '+esc(m.diluicao):''}</div>`;
+  const statusBanner=`<div style="padding:6px 12px;background:${isEpi?'var(--viobg)':'var(--pl)'};font-size:11px;color:${isEpi?'var(--vio)':'var(--pd)'};border-top:1px solid ${isEpi?'#C4B5FD':'var(--pm)'}20">${m.suspended?'⏸ SUSPENSA':'▶ A CORRER'}${m.notes?' · '+esc(m.notes):''}</div>`;
+  return`<div class="med-card ${isEpi?'perf-card-epi':'perf-card-ev'}${m.suspended?' suspended':''}"><div class="med-card-hdr"><div><div class="med-name">${esc(m.name)} ${badge}</div><div class="med-meta">${m.dose} ${m.unit}/h · ${m.route}</div>${m.suspended?'<div class="med-susp-lbl">SUSPENSO</div>':''}</div><div style="display:flex;gap:5px;flex-shrink:0"><button class="btn btn-o btn-sm" style="font-size:11px" onclick="tglSusp(${i})">${m.suspended?'Reativar':'Suspender'}</button><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red)" onclick="archiveMed(${i})">▣ Parar</button><button class="rm-btn" onclick="rmMed(${i})">×</button></div></div><div style="padding:8px 12px;background:${isEpi?'var(--viobg)':'var(--pl)'};">${velBig}${doseRow}</div>${statusBanner}</div>`;
 }
 
 function openMedModal(type){
@@ -2283,11 +2324,12 @@ function openMedModal(type){
   el('med-modal-title').textContent=type==='perf'?'Adicionar Perfusão':'Adicionar Medicação';
   el('med-freq-row').style.display=type==='perf'?'none':'block';
   el('med-notes-row').style.display=type==='perf'?'block':'none';
+  if(el('med-notasperf-row'))el('med-notasperf-row').style.display=type==='perf'?'block':'none';
   el('med-vel-wrap').style.display=type==='perf'?'block':'none';
   // Perfusion routes: EV or Epidural only
   if(type==='perf'){el('med-route').innerHTML='<option>EV</option><option>Epidural</option>';}
   else{el('med-route').innerHTML='<option>EV</option><option>Oral</option><option>Gástrica (SNG/SOG)</option><option>Epidural</option><option>Inalatória</option><option>Perineural</option><option>Retal</option><option>Subcutânea</option><option>Intramuscular</option>';}
-  ['med-name','med-dose','med-notes','med-vel'].forEach(id=>{const e=el(id);if(e)e.value='';});
+  ['med-name','med-dose','med-notes','med-vel','med-diluicao'].forEach(id=>{const e=el(id);if(e)e.value='';});
   el('med-autocomplete').innerHTML='';
   const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());
   if(el('med-start'))el('med-start').value=now.toISOString().slice(0,16);
@@ -2459,7 +2501,8 @@ function confMed(){
       }
     }
   }
-  p.medications.push({id:uid(),name,dose,unit:el('med-unit').value,route:el('med-route').value,freq,firstHour:8,administered:{},suspended:false,notes,vel,startAt});
+  const startHour=startAt?parseInt(startAt.slice(11,13)):8;
+  p.medications.push({id:uid(),name,dose,unit:el('med-unit').value,route:el('med-route').value,freq,firstHour:startHour,administered:{},suspended:false,notes,vel,diluicao:el('med-diluicao')?.value.trim()||'',startAt});
   learnMed(name);save();showToast('Medicação adicionada ✓','ok');closeM('modal-med');renMsec(ST.msec);
 }
 function tglDose(key,idx){const p=ST.patients[ST.idx];if(!p)return;const m=p.medications[idx];if(!m)return;if(!m.administered)m.administered={};m.administered[key]=!m.administered[key];save();renMsec(ST.msec);}
@@ -2742,28 +2785,162 @@ function saveAP(){const p=ST.patients[ST.idx];if(!p)return;p.antecedentes=el('ap
 function saveHDA(){const p=ST.patients[ST.idx];if(!p)return;p.hda=el('hda-inp').value;save();showToast('HDA guardada ✓','ok');ST.isbarSec=null;renISBAR();}
 
 // ─── OCR de câmara para campo de texto ────────
+// Estado do crop
+const _crop={fieldId:null,btnId:null,img:null,startX:0,startY:0,endX:0,endY:0,dragging:false,scaleX:1,scaleY:1};
+
 function ocrImageToField(fieldId,btnId){
   if(!isPremium()){showPremiumModal('camera');return;}
   const inp=document.createElement('input');
   inp.type='file';inp.accept='image/*';inp.capture='environment';
-  inp.onchange=async function(){
+  inp.onchange=function(){
     const file=this.files[0];if(!file)return;
-    const btn=el(btnId);if(btn){btn.classList.add('loading');btn.textContent='⏳ A ler...';}
-    try{
-      const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
-      const mt=file.type||'image/jpeg';
-      /* Usa endpoint 'ocr' dedicado no worker (modelo de visão, prompt de extracção de texto) */
-      const result=await callAI({type:'ocr', b64, mt});
-      const txt=(result.text||'').trim();
-      if(txt){
-        const ta=el(fieldId);
-        if(ta){ta.value=(ta.value?ta.value+'\n\n':'')+txt;ta.dispatchEvent(new Event('input'));}
-        showToast('Texto extraído ✓ — reveja e guarde','ok');
-      } else {showToast('Sem texto reconhecido na imagem','err');}
-    }catch(e){showToast('Erro OCR: '+e.message,'err');}
-    finally{if(btn){btn.classList.remove('loading');btn.textContent='📷 Câmara / Foto';}}
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>openCropModal(img,fieldId,btnId);
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
   };
   inp.click();
+}
+
+function openCropModal(img,fieldId,btnId){
+  _crop.fieldId=fieldId;_crop.btnId=btnId;_crop.img=img;
+  _crop.startX=0;_crop.startY=0;_crop.endX=0;_crop.endY=0;_crop.dragging=false;
+  const modal=el('modal-ocr-crop');
+  modal.style.display='flex';
+  requestAnimationFrame(()=>{
+    const container=el('crop-container');
+    const canvas=el('crop-canvas');
+    const overlay=el('crop-overlay');
+    // Fit image in container
+    const maxW=container.clientWidth||window.innerWidth;
+    const maxH=container.clientHeight||(window.innerHeight-120);
+    const ratio=Math.min(maxW/img.naturalWidth,maxH/img.naturalHeight,1);
+    const dW=Math.round(img.naturalWidth*ratio);
+    const dH=Math.round(img.naturalHeight*ratio);
+    canvas.width=dW;canvas.height=dH;
+    overlay.width=dW;overlay.height=dH;
+    canvas.style.width=dW+'px';canvas.style.height=dH+'px';
+    overlay.style.width=dW+'px';overlay.style.height=dH+'px';
+    _crop.scaleX=img.naturalWidth/dW;
+    _crop.scaleY=img.naturalHeight/dH;
+    canvas.getContext('2d').drawImage(img,0,0,dW,dH);
+    _drawCropOverlay();
+    // Pointer events for drag selection
+    overlay.style.pointerEvents='auto';
+    overlay.style.cursor='crosshair';
+    overlay.onpointerdown=_cropPointerDown;
+    overlay.onpointermove=_cropPointerMove;
+    overlay.onpointerup=_cropPointerUp;
+  });
+}
+
+function closeCropModal(){el('modal-ocr-crop').style.display='none';_crop.img=null;}
+function resetCropSelection(){_crop.startX=0;_crop.startY=0;_crop.endX=0;_crop.endY=0;_drawCropOverlay();}
+
+function _cropPointerDown(e){
+  e.preventDefault();
+  const rect=el('crop-overlay').getBoundingClientRect();
+  _crop.startX=Math.round(e.clientX-rect.left);
+  _crop.startY=Math.round(e.clientY-rect.top);
+  _crop.endX=_crop.startX;_crop.endY=_crop.startY;
+  _crop.dragging=true;
+  el('crop-overlay').setPointerCapture(e.pointerId);
+  _drawCropOverlay();
+}
+function _cropPointerMove(e){
+  if(!_crop.dragging)return;
+  e.preventDefault();
+  const rect=el('crop-overlay').getBoundingClientRect();
+  const canvas=el('crop-overlay');
+  _crop.endX=Math.max(0,Math.min(Math.round(e.clientX-rect.left),canvas.width));
+  _crop.endY=Math.max(0,Math.min(Math.round(e.clientY-rect.top),canvas.height));
+  _drawCropOverlay();
+}
+function _cropPointerUp(e){
+  if(!_crop.dragging)return;
+  _crop.dragging=false;
+  _drawCropOverlay();
+}
+
+function _drawCropOverlay(){
+  const canvas=el('crop-overlay');if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const x=Math.min(_crop.startX,_crop.endX);
+  const y=Math.min(_crop.startY,_crop.endY);
+  const w=Math.abs(_crop.endX-_crop.startX);
+  const h=Math.abs(_crop.endY-_crop.startY);
+  if(w<4||h<4){
+    // No selection yet — show guide text
+    ctx.fillStyle='rgba(0,0,0,0.25)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='rgba(255,255,255,0.9)';
+    ctx.font='bold 14px sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText('Arrasta para seleccionar',canvas.width/2,canvas.height/2);
+    return;
+  }
+  // Dark overlay outside selection
+  ctx.fillStyle='rgba(0,0,0,0.5)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  // Cut out selection
+  ctx.clearRect(x,y,w,h);
+  // Selection border
+  ctx.strokeStyle='#0D9488';
+  ctx.lineWidth=2;
+  ctx.strokeRect(x,y,w,h);
+  // Corner handles
+  const hs=8;
+  ctx.fillStyle='#0D9488';
+  [[x,y],[x+w,y],[x,y+h],[x+w,y+h]].forEach(([cx,cy])=>ctx.fillRect(cx-hs/2,cy-hs/2,hs,hs));
+}
+
+async function confirmCrop(){
+  const x=Math.min(_crop.startX,_crop.endX);
+  const y=Math.min(_crop.startY,_crop.endY);
+  const w=Math.abs(_crop.endX-_crop.startX);
+  const h=Math.abs(_crop.endY-_crop.startY);
+  const fieldId=_crop.fieldId,btnId=_crop.btnId;
+  const btn=el(btnId);
+  const confirmBtn=el('crop-confirm-btn');
+
+  // If no selection, use full image
+  const useFullImg=(w<4||h<4);
+
+  // Draw cropped region to a temp canvas
+  const tmpCanvas=document.createElement('canvas');
+  if(useFullImg){
+    tmpCanvas.width=_crop.img.naturalWidth;
+    tmpCanvas.height=_crop.img.naturalHeight;
+    tmpCanvas.getContext('2d').drawImage(_crop.img,0,0);
+  } else {
+    const sx=Math.round(x*_crop.scaleX),sy=Math.round(y*_crop.scaleY);
+    const sw=Math.round(w*_crop.scaleX),sh=Math.round(h*_crop.scaleY);
+    tmpCanvas.width=sw;tmpCanvas.height=sh;
+    tmpCanvas.getContext('2d').drawImage(_crop.img,sx,sy,sw,sh,0,0,sw,sh);
+  }
+
+  closeCropModal();
+  if(btn){btn.classList.add('loading');btn.textContent='⏳ A ler...';}
+  if(confirmBtn)confirmBtn.disabled=true;
+
+  try{
+    const b64=tmpCanvas.toDataURL('image/jpeg',0.92).split(',')[1];
+    const result=await callAI({type:'ocr',b64,mt:'image/jpeg'});
+    const txt=(result.text||'').trim();
+    if(txt){
+      const ta=el(fieldId);
+      if(ta){ta.value=(ta.value?ta.value+'\n\n':'')+txt;ta.dispatchEvent(new Event('input'));}
+      showToast('Texto extraído ✓ — reveja e guarde','ok');
+    } else {showToast('Sem texto reconhecido na imagem','err');}
+  }catch(e){showToast('Erro OCR: '+e.message,'err');}
+  finally{
+    if(btn){btn.classList.remove('loading');btn.textContent='📷 Câmara / Foto';}
+    if(confirmBtn)confirmBtn.disabled=false;
+  }
 }
 
 // ─── Voz para campo de texto ──────────────────
