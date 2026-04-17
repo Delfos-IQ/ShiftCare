@@ -95,15 +95,20 @@
   --sat:0px; /* safe-area-inset-top — actualizado por JS */
   --sab:0px; /* safe-area-inset-bottom */
 }
-html{height:100%;height:100dvh;overflow:hidden;max-width:100%;width:100%}
+html{height:100%;overflow:hidden;max-width:100%;width:100%}
 body{
-  height:100%;height:100dvh;overflow:hidden;
+  height:100%;overflow:hidden;
   max-width:100%;width:100%;
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
   background:var(--bg);color:var(--t);font-size:13px;line-height:1.5;
   -webkit-font-smoothing:antialiased;
+  /* Bloqueia pull-to-refresh e scroll elástico do Chrome/Android */
+  overscroll-behavior:none;
+  overscroll-behavior-y:none;
+  touch-action:manipulation;
 }
-.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;transition:opacity .18s,transform .18s}
+/* position:fixed usa sempre o viewport real — ignora inconsistências do body */
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;transition:opacity .18s,transform .18s}
 .screen.hidden{opacity:0;pointer-events:none;transform:translateX(14px)}
 input,textarea,select{font-family:inherit;font-size:13px;color:var(--t);background:var(--s2);border:1.5px solid var(--b2);border-radius:var(--rads);padding:7px 10px;width:100%;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
 input:focus,textarea:focus,select:focus{border-color:var(--p);background:var(--s3)}
@@ -620,7 +625,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
           <div>
             <div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
-            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.2.3</div>
+            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.2.4</div>
           </div>
         </div>
         <div id="wl-status-home" style="display:flex;justify-content:center;margin-bottom:8px"></div>
@@ -862,7 +867,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
         </div>
         <div style="padding:0 15px 15px">
-          <div class="about-row"><span>Versão</span><span class="about-val">3.2.3</span></div>
+          <div class="about-row"><span>Versão</span><span class="about-val">3.2.4</span></div>
           <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v3.0</span></div>
           <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
           <div class="about-row"><span>IA</span><span class="about-val">Integrada · Activa</span></div>
@@ -941,7 +946,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
 
-            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.2.3 © 2026 · Todos os direitos reservados</div>
+            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.2.4 © 2026 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
@@ -1586,7 +1591,7 @@ function medSugg(q){if(!q)return[];q=q.toLowerCase();const learned=Object.entrie
 
 function exportBackup(){
   const data={
-    version:'3.2.3',
+    version:'3.2.4',
     timestamp:new Date().toISOString(),
     patients:ST.patients,
     shiftStart:ST.shiftStart,
@@ -3643,23 +3648,7 @@ function initSafeArea(){
 initSafeArea();
 window.addEventListener('orientationchange',()=>setTimeout(initSafeArea,300));
 
-/* ── Viewport height fix para mobile Chrome (barras do browser) ──────────
-   100dvh resolve na maioria dos casos, mas em browsers mais antigos
-   usamos o visualViewport para garantir que o body não transborda.        */
-function fixVH(){
-  const h=(window.visualViewport?.height??window.innerHeight)+'px';
-  document.documentElement.style.setProperty('--real-vh',h);
-  // Força o body a ter exactamente a altura visível
-  document.documentElement.style.height=h;
-  document.body.style.height=h;
-}
-fixVH();
-if(window.visualViewport){
-  window.visualViewport.addEventListener('resize',fixVH);
-} else {
-  window.addEventListener('resize',fixVH);
-}
-window.addEventListener('orientationchange',()=>setTimeout(fixVH,300));
+/* Viewport height: position:fixed em .screen garante fill exacto do viewport */
 
 // ── Boot sequence ──────────────────────────────────────────────────────────
 reqWakeLock();
