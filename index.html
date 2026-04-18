@@ -625,7 +625,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
           <div>
             <div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
-            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.2.4</div>
+            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.2.5</div>
           </div>
         </div>
         <div id="wl-status-home" style="display:flex;justify-content:center;margin-bottom:8px"></div>
@@ -867,7 +867,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
         </div>
         <div style="padding:0 15px 15px">
-          <div class="about-row"><span>Versão</span><span class="about-val">3.2.4</span></div>
+          <div class="about-row"><span>Versão</span><span class="about-val">3.2.5</span></div>
           <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v3.0</span></div>
           <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
           <div class="about-row"><span>IA</span><span class="about-val">Integrada · Activa</span></div>
@@ -946,7 +946,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
 
-            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.2.4 © 2026 · Todos os direitos reservados</div>
+            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.2.5 © 2026 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
@@ -1122,8 +1122,8 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
     </div>
     <div class="modal-body">
       <div style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.6">
-        <strong>Método recomendado:</strong> use <strong>📦 Transferir Todos</strong> — gera um código que o colega cola no painel e importa todos os doentes com dados completos.<br>
-        <strong>QR por doente:</strong> leitura rápida com câmara, sem dados clínicos completos. Se o QR falhar, aparece botão 📋 para copiar.
+        <strong>📦 Transferir Todos</strong> — método recomendado. Gera um código de texto com todos os dados (qualquer telemóvel, iOS ↔ Android).<br>
+        <strong>📋 QR por doente</strong> — dados essenciais em QR optimizado para leitura pela câmara. <em>Para histórico completo usa "Transferir Todos".</em>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:13px;flex-wrap:wrap">
         <button class="btn btn-p" onclick="bulkTransferAllPatients()">📦 Transferir Todos (recomendado)</button>
@@ -1591,7 +1591,7 @@ function medSugg(q){if(!q)return[];q=q.toLowerCase();const learned=Object.entrie
 
 function exportBackup(){
   const data={
-    version:'3.2.4',
+    version:'3.2.5',
     timestamp:new Date().toISOString(),
     patients:ST.patients,
     shiftStart:ST.shiftStart,
@@ -3363,14 +3363,42 @@ function renderQRTabs(){
 }
 
 function _buildQRPayload(p, handoverText, mode='basic'){
-  // mode: 'basic' = single QR, 'full' = bulk transfer with all clinical data
+  // mode: 'basic'|'qr' = QR transfer (lean), 'full' = bulk transfer with all clinical data
+  const isQR=(mode==='basic'||mode==='qr');
   const obj={
     name:p.name,bed:p.bed,ageDays:p.ageDays,wt:p.weightKg,
     alrg:p.allergies,diag:p.diagMain,diagSec:p.diagSec,
     gestWeeks:p.gestWeeks,gestDays:p.gestDays,birthDate:p.birthDate,
-    antecedentes:(p.antecedentes||'').slice(0,mode==='full'?2000:250),
-    hda:(p.hda||'').slice(0,mode==='full'?2000:250)
+    antecedentes:(p.antecedentes||'').slice(0,isQR?200:2000),
+    hda:(p.hda||'').slice(0,isQR?200:2000)
   };
+
+  // QR mode: only essential handover fields — keeps payload small enough to scan
+  if(mode==='qr'){
+    // Vitals: values only, no lastUp timestamp
+    if(p.vitals){
+      const v={};VITALS_DEF.forEach(vd=>{if(p.vitals[vd.k])v[vd.k]=p.vitals[vd.k];});
+      obj.vitals=v;
+    }
+    // Active medications: trim to essential fields only
+    const activeMeds=(p.medications||[]).filter(m=>!m.suspended);
+    if(activeMeds.length)obj.medications=activeMeds.map(m=>({name:m.name,dose:m.dose,unit:m.unit,route:m.route,freq:m.freq,vel:m.vel||'',diluicao:m.diluicao||''}));
+    // Active devices: label + location only
+    if(p.devices&&p.devices.length)obj.devices=p.devices.map(d=>({label:d.label,location:d.location||'',gauge:d.gauge||''}));
+    // Vent mode
+    if(p.vent&&p.vent.mode)obj.vent={mode:p.vent.mode,params:p.vent.params||{}};
+    // Positioning
+    if(p.positioning)obj.positioning=p.positioning;
+    // 3 most recent notes, trimmed to 100 chars each
+    if(p.notes&&p.notes.length)obj.notes=p.notes.slice(0,3).map(n=>({text:(n.text||'').slice(0,100),timestamp:n.timestamp}));
+    // Active nutrition summary (type + active entries only)
+    if(p.nutrition&&p.nutrition.active&&p.nutrition.active.length){
+      obj.nutrition={staging:p.nutrition.staging,active:p.nutrition.active.filter(r=>r.status==='active')};
+    }
+    // Pending todos only (text + scheduledAt)
+    const pendTodos=(p.todos||[]).filter(t=>!t.done);
+    if(pendTodos.length)obj.todos=pendTodos.map(t=>({text:t.text,scheduledAt:t.scheduledAt||''}));
+  }
 
   // In 'full' mode, include all clinical data
   if(mode==='full'){
@@ -3433,7 +3461,7 @@ function _doRenderQR(payload, label, hwText, fallbackCode){
     if(inner)inner.innerHTML='';
     try{
       // Try QR encoding
-      new QRCode(inner,{text:payload,width:220,height:220,colorDark:'#0F172A',colorLight:'#FFFFFF',correctLevel:QRCode.CorrectLevel.L});
+      new QRCode(inner,{text:payload,width:260,height:260,colorDark:'#0F172A',colorLight:'#FFFFFF',correctLevel:QRCode.CorrectLevel.M});
       if(info)info.textContent=label;
       if(hwText&&hwbox&&hwel){
         hwel.textContent=hwText;
@@ -3476,8 +3504,8 @@ function showQRFor(ri){
   if(disp)disp.style.display='none';
   if(hwbox)hwbox.style.display='none';
   if(loading)loading.style.display='block';
-  const payload=_buildQRPayload(p,null,'full');
-  const fallback='BULK|'+(typeof LZString==='object'?LZString.compressToBase64(JSON.stringify({v:'3.0',patients:[payload]})):JSON.stringify({v:'3.0',patients:[payload]}));
+  const payload=_buildQRPayload(p,null,'qr');
+  const fallback='BULK|'+(typeof LZString==='object'?LZString.compressToBase64(JSON.stringify({v:'3.0',patients:[_buildQRPayload(p,null,'full')]})):JSON.stringify({v:'3.0',patients:[_buildQRPayload(p,null,'full')]}));
   _doRenderQR(payload,p.name+' · Cama '+p.bed,null,fallback);
 }
 
@@ -3537,7 +3565,7 @@ Notas do turno: ${recentNotes.join(' || ')||'sem notas'}`;
   }
   if(ailoading)ailoading.style.display='none';
   if(loading)loading.style.display='block';
-  const payload=_buildQRPayload(p,hwText);
+  const payload=_buildQRPayload(p,hwText,'qr');
   const fullPayload=_buildQRPayload(p,hwText,'full');
   const fallback='BULK|'+(typeof LZString==='object'?LZString.compressToBase64(JSON.stringify({v:'3.0',patients:[fullPayload]})):JSON.stringify({v:'3.0',patients:[fullPayload]}));
   _doRenderQR(payload,p.name+' · Cama '+p.bed+' · Resumo IA ✓',hwText,fallback);
