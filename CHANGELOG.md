@@ -7,6 +7,10 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-PT/1.0.0/).
 
 ## [3.3.2] — Abril 2026
 
+### Corrigido
+- **Badge de Sync sempre visível** — o botão `🔄 Sync` no cabeçalho estava oculto (`display:none`) até o utilizador já estar ligado, tornando impossível iniciar uma sessão de sincronização; agora é sempre visível com estilo neutro quando desligado e muda de cor conforme o estado (cinzento → amarelo → verde / vermelho)
+- **Comentário do Service Worker** actualizado para v3.3.2 (estava desactualizado como v3.2)
+
 ### Adicionado
 - **Backup Cloud Cifrado (zero-knowledge)** — botão "☁️ Backup Cloud Cifrado" no ecrã Sobre; dados cifrados localmente antes de qualquer transmissão
 - **Cifragem AES-256-GCM** com chave derivada via PBKDF2-SHA-256 (100 000 iterações + salt aleatório de 16 bytes + IV de 12 bytes); a password nunca sai do dispositivo

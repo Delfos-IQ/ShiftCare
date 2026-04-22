@@ -1,0 +1,32 @@
+# ShiftCare — Cloudflare Worker config
+# Deploy: wrangler deploy
+# Docs: https://developers.cloudflare.com/workers/
+
+name       = "shiftcare"
+main       = "worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# ── Durable Objects (sincronização WebSocket entre dispositivos) ──
+# Requer Workers Paid plan (5 USD/mês) ou Workers Free com Durable Objects beta
+[durable_objects]
+bindings = [
+  { name = "SYNC_ROOM", class_name = "SyncRoom" }
+]
+
+# Migração inicial — obrigatório na primeira vez que se adiciona um DO
+[[migrations]]
+tag     = "v1"
+new_classes = ["SyncRoom"]
+
+# ── KV Namespace (backup cloud cifrado) ──
+# Criar com: wrangler kv:namespace create BACKUP_KV
+# Depois substituir os IDs gerados abaixo.
+[[kv_namespaces]]
+binding    = "BACKUP_KV"
+id         = "PLACEHOLDER_KV_ID"          # substituir pelo ID gerado
+preview_id = "PLACEHOLDER_KV_PREVIEW_ID" # substituir pelo preview ID
+
+# ── Variáveis de ambiente (definir em Cloudflare Dashboard → Workers → Settings → Variables) ──
+# GROQ_API_KEY   = "gsk_..."
+# LS_API_KEY     = "..."  (Lemon Squeezy API key)

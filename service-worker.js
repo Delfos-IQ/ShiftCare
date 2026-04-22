@@ -1,4 +1,4 @@
-/* ShiftCare Service Worker v3.2
+/* ShiftCare Service Worker v3.3.2
    Cache-first para assets, network-first para API */
 
 const CACHE_NAME   = 'shiftcare-v3.3.2';

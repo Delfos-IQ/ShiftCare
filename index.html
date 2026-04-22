@@ -541,14 +541,15 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 @keyframes sync-pulse{from{opacity:1}to{opacity:.3}}
 
 #sync-badge{
-  display:none;align-items:center;gap:4px;
+  display:flex;align-items:center;gap:4px;
   font-size:10px;font-weight:700;padding:2px 7px;
-  border-radius:8px;background:var(--gbg);border:1px solid var(--gborder);
-  color:var(--grn);cursor:pointer;
+  border-radius:8px;background:var(--s2);border:1px solid var(--b);
+  color:var(--t2);cursor:pointer;opacity:.75;transition:opacity .15s;
 }
-#sync-badge.show{display:flex}
-#sync-badge.connecting{background:var(--obg);border-color:rgba(251,191,36,0.3);color:var(--org)}
-#sync-badge.error{background:#fee2e2;border-color:#fecaca;color:var(--red)}
+#sync-badge:hover{opacity:1}
+#sync-badge.show{background:var(--gbg);border-color:var(--gborder);color:var(--grn);opacity:1}
+#sync-badge.connecting{background:var(--obg);border-color:rgba(251,191,36,0.3);color:var(--org);opacity:1}
+#sync-badge.error{background:#fee2e2;border-color:#fecaca;color:var(--red);opacity:1}
 
 #modal-sync{
   position:fixed;inset:0;z-index:10001;
@@ -5222,13 +5223,15 @@ function _syncUpdateBadge(){
     txt.textContent=_sync.peers>0?`${_sync.peers+1} disp.`:'Sync';
     ind.classList.add('connected');
   } else if(_sync.status==='connecting'){
-    badge.classList.add('show','connecting');
+    badge.classList.add('connecting');
     txt.textContent='A ligar...';
     ind.classList.add('connecting');
   } else if(_sync.status==='error'){
-    badge.classList.add('show','error');
+    badge.classList.add('error');
     txt.textContent='Offline';
     ind.classList.add('error');
+  } else {
+    txt.textContent='Sync';
   }
   /* Actualiza UI do modal se estiver aberto */
   _syncUpdatePeersUI();
