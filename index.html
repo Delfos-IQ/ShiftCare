@@ -222,7 +222,32 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .vt-full-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
 .vc{background:var(--s);border:1.5px solid var(--b);border-radius:var(--rad);padding:8px;transition:border-color .18s,background .18s}
 .vc.ok{border-color:var(--grn)}.vc.warn{border-color:var(--org);background:var(--obg)}.vc.alrt{border-color:var(--red);background:var(--rbg)}
-.vc-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px}
+.vc-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.vc-trend{font-size:11px;font-weight:900;letter-spacing:-.5px;color:var(--t3);line-height:1}
+.vc-trend-warn{color:var(--org)}
+.vc-trend-alrt{color:var(--red);animation:pulse-trend .8s ease-in-out infinite alternate}
+@keyframes pulse-trend{from{opacity:1}to{opacity:.5}}
+/* ── PEWS ── */
+.pews-wrap{margin-top:13px;border-radius:10px;overflow:hidden;border:1px solid var(--b)}
+.pews-hdr{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--s2)}
+.pews-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t2)}
+.pews-score-pill{display:flex;align-items:center;gap:6px}
+.pews-total{font-size:22px;font-weight:900;line-height:1}
+.pews-lvl{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.pews-lvl-0{background:#dcfce7;color:#15803d}.pews-lvl-1{background:#fef9c3;color:#854d0e}
+.pews-lvl-2{background:#ffedd5;color:#9a3412}.pews-lvl-3{background:#fee2e2;color:#991b1b;animation:pulse-trend .7s ease-in-out infinite alternate}
+.pews-domains{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b)}
+.pews-domain{background:var(--s);padding:7px 8px;text-align:center}
+.pews-d-lbl{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--t3);margin-bottom:3px}
+.pews-d-val{font-size:18px;font-weight:900;color:var(--t)}
+.pews-d-sub{font-size:9px;color:var(--t3);margin-top:1px}
+.pews-d-0{color:var(--grn)}.pews-d-1{color:var(--org)}.pews-d-2{color:#ea580c}.pews-d-3{color:var(--red)}
+.pews-action{padding:8px 12px;font-size:11px;font-weight:700;background:var(--s2);color:var(--t2);border-top:1px solid var(--b)}
+.pews-beh{display:flex;gap:5px;padding:8px 12px;border-top:1px solid var(--b);background:var(--s2);align-items:center}
+.pews-beh-lbl{font-size:10px;font-weight:700;color:var(--t3);flex-shrink:0}
+.pews-beh-opts{display:flex;gap:4px;flex-wrap:wrap}
+.pews-beh-btn{font-size:10px;font-weight:700;padding:4px 9px;border-radius:8px;border:1.5px solid var(--b);background:var(--s);color:var(--t2);cursor:pointer;transition:all .15s}
+.pews-beh-btn.sel{background:var(--pd);color:#fff;border-color:var(--pd)}
 .vc-inp{border:none;background:none;font-size:20px;font-weight:800;width:100%;padding:0;color:var(--t);font-family:inherit;outline:none}
 .vc.ok .vc-inp{color:var(--grn)}.vc.warn .vc-inp{color:var(--org)}.vc.alrt .vc-inp{color:var(--red)}
 .vc-foot{display:flex;justify-content:space-between;margin-top:3px}
@@ -440,6 +465,20 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .scan-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
 .scan-frame{width:200px;height:200px;border:3px solid var(--p);border-radius:12px;box-shadow:0 0 0 2000px rgba(0,0,0,.5)}
 /* Privacy lock */
+/* ── Portrait lock overlay (landscape avoidance) ── */
+#landscape-overlay{
+  display:none;position:fixed;inset:0;z-index:99999;
+  background:#060B18;
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;text-align:center;padding:32px;
+}
+#landscape-overlay .lo-icon{font-size:52px;animation:lo-spin 1.4s ease-in-out infinite alternate;}
+@keyframes lo-spin{from{transform:rotate(0deg)}to{transform:rotate(-15deg)}}
+#landscape-overlay .lo-title{color:#fff;font-size:18px;font-weight:800;letter-spacing:-.3px}
+#landscape-overlay .lo-sub{color:rgba(255,255,255,.55);font-size:13px;max-width:240px}
+@media(orientation:landscape){
+  #landscape-overlay{display:flex}
+}
 #privacy-overlay{position:fixed;inset:0;z-index:9990;background:rgba(15,23,42,0.82);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .35s}
 #privacy-overlay.visible{opacity:1;pointer-events:all}
 .priv-icon{font-size:48px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
@@ -490,6 +529,49 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
   display:block;margin-top:8px;font-size:11px;
   color:var(--t2);cursor:pointer;text-decoration:underline
 }
+/* ── Sincronização WebSocket ── */
+#sync-indicator{
+  position:fixed;top:0;left:0;right:0;z-index:9998;
+  height:3px;background:transparent;transition:background .4s;
+  pointer-events:none;
+}
+#sync-indicator.connected{background:var(--grn)}
+#sync-indicator.connecting{background:var(--org);animation:sync-pulse .8s ease-in-out infinite alternate}
+#sync-indicator.error{background:var(--red)}
+@keyframes sync-pulse{from{opacity:1}to{opacity:.3}}
+
+#sync-badge{
+  display:none;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;padding:2px 7px;
+  border-radius:8px;background:var(--gbg);border:1px solid var(--gborder);
+  color:var(--grn);cursor:pointer;
+}
+#sync-badge.show{display:flex}
+#sync-badge.connecting{background:var(--obg);border-color:rgba(251,191,36,0.3);color:var(--org)}
+#sync-badge.error{background:#fee2e2;border-color:#fecaca;color:var(--red)}
+
+#modal-sync{
+  position:fixed;inset:0;z-index:10001;
+  background:rgba(0,0,0,.72);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+#modal-sync.open{opacity:1;pointer-events:all}
+.sync-sheet{
+  background:var(--s);border-radius:18px 18px 0 0;
+  padding:20px 18px 32px;width:100%;max-width:480px;
+  box-shadow:var(--shm);
+}
+.sync-sheet h3{font-size:16px;font-weight:800;margin-bottom:4px}
+.sync-sheet p{font-size:12px;color:var(--t2);margin-bottom:16px}
+.sync-room-display{
+  font-size:28px;font-weight:900;letter-spacing:4px;
+  text-align:center;padding:14px;
+  background:var(--s2);border-radius:10px;
+  color:var(--pd);font-family:monospace;
+  margin-bottom:12px;
+}
+.sync-peers{font-size:12px;color:var(--t2);text-align:center;margin-bottom:14px;min-height:18px}
 /* ── Premium: modal de desbloqueio ── */
 #premium-modal{
   position:fixed;inset:0;z-index:10000;
@@ -543,9 +625,97 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 }
 /* Lock badge on premium buttons when not unlocked */
 .prem-lock::after{content:' 🔒';font-size:10px;opacity:.7}
+
+/* ── Backup Cloud ───────────────────────────────────────────────────── */
+#modal-backup{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s}
+#modal-backup.open{opacity:1;pointer-events:all}
+#modal-backup.open .bk-sheet{transform:translateY(0)}
+.bk-sheet{background:var(--s);border-radius:22px 22px 0 0;padding:0 0 calc(22px + var(--sab)) 0;max-height:88vh;overflow-y:auto;width:100%;transition:transform .22s cubic-bezier(.32,1,.34,1);transform:translateY(100%)}
+.bk-handle{width:36px;height:4px;background:var(--b2);border-radius:2px;margin:12px auto 0}
+.bk-title{font-size:15px;font-weight:800;color:var(--t);padding:14px 18px 0;display:flex;align-items:center;gap:8px}
+.bk-body{padding:14px 18px}
+.bk-pw-row{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.bk-pw-inp{flex:1;background:var(--s2);border:1.5px solid var(--b2);border-radius:10px;padding:10px 12px;color:var(--t);font-size:14px;font-family:monospace}
+.bk-pw-inp:focus{outline:none;border-color:var(--p)}
+.bk-pw-eye{background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:8px}
+.bk-info{font-size:11px;color:var(--t3);background:var(--s2);border-radius:9px;padding:9px 11px;margin-bottom:12px;line-height:1.5}
+.bk-info b{color:var(--t2)}
+.bk-card{background:var(--s2);border:1px solid var(--b);border-radius:var(--rads);padding:11px 13px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bk-card-ico{font-size:22px;flex-shrink:0}
+.bk-card-info{flex:1;min-width:0}
+.bk-card-date{font-size:13px;font-weight:700;color:var(--t)}
+.bk-card-size{font-size:11px;color:var(--t3);margin-top:2px}
+.bk-card-actions{display:flex;gap:6px}
+.bk-status{font-size:12px;text-align:center;color:var(--t2);padding:8px 0}
+.bk-divider{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px}
+.bk-progress{height:3px;background:var(--pl);border-radius:3px;overflow:hidden;margin-bottom:10px;display:none}
+.bk-progress-bar{height:100%;background:var(--p);border-radius:3px;transition:width .3s}
+.bk-zero{text-align:center;padding:18px 0;color:var(--t3);font-size:13px}
+
+/* ── Investigação / Research module ─────────────────────────────────── */
+.res-hdr{display:flex;align-items:center;gap:10px;padding:12px 14px;padding-top:calc(12px + var(--sat));background:var(--s);border-bottom:1px solid var(--b);flex-shrink:0}
+.res-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px}
+.res-section{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:14px;margin-bottom:12px}
+.res-section-title{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.res-textarea{width:100%;min-height:70px;background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:10px;color:var(--t);font-size:14px;resize:none;box-sizing:border-box;font-family:inherit}
+.res-textarea:focus{outline:none;border-color:var(--p)}
+.mesh-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(13,148,136,.15);border:1px solid rgba(13,148,136,.4);color:var(--pm);border-radius:20px;padding:3px 10px 3px 10px;font-size:12px;font-weight:600;margin:3px}
+.mesh-chip button{background:none;border:none;color:var(--pm);cursor:pointer;font-size:13px;padding:0;line-height:1;opacity:.7}
+.res-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.res-filter-label{font-size:12px;color:var(--t2);font-weight:600;margin-bottom:5px}
+.res-select{background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:7px 10px;color:var(--t);font-size:13px;flex:1;min-width:0}
+.res-select:focus{outline:none;border-color:var(--p)}
+.res-pubtype-wrap{display:flex;flex-wrap:wrap;gap:6px}
+.res-pubtype-btn{padding:5px 11px;border-radius:20px;font-size:12px;font-weight:600;background:var(--s2);border:1.5px solid var(--b2);color:var(--t2);cursor:pointer;transition:all .15s}
+.res-pubtype-btn.sel{background:rgba(13,148,136,.18);border-color:rgba(13,148,136,.5);color:var(--pm)}
+.res-art-card{background:var(--s2);border:1px solid var(--b);border-radius:var(--rads);padding:12px;margin-bottom:10px}
+.res-art-title{font-size:13px;font-weight:700;color:var(--t);line-height:1.4;margin-bottom:5px}
+.res-art-meta{font-size:11px;color:var(--t3);margin-bottom:6px}
+.res-art-abstract{font-size:12px;color:var(--t2);line-height:1.5;display:none}
+.res-art-abstract.open{display:block}
+.res-art-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.res-art-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;background:var(--pl);color:var(--pm);border:1px solid rgba(13,148,136,.3)}
+.res-art-badge.epmc{background:rgba(167,139,250,.12);color:var(--vio);border-color:rgba(167,139,250,.3)}
+.res-loading{text-align:center;padding:30px;color:var(--t2);font-size:14px}
+.res-empty{text-align:center;padding:40px 20px;color:var(--t3);font-size:13px}
+.res-source-tab{display:flex;gap:8px;margin-bottom:12px}
+.res-source-btn{flex:1;padding:8px;border-radius:10px;font-size:12px;font-weight:700;background:var(--s2);border:1.5px solid var(--b2);color:var(--t2);cursor:pointer;text-align:center}
+.res-source-btn.sel{background:rgba(13,148,136,.15);border-color:rgba(13,148,136,.4);color:var(--pm)}
 </style>
 </head>
 <body>
+<!-- ═══ SYNC INDICATOR ═══ -->
+<div id="sync-indicator"></div>
+
+<!-- ═══ MODAL SYNC ═══ -->
+<div id="modal-sync" onclick="if(event.target===this)closeSyncModal()">
+  <div class="sync-sheet">
+    <h3>🔄 Sincronização em Tempo Real</h3>
+    <p>Partilha o código com o teu colega para sincronizar os doentes em tempo real. O código expira ao fim de 12 horas.</p>
+    <div class="sync-room-display" id="sync-room-code">——</div>
+    <div class="sync-peers" id="sync-peers-status">A aguardar ligação...</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <button class="btn btn-p" style="flex:1" onclick="syncCopyCode()">📋 Copiar código</button>
+      <button class="btn btn-o" style="flex:1" onclick="syncNewCode()">↺ Novo código</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px">
+      <input id="sync-join-inp" class="inp" type="text" placeholder="Entrar com código do colega..."
+             maxlength="8" style="flex:1;font-family:monospace;letter-spacing:2px;text-transform:uppercase"
+             oninput="this.value=this.value.toUpperCase()">
+      <button class="btn btn-o" onclick="syncJoinCode()">Entrar</button>
+    </div>
+    <button class="btn btn-o" style="width:100%;color:var(--red)" onclick="syncDisconnect()">Desligar sincronização</button>
+    <button class="btn" style="width:100%;margin-top:8px;background:none;color:var(--t2);font-size:12px" onclick="closeSyncModal()">Fechar</button>
+  </div>
+</div>
+
+<!-- ═══ LANDSCAPE OVERLAY — Portrait lock ═══ -->
+<div id="landscape-overlay" aria-live="polite" aria-label="Por favor roda o ecrã para modo vertical">
+  <div class="lo-icon">📱</div>
+  <div class="lo-title">Roda o ecrã</div>
+  <div class="lo-sub">O ShiftCare foi desenhado para usar em modo vertical (portrait)</div>
+</div>
+
 <div id="privacy-overlay" onclick="deactivatePrivacy()" role="button" aria-label="Ecrã bloqueado — toque para desbloquear">
   <div class="priv-icon">🔒</div>
   <div class="priv-msg">Ecrã bloqueado</div>
@@ -625,7 +795,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
           <div>
             <div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
-            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.2.5</div>
+            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.3.2</div>
           </div>
         </div>
         <div id="wl-status-home" style="display:flex;justify-content:center;margin-bottom:8px"></div>
@@ -758,9 +928,13 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         <div class="dash-app-sub" id="dash-sub">A carregar...</div>
       </div>
       <div class="dash-right-btns">
+        <div id="sync-badge" onclick="openSyncModal()" title="Sincronização em tempo real">🔄 <span id="sync-badge-txt">Sync</span></div>
         <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" title="Tema claro/escuro" aria-label="Alternar tema">🌙</button>
         <button class="btn-ic" onclick="openFinalizeModal()" title="Finalizar Turno" aria-label="Finalizar Turno" style="background:rgba(239,68,68,.25);border-color:rgba(239,68,68,.4)">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+        <button class="btn-ic" onclick="goResearch()" title="Investigação Científica" aria-label="Investigação">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
         </button>
         <button class="btn-ic" onclick="goHistorico()" title="Histórico" aria-label="Histórico">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
@@ -819,6 +993,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
       <div id="capture-preview-wrap"><img id="capture-img" src="" alt=""></div>
       <div class="vt-full-grid" id="vitals-grid"></div>
       <div id="vitals-alert"></div>
+      <div id="pews-wrap" class="pews-wrap"></div>
     </div>
     <!-- CUIDADOS -->
     <div id="tab-cuidados" class="tab-pane">
@@ -847,6 +1022,97 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
   </div>
 </div>
 
+<!-- ═══ INVESTIGAÇÃO ═══ -->
+<div id="s-research" class="screen hidden">
+  <div class="res-hdr">
+    <button class="btn-g" onclick="goBack()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div style="font-size:15px;font-weight:800;color:#fff;flex:1">Investigação Científica</div>
+    <button class="btn-g" onclick="_exportResearch()" title="Exportar por email" id="res-export-btn" style="display:none">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+    </button>
+  </div>
+  <div class="res-body">
+
+    <!-- INPUT -->
+    <div class="res-section">
+      <div class="res-section-title">Pesquisa</div>
+      <div id="res-diag-import" style="display:none;margin-bottom:8px">
+        <button class="btn btn-sm" style="font-size:12px;width:100%" onclick="_importPatientDiag()">
+          📋 Importar diagnóstico do doente actual
+        </button>
+      </div>
+      <div class="res-filter-label">Palavras-chave / diagnóstico</div>
+      <textarea id="res-keywords" class="res-textarea" placeholder="Ex: sepsis neonatal, disfunção orgânica, prematuridade..." rows="3"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn btn-o btn-sm" style="flex:1;font-size:13px" onclick="_meshFromAI()" id="res-mesh-btn">
+          🧠 Converter para MeSH/DeCS
+        </button>
+        <button class="btn btn-sm" style="flex:1;font-size:13px;background:var(--p);color:#fff;border-color:var(--p)" onclick="_doResearch()" id="res-search-btn">
+          🔍 Pesquisar
+        </button>
+      </div>
+    </div>
+
+    <!-- MESH TERMS -->
+    <div class="res-section" id="res-mesh-section" style="display:none">
+      <div class="res-section-title">Descritores MeSH / DeCS <span style="color:var(--t3);font-weight:400;font-size:10px">(toque para remover)</span></div>
+      <div id="res-mesh-chips"></div>
+      <div id="res-query-preview" style="margin-top:8px;font-size:11px;color:var(--t3);font-family:monospace;background:var(--s2);padding:6px 8px;border-radius:7px;word-break:break-all;display:none"></div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="res-section">
+      <div class="res-section-title">Filtros</div>
+
+      <div class="res-filter-row">
+        <div style="flex:1;min-width:0">
+          <div class="res-filter-label">Faixa etária</div>
+          <select id="res-age" class="res-select" onchange="_ageSelectChange()">
+            <option value="">Todas as idades</option>
+            <option value="neonate" selected>Neonatal (0–28 dias)</option>
+            <option value="infant">Lactente (1–23 meses)</option>
+            <option value="child">Criança (2–12 anos)</option>
+            <option value="adolescent">Adolescente (13–18 anos)</option>
+            <option value="pediatric">Pediátrico (todos)</option>
+            <option value="adult">Adulto</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div class="res-filter-label">Publicação</div>
+          <select id="res-year" class="res-select">
+            <option value="">Qualquer ano</option>
+            <option value="1" selected>Último ano</option>
+            <option value="5">Últimos 5 anos</option>
+            <option value="10">Últimos 10 anos</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="res-filter-label">Tipo de publicação</div>
+      <div class="res-pubtype-wrap" id="res-pubtype-wrap">
+        <button class="res-pubtype-btn sel" data-pt="" onclick="_togglePubtype(this)">Todos</button>
+        <button class="res-pubtype-btn" data-pt="systematic review[pt]" onclick="_togglePubtype(this)">Revisão Sistemática</button>
+        <button class="res-pubtype-btn" data-pt="meta-analysis[pt]" onclick="_togglePubtype(this)">Meta-análise</button>
+        <button class="res-pubtype-btn" data-pt="randomized controlled trial[pt]" onclick="_togglePubtype(this)">RCT</button>
+        <button class="res-pubtype-btn" data-pt="clinical trial[pt]" onclick="_togglePubtype(this)">Ensaio Clínico</button>
+        <button class="res-pubtype-btn" data-pt="review[pt]" onclick="_togglePubtype(this)">Revisão</button>
+        <button class="res-pubtype-btn" data-pt="guideline[pt]" onclick="_togglePubtype(this)">Guideline</button>
+      </div>
+    </div>
+
+    <!-- FONTES -->
+    <div class="res-source-tab">
+      <button class="res-source-btn sel" id="src-pubmed" onclick="_selSource('pubmed')">PubMed</button>
+      <button class="res-source-btn" id="src-europepmc" onclick="_selSource('europepmc')">Europe PMC</button>
+      <button class="res-source-btn" id="src-both" onclick="_selSource('both')">Ambas</button>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div id="res-results"></div>
+
+  </div>
+</div>
+
 <!-- ═══ ABOUT ═══ -->
 <div id="s-about" class="screen hidden">
   <div class="about-hdr">
@@ -867,8 +1133,8 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
         </div>
         <div style="padding:0 15px 15px">
-          <div class="about-row"><span>Versão</span><span class="about-val">3.2.5</span></div>
-          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v3.0</span></div>
+          <div class="about-row"><span>Versão</span><span class="about-val">3.3.2</span></div>
+          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v3.3.2</span></div>
           <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
           <div class="about-row"><span>IA</span><span class="about-val">Integrada · Activa</span></div>
           <div class="about-row"><span>Idioma</span><span class="about-val">Português (PT)</span></div>
@@ -895,8 +1161,9 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
       <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:8px" onclick="resetLearn()">Resetar Módulo de Aprendizagem</button>
-      <button class="btn btn-p" style="width:100%;font-size:12px;margin-bottom:8px" onclick="exportBackup()">💾 Exportar Backup</button>
-      <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:11px" onclick="document.getElementById('backup-import-input').click()">📥 Importar Backup</button>
+      <button class="btn btn-p" style="width:100%;font-size:12px;margin-bottom:8px" onclick="exportBackup()">💾 Exportar Backup Local</button>
+      <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:8px" onclick="document.getElementById('backup-import-input').click()">📥 Importar Backup Local</button>
+      <button class="btn" style="width:100%;font-size:13px;font-weight:700;margin-bottom:11px;background:linear-gradient(135deg,var(--pdk),var(--p));color:#fff;border-color:var(--pd);padding:13px" onclick="openBackupModal()">☁️ Backup Cloud Cifrado</button>
       <!-- Permissões câmara e microfone -->
       <div style="margin-bottom:11px;border-radius:var(--rads);padding:12px 14px;border:1.5px solid var(--b2);background:var(--s3)">
         <div style="font-size:12px;font-weight:700;color:var(--t);margin-bottom:10px">🎤 📷 Câmara e Microfone</div>
@@ -946,12 +1213,51 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
 
-            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.2.5 © 2026 · Todos os direitos reservados</div>
+            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.3.2 © 2026 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
 
 <!-- MODALS -->
+
+<!-- Backup Cloud -->
+<div id="modal-backup" onclick="if(event.target===this)closeBackupModal()">
+  <div class="bk-sheet" role="dialog" aria-modal="true" aria-label="Backup Cloud">
+    <div class="bk-handle"></div>
+    <div class="bk-title">☁️ Backup Cloud</div>
+    <div class="bk-body">
+
+      <div class="bk-info">
+        <b>🔒 Zero-knowledge</b> — Os dados são cifrados no teu dispositivo com AES-256-GCM antes de saírem. O servidor apenas armazena o blob cifrado e <b>nunca tem acesso</b> aos dados clínicos. A password <b>não é recuperável</b> — guarda-a em local seguro.
+      </div>
+
+      <!-- Password -->
+      <div class="bk-divider">Password de cifragem</div>
+      <div class="bk-pw-row">
+        <input id="bk-pw" class="bk-pw-inp" type="password" placeholder="Password de backup…" autocomplete="new-password" autocorrect="off" spellcheck="false">
+        <button class="bk-pw-eye" onclick="_bkTogglePw()" title="Mostrar/ocultar">👁</button>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="bk-progress" id="bk-progress"><div class="bk-progress-bar" id="bk-progress-bar" style="width:0%"></div></div>
+      <div id="bk-status" class="bk-status"></div>
+
+      <!-- Backup now -->
+      <button class="btn btn-sm" style="width:100%;background:var(--p);color:#fff;border-color:var(--p);font-size:14px;padding:12px" onclick="backupSave()">
+        💾 Fazer backup agora
+      </button>
+
+      <!-- Backup list -->
+      <div class="bk-divider">Backups guardados <span id="bk-count" style="font-size:10px;color:var(--t3)"></span></div>
+      <div id="bk-list"><div class="bk-zero">A carregar…</div></div>
+
+      <div style="font-size:10px;color:var(--t3);text-align:center;margin-top:14px;line-height:1.5">
+        Máx. 5 backups · Dados armazenados na Cloudflare (EU) · RGPD: dados cifrados, sem identificadores pessoais
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Add Patient -->
 <div id="modal-addpt" class="modal-ov" role="dialog" aria-modal="true" aria-label="Adicionar Doente">
   <div class="modal-sheet">
@@ -1095,11 +1401,11 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           <div class="fin-opt-sub">Reinicia o turno mantendo todos os doentes activos. Os cuidados ficam registados.</div>
         </div>
       </div>
-      <div class="fin-opt" onclick="exportShiftReport()">
+      <div class="fin-opt" onclick="exportShiftPDF()">
         <span class="fin-opt-icon">📄</span>
         <div>
-          <div class="fin-opt-title">Exportar Relatório do Turno</div>
-          <div class="fin-opt-sub">Gera relatório completo em texto para copiar ou enviar.</div>
+          <div class="fin-opt-title">Exportar Relatório PDF</div>
+          <div class="fin-opt-sub">Abre relatório formatado pronto a imprimir ou guardar como PDF.</div>
         </div>
       </div>
       <div class="fin-opt" onclick="finArchiveAll()">
@@ -1500,15 +1806,21 @@ const NUTR_ADDITIVES=[
 const NUTR_MODE_FREQ=['Bolus','Perfusão Contínua','2/2h','3/3h','Horário Livre'];
 const NUTR_MODE_VIA=['Tetina','Sonda Dedo','Copo','SOG','SNG','Gastro'];
 
-function vRanges(d){d=parseInt(d)||0;if(d<=28)return{hr:[100,180],rr:[40,60],sbp:[45,80],spo2:[88,100],temp:[36.3,37.5],gluc:[45,120]};if(d<=90)return{hr:[100,180],rr:[35,55],sbp:[60,95],spo2:[95,100],temp:[36.3,37.5],gluc:[50,120]};if(d<=365)return{hr:[100,160],rr:[30,50],sbp:[65,100],spo2:[95,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=730)return{hr:[90,150],rr:[24,40],sbp:[70,110],spo2:[95,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=1825)return{hr:[80,140],rr:[22,34],sbp:[80,112],spo2:[96,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=4380)return{hr:[70,120],rr:[18,30],sbp:[85,118],spo2:[96,100],temp:[36.5,37.5],gluc:[60,120]};return{hr:[55,100],rr:[12,20],sbp:[90,130],spo2:[96,100],temp:[36.5,37.5],gluc:[70,120]};}
+function vRanges(d){d=Math.max(0,parseInt(d)||0);/* A-03: ageDays negativo (RN prematuro c/ data futura) tratado como neonatal */if(d<=28)return{hr:[100,180],rr:[40,60],sbp:[45,80],spo2:[88,100],temp:[36.3,37.5],gluc:[45,120]};if(d<=90)return{hr:[100,180],rr:[35,55],sbp:[60,95],spo2:[95,100],temp:[36.3,37.5],gluc:[50,120]};if(d<=365)return{hr:[100,160],rr:[30,50],sbp:[65,100],spo2:[95,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=730)return{hr:[90,150],rr:[24,40],sbp:[70,110],spo2:[95,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=1825)return{hr:[80,140],rr:[22,34],sbp:[80,112],spo2:[96,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=4380)return{hr:[70,120],rr:[18,30],sbp:[85,118],spo2:[96,100],temp:[36.5,37.5],gluc:[60,120]};return{hr:[55,100],rr:[12,20],sbp:[90,130],spo2:[96,100],temp:[36.5,37.5],gluc:[70,120]};}
 function vSt(v,r){if(v===''||v===null||v===undefined)return'';const n=parseFloat(v);if(isNaN(n))return'';if(n<r[0]||n>r[1])return'alrt';const s=r[1]-r[0];if(n<r[0]+s*.12||n>r[1]-s*.12)return'warn';return'ok';}
-function alrtCnt(p){const R=vRanges(p.ageDays);return VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&R[v.k]&&vSt(val,R[v.k])==='alrt';}).length;}
+function alrtCnt(p){
+  const R=vRanges(p.ageDays);
+  const vitAlerts=VITALS_DEF.filter(v=>{const val=p.vitals[v.k];return val&&R[v.k]&&vSt(val,R[v.k])==='alrt';}).length;
+  /* Adiciona 1 ao badge se PEWS ≥ 4 (escalação ou emergência) */
+  const pews=calcPEWS(p);
+  return vitAlerts+(pews.total>=4?1:0);
+}
 function ageToDays(v,u){const n=parseInt(v)||0;if(u==='dias')return n;if(u==='meses')return Math.round(n*30.44);return Math.round(n*365.25);}
-function ageCat(p){const d=p.ageDays||0;if(d<=28)return'neo';if(d<=730)return'lac';return'cri';}
+function ageCat(p){const d=Math.max(0,p.ageDays||0);if(d<=28)return'neo';if(d<=730)return'lac';return'cri';}
 
 // Age label
 function ageLabel(p){
-  const d=p.ageDays||0;
+  const d=Math.max(0,p.ageDays||0);/* A-03: guard prematuros */
   if(d<=60)return d+' dias';
   const m=Math.floor(d/30.44);
   if(m<24)return m+' meses';
@@ -1561,6 +1873,8 @@ function mkPt(o){
     positioning:'',
     vent:{mode:'',params:{}},
     vitals:{hr:'',spo2:'',rr:'',temp:'',sbp:'',gluc:'',lastUp:null},
+    vitalsLog:[],/* histórico para alertas de tendência — [{k,v,ts}] max 30 */
+    pewsBehavior:0,/* 0=adequado 1=dormindo 2=irritável 3=letárgico */
     tasks:DEF_TASKS.map((t,i)=>({id:i,text:t,done:false,doneAt:null})),
     abcde:{A:'',B:'',C:'',D:'',E:''},unitCheck:{},
     devices:[],devInactive:[],
@@ -1570,13 +1884,40 @@ function mkPt(o){
     status:'internado',dischargeAt:null,dischargeNote:''};
 }
 
+/* Poda automática: limita arrays para evitar esgotar localStorage (A-02) */
+function _trimData(){
+  let trimmed=false;
+  ST.patients.forEach(p=>{
+    if((p.medHistory||[]).length>100){p.medHistory=p.medHistory.slice(0,100);trimmed=true;}
+    if((p.notes||[]).length>50){p.notes=p.notes.slice(0,50);trimmed=true;}
+    if((p.todos||[]).length>200){p.todos=p.todos.slice(0,200);trimmed=true;}
+    if((p.vitalsLog||[]).length>30){p.vitalsLog=p.vitalsLog.slice(-30);trimmed=true;}
+  });
+  return trimmed;
+}
 function save(){
   try{
+    const payload={p:ST.patients,ss:ST.shiftStart};
+    const str=JSON.stringify(payload);
+    /* Aviso preventivo acima dos 4 MB (limite típico ~5 MB) */
+    if(str.length>4*1024*1024){
+      _trimData();
+      showToast('⚠ Histórico antigo podado para libertar espaço.','');
+    }
     localStorage.setItem('sc_v23',JSON.stringify({p:ST.patients,ss:ST.shiftStart}));
     localStorage.setItem('sc_learn',JSON.stringify(LEARN));
   }catch(e){
-    showToast('⚠ Erro ao guardar dados: '+e.message+'. Armazenamento local pode estar cheio.','error');
+    /* Última tentativa: poda e retry */
+    _trimData();
+    try{
+      localStorage.setItem('sc_v23',JSON.stringify({p:ST.patients,ss:ST.shiftStart}));
+      showToast('⚠ Dados antigos removidos para libertar espaço.','');
+    }catch(e2){
+      showToast('🚨 Armazenamento cheio! Faz um backup (Menu → Exportar) e limpa o histórico.','error');
+    }
   }
+  /* Propaga alterações para colegas na sala de sync (debounce 1.5s) */
+  if(typeof _syncOnSave==='function')_syncOnSave();
 }
 function loadData(){try{
   // Try v22 first, fall back to v21
@@ -1591,7 +1932,7 @@ function medSugg(q){if(!q)return[];q=q.toLowerCase();const learned=Object.entrie
 
 function exportBackup(){
   const data={
-    version:'3.2.5',
+    version:'3.3.2',
     timestamp:new Date().toISOString(),
     patients:ST.patients,
     shiftStart:ST.shiftStart,
@@ -1608,6 +1949,75 @@ function exportBackup(){
   showToast('Backup exportado ✓','ok');
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   VALIDADOR DE SCHEMA — A-05
+   Verifica campos obrigatórios, tipos e limites fisiológicos antes
+   de aceitar qualquer importação por QR, backup ou código de turno.
+   ══════════════════════════════════════════════════════════════════ */
+const _VITAL_LIMITS={hr:[0,350],spo2:[0,100],rr:[0,120],temp:[20,45],sbp:[0,300],gluc:[0,1500]};
+
+function _validatePatientObj(obj){
+  const errors=[],warnings=[];
+  if(!obj||typeof obj!=='object'){errors.push('Objecto inválido');return{ok:false,errors,warnings};}
+
+  /* Campos obrigatórios */
+  if(!obj.name||typeof obj.name!=='string'||!obj.name.trim())errors.push('Campo "name" em falta ou inválido');
+  if(!obj.bed&&obj.bed!==0)warnings.push('Campo "bed" (cama) em falta');
+
+  /* ageDays */
+  if(obj.ageDays!==undefined&&obj.ageDays!==null){
+    const d=parseFloat(obj.ageDays);
+    if(isNaN(d)||d<-365||d>40000)errors.push(`ageDays=${obj.ageDays} fora de limites (-365 a 40000)`);
+  }
+
+  /* weightKg */
+  if(obj.weightKg!==undefined&&obj.weightKg!==null&&obj.weightKg!==''){
+    const w=parseFloat(obj.weightKg);
+    if(isNaN(w)||w<0.3||w>350)errors.push(`weightKg=${obj.weightKg} fora de limites fisiológicos`);
+  }
+
+  /* Vitais — limites fisiológicos absolutos */
+  if(obj.vitals&&typeof obj.vitals==='object'){
+    Object.entries(_VITAL_LIMITS).forEach(([k,[mn,mx]])=>{
+      const v=obj.vitals[k];
+      if(v!==''&&v!==null&&v!==undefined){
+        const n=parseFloat(v);
+        if(!isNaN(n)&&(n<mn||n>mx))errors.push(`Vital ${k}=${v} fora de limites fisiológicos (${mn}–${mx})`);
+      }
+    });
+  } else if(obj.vitals!==undefined&&typeof obj.vitals!=='object'){
+    errors.push('"vitals" deve ser objecto');
+  }
+
+  /* Arrays */
+  ['medications','devices','notes','todos','tasks','medHistory'].forEach(k=>{
+    if(obj[k]!==undefined&&!Array.isArray(obj[k]))errors.push(`"${k}" deve ser array`);
+  });
+
+  /* Tamanhos máximos (segurança — A-02) */
+  if(Array.isArray(obj.medications)&&obj.medications.length>500)warnings.push('Lista de medicação muito grande (>500) — será podada');
+  if(Array.isArray(obj.notes)&&obj.notes.length>200)warnings.push('Lista de notas muito grande (>200) — será podada');
+
+  return{ok:errors.length===0,errors,warnings};
+}
+
+function _validateBackupData(data){
+  const errors=[],warnings=[];
+  if(!data||typeof data!=='object'){errors.push('Ficheiro não é um objecto JSON válido');return{ok:false,errors,warnings};}
+  if(!data.patients||!Array.isArray(data.patients)){errors.push('"patients" em falta ou não é array');return{ok:false,errors,warnings};}
+  if(data.patients.length===0)warnings.push('Backup não contém doentes');
+  if(data.patients.length>100)errors.push('Número de doentes excessivo (>100)');
+
+  let ptErrors=0;
+  data.patients.forEach((p,i)=>{
+    const r=_validatePatientObj(p);
+    if(!r.ok){ptErrors++;errors.push(`Doente #${i+1}: ${r.errors.join('; ')}`);}
+  });
+  if(ptErrors>0)warnings.push(`${ptErrors} doente(s) com erros de validação serão ignorados`);
+
+  return{ok:errors.filter(e=>!e.startsWith('Doente')).length===0,errors,warnings};
+}
+
 function importBackup(event){
   const file=event.target.files[0];
   if(!file)return;
@@ -1615,11 +2025,27 @@ function importBackup(event){
   reader.onload=(e)=>{
     try{
       const data=JSON.parse(e.target.result);
-      if(data.patients){ST.patients=data.patients;}
+
+      /* Validação de schema */
+      const v=_validateBackupData(data);
+      if(!v.ok){
+        alert('❌ Backup inválido — importação cancelada.\n\nErros:\n'+v.errors.join('\n'));
+        return;
+      }
+      if(v.warnings.length){
+        const proceed=confirm('⚠ Avisos no backup:\n'+v.warnings.join('\n')+'\n\nDeseja continuar?');
+        if(!proceed)return;
+      }
+
+      /* Filtra apenas doentes que passam a validação */
+      const validPatients=data.patients.filter(p=>_validatePatientObj(p).ok);
+
+      if(data.patients){ST.patients=validPatients;}
       if(data.shiftStart){ST.shiftStart=data.shiftStart;}
       if(data.learn){LEARN=data.learn;}
+      _trimData();
       save();
-      showToast('Backup importado ✓','ok');
+      showToast(`Backup importado: ${validPatients.length} doente(s) ✓`,'ok');
       location.reload();
     }catch(err){
       alert('Erro ao importar backup: '+err.message);
@@ -1631,6 +2057,221 @@ function importBackup(event){
 
 function resetLearn(){if(!confirm('Resetar dados de aprendizagem?'))return;LEARN={meds:{},tasks:{},todos:{}};save();alert('Dados eliminados.');}
 
+// ══════════════════════════════════════════════════════════════════
+// BACKUP CLOUD CIFRADO — AES-256-GCM + PBKDF2 + Cloudflare KV
+// Zero-knowledge: a password nunca sai do dispositivo.
+// ══════════════════════════════════════════════════════════════════
+const BK_UID_KEY = 'sc_backup_uid';
+
+function _bkGetUserId(){
+  let uid = localStorage.getItem(BK_UID_KEY);
+  if(!uid || !/^[a-f0-9\-]{36}$/.test(uid)){
+    // Gera UUID v4
+    uid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{
+      const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);
+    });
+    localStorage.setItem(BK_UID_KEY, uid);
+  }
+  return uid;
+}
+
+function _bkTogglePw(){
+  const inp = document.getElementById('bk-pw');
+  if(inp) inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function _bkSetStatus(msg, type=''){
+  const el2 = document.getElementById('bk-status');
+  if(!el2) return;
+  el2.style.color = type==='err' ? 'var(--red)' : type==='ok' ? 'var(--grn)' : 'var(--t2)';
+  el2.textContent = msg;
+}
+
+function _bkSetProgress(pct){
+  const wrap = document.getElementById('bk-progress');
+  const bar  = document.getElementById('bk-progress-bar');
+  if(!wrap||!bar) return;
+  wrap.style.display = pct > 0 && pct < 100 ? 'block' : 'none';
+  bar.style.width = pct + '%';
+}
+
+// ── Cifragem AES-256-GCM ──────────────────────────────────────────
+async function _bkEncrypt(plaintext, password){
+  const enc = new TextEncoder();
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv   = crypto.getRandomValues(new Uint8Array(12));
+  const keyMat = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey(
+    { name:'PBKDF2', salt, iterations:100000, hash:'SHA-256' },
+    keyMat, { name:'AES-GCM', length:256 }, false, ['encrypt']
+  );
+  const cipher = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, key, enc.encode(plaintext));
+  // salt(16) + iv(12) + ciphertext
+  const combined = new Uint8Array(28 + cipher.byteLength);
+  combined.set(salt, 0); combined.set(iv, 16); combined.set(new Uint8Array(cipher), 28);
+  // Base64
+  let b64 = '';
+  combined.forEach(b => b64 += String.fromCharCode(b));
+  return btoa(b64);
+}
+
+async function _bkDecrypt(b64, password){
+  const enc = new TextEncoder(); const dec = new TextDecoder();
+  const combined = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  const salt = combined.slice(0, 16);
+  const iv   = combined.slice(16, 28);
+  const cipher = combined.slice(28);
+  const keyMat = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey(
+    { name:'PBKDF2', salt, iterations:100000, hash:'SHA-256' },
+    keyMat, { name:'AES-GCM', length:256 }, false, ['decrypt']
+  );
+  const plain = await crypto.subtle.decrypt({ name:'AES-GCM', iv }, key, cipher);
+  return dec.decode(plain);
+}
+
+// ── UI ────────────────────────────────────────────────────────────
+function openBackupModal(){
+  document.getElementById('modal-backup').classList.add('open');
+  _bkLoadList();
+}
+function closeBackupModal(){document.getElementById('modal-backup').classList.remove('open');}
+
+async function _bkLoadList(){
+  const listEl = document.getElementById('bk-list');
+  const countEl = document.getElementById('bk-count');
+  if(!listEl) return;
+  listEl.innerHTML = '<div class="bk-zero">A carregar…</div>';
+  try{
+    const r = await fetch(WORKER_URL, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ type:'backup_list', userId: _bkGetUserId() })
+    });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    const backups = d.backups || [];
+    if(countEl) countEl.textContent = `(${backups.length}/5)`;
+    if(!backups.length){
+      listEl.innerHTML = '<div class="bk-zero">Sem backups guardados ainda.</div>';
+      return;
+    }
+    listEl.innerHTML = backups.map(bk => {
+      const dt = new Date(bk.ts);
+      const dateStr = dt.toLocaleDateString('pt-PT',{day:'2-digit',month:'short',year:'numeric'});
+      const timeStr = dt.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+      const sizeKB = (bk.size / 1024).toFixed(1);
+      return `<div class="bk-card">
+        <div class="bk-card-ico">☁️</div>
+        <div class="bk-card-info">
+          <div class="bk-card-date">${dateStr} · ${timeStr}</div>
+          <div class="bk-card-size">${sizeKB} KB${bk.label ? ' · ' + _escHtml(bk.label) : ''}</div>
+        </div>
+        <div class="bk-card-actions">
+          <button class="btn btn-sm btn-p" style="font-size:11px;padding:5px 9px" onclick="backupRestore('${bk.id}','${dateStr}')">↩ Restaurar</button>
+          <button class="btn-g" style="font-size:11px;color:var(--red);padding:5px 8px" onclick="backupDelete('${bk.id}')">🗑</button>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){
+    listEl.innerHTML = `<div class="bk-zero" style="color:var(--red)">❌ ${e.message}</div>`;
+  }
+}
+
+async function backupSave(){
+  const pw = (document.getElementById('bk-pw')?.value || '').trim();
+  if(!pw){ _bkSetStatus('Define uma password de cifragem primeiro.','err'); return; }
+  if(pw.length < 8){ _bkSetStatus('Password deve ter pelo menos 8 caracteres.','err'); return; }
+
+  _bkSetStatus('A preparar dados…');_bkSetProgress(10);
+  try{
+    const rawData = localStorage.getItem('sc_v23') || '{}';
+    const compressed = LZString.compressToBase64(rawData);
+    _bkSetProgress(30);
+
+    _bkSetStatus('A cifrar (AES-256-GCM)…');
+    const encrypted = await _bkEncrypt(compressed, pw);
+    _bkSetProgress(60);
+
+    _bkSetStatus('A enviar para a cloud…');
+    const now = new Date();
+    const label = `Turno ${now.toLocaleDateString('pt-PT',{day:'2-digit',month:'2-digit'})} ${now.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})}`;
+    const r = await fetch(WORKER_URL, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ type:'backup_save', userId: _bkGetUserId(), data: encrypted, label })
+    });
+    _bkSetProgress(90);
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    _bkSetProgress(100);
+    _bkSetStatus(`✅ Backup guardado! (${d.remaining ?? '?'} espaço(s) livre(s))`,'ok');
+    setTimeout(()=>_bkSetProgress(0), 800);
+    _bkLoadList();
+  }catch(e){
+    _bkSetStatus('❌ Erro: ' + e.message,'err');
+    _bkSetProgress(0);
+  }
+}
+
+async function backupRestore(backupId, dateLabel){
+  const pw = (document.getElementById('bk-pw')?.value || '').trim();
+  if(!pw){ _bkSetStatus('Introduz a password de cifragem para restaurar.','err'); return; }
+  if(!confirm(`Restaurar backup de "${dateLabel}"?\n\nIsto vai substituir TODOS os dados actuais do turno. Esta acção não pode ser desfeita.`)) return;
+
+  _bkSetStatus('A transferir backup…');_bkSetProgress(20);
+  try{
+    const r = await fetch(WORKER_URL, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ type:'backup_load', userId: _bkGetUserId(), backupId })
+    });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    _bkSetProgress(50);
+
+    _bkSetStatus('A decifrar…');
+    let compressed;
+    try{
+      compressed = await _bkDecrypt(d.data, pw);
+    }catch{
+      throw new Error('Password incorrecta ou backup corrompido.');
+    }
+    _bkSetProgress(75);
+
+    const rawData = LZString.decompressFromBase64(compressed);
+    if(!rawData) throw new Error('Falha ao descomprimir — backup inválido.');
+    const parsed = JSON.parse(rawData);
+    _bkSetProgress(90);
+
+    // Valida estrutura antes de aplicar
+    const vRes = typeof _validateBackupData === 'function' ? _validateBackupData(parsed) : {ok:true,errors:[],warnings:[]};
+    if(!vRes.ok){ throw new Error('Backup inválido: ' + vRes.errors.join('; ')); }
+
+    localStorage.setItem('sc_v23', rawData);
+    _bkSetProgress(100);
+    _bkSetStatus('✅ Backup restaurado! A recarregar…','ok');
+    setTimeout(() => location.reload(), 1200);
+  }catch(e){
+    _bkSetStatus('❌ Erro: ' + e.message,'err');
+    _bkSetProgress(0);
+  }
+}
+
+async function backupDelete(backupId){
+  if(!confirm('Eliminar este backup da cloud? Esta acção não pode ser desfeita.')) return;
+  _bkSetStatus('A eliminar…');
+  try{
+    const r = await fetch(WORKER_URL, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ type:'backup_delete', userId: _bkGetUserId(), backupId })
+    });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    _bkSetStatus('Backup eliminado.','ok');
+    _bkLoadList();
+  }catch(e){
+    _bkSetStatus('❌ Erro: ' + e.message,'err');
+  }
+}
+
 // ══════════════════════════════════════════════
 // MODULE: NAVIGATION
 // ══════════════════════════════════════════════
@@ -1641,9 +2282,291 @@ function goBack(){
   if(ST.screen==='s-detail'){renderDash();showScreen('s-dashboard');}
   else if(ST.screen==='s-historico'){showScreen('s-dashboard');}
   else if(ST.screen==='s-about'){showScreen(ST.prevScreen||'s-dashboard');}
+  else if(ST.screen==='s-research'){showScreen(ST.prevScreen||'s-dashboard');}
   else{showScreen('s-setup');}
 }
 function goAbout(){ST.prevScreen=ST.screen;_updAboutPremium();showScreen('s-about');}
+
+// ══════════════════════════════════════════════════════════════════
+// MÓDULO DE INVESTIGAÇÃO CIENTÍFICA
+// ══════════════════════════════════════════════════════════════════
+const _RES={meshTerms:[],results:[],source:'pubmed',selectedPubtypes:new Set()};
+const PUBMED_BASE='https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
+const EUROPEPMC_BASE='https://www.ebi.ac.uk/europepmc/webservices/rest/';
+
+// Age filter → PubMed MeSH terms
+const RES_AGE_MESH={
+  neonate:'"infant, newborn"[MeSH Terms]',
+  infant:'"infant"[MeSH Terms]',
+  child:'"child"[MeSH Terms]',
+  adolescent:'"adolescent"[MeSH Terms]',
+  pediatric:'("infant, newborn"[MeSH Terms] OR "infant"[MeSH Terms] OR "child"[MeSH Terms] OR "adolescent"[MeSH Terms])',
+  adult:'"adult"[MeSH Terms]',
+};
+// Age filter → Europe PMC query part
+const RES_AGE_EPMC={
+  neonate:'(AGE_CATEGORY:"newborn")',
+  infant:'(AGE_CATEGORY:"infant")',
+  child:'(AGE_CATEGORY:"children")',
+  adolescent:'(AGE_CATEGORY:"adolescent")',
+  pediatric:'(AGE_CATEGORY:"newborn" OR AGE_CATEGORY:"infant" OR AGE_CATEGORY:"children" OR AGE_CATEGORY:"adolescent")',
+  adult:'(AGE_CATEGORY:"adult")',
+};
+
+function goResearch(){
+  ST.prevScreen=ST.screen;
+  // Show import button if a patient is selected in detail
+  const hasPt=ST.patients.length>0&&ST.patients[ST.idx];
+  document.getElementById('res-diag-import').style.display=hasPt?'block':'none';
+  showScreen('s-research');
+}
+
+function _importPatientDiag(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const kw=(p.diagMain||'').trim();
+  const inp=document.getElementById('res-keywords');
+  if(inp)inp.value=kw;
+  if(kw)showToast('Diagnóstico importado','ok');
+  else showToast('Sem diagnóstico principal registado','warn');
+}
+
+function _selSource(src){
+  _RES.source=src;
+  ['pubmed','europepmc','both'].forEach(s=>{
+    document.getElementById('src-'+s).classList.toggle('sel',s===src);
+  });
+}
+
+function _togglePubtype(btn){
+  const pt=btn.dataset.pt;
+  if(pt===''){ // "Todos" — clear all
+    _RES.selectedPubtypes.clear();
+    document.querySelectorAll('.res-pubtype-btn').forEach(b=>b.classList.remove('sel'));
+    btn.classList.add('sel');
+  } else {
+    document.querySelector('.res-pubtype-btn[data-pt=""]').classList.remove('sel');
+    if(_RES.selectedPubtypes.has(pt)){_RES.selectedPubtypes.delete(pt);btn.classList.remove('sel');}
+    else{_RES.selectedPubtypes.add(pt);btn.classList.add('sel');}
+    if(_RES.selectedPubtypes.size===0){
+      document.querySelector('.res-pubtype-btn[data-pt=""]').classList.add('sel');
+    }
+  }
+}
+
+function _ageSelectChange(){}// placeholder for future logic
+
+async function _meshFromAI(){
+  const kw=(document.getElementById('res-keywords')?.value||'').trim();
+  if(!kw){showToast('Escreve palavras-chave primeiro','warn');return;}
+  const btn=document.getElementById('res-mesh-btn');
+  btn.textContent='⏳ A converter…';btn.disabled=true;
+  try{
+    const r=await fetch(WORKER_URL,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'mesh',text:kw})
+    });
+    if(!r.ok)throw new Error('Worker error '+r.status);
+    const d=await r.json();
+    const terms=(d.terms||[]).filter(Boolean);
+    if(!terms.length)throw new Error('Sem descritores');
+    _RES.meshTerms=terms;
+    _renderMeshChips();
+    showToast(`${terms.length} descritor(es) MeSH gerado(s)`,'ok');
+  }catch(e){
+    showToast('Erro ao gerar MeSH: '+e.message,'err');
+  }finally{
+    btn.textContent='🧠 Converter para MeSH/DeCS';btn.disabled=false;
+  }
+}
+
+function _renderMeshChips(){
+  const wrap=document.getElementById('res-mesh-chips');
+  const sec=document.getElementById('res-mesh-section');
+  const preview=document.getElementById('res-query-preview');
+  if(!wrap)return;
+  wrap.innerHTML=_RES.meshTerms.map((t,i)=>
+    `<span class="mesh-chip">${t}<button onclick="_removeMesh(${i})" title="Remover">×</button></span>`
+  ).join('');
+  sec.style.display=_RES.meshTerms.length?'block':'none';
+  if(_RES.meshTerms.length){
+    const q=_RES.meshTerms.map(t=>`"${t}"[MeSH Terms]`).join(' OR ');
+    preview.textContent='PubMed: '+q;preview.style.display='block';
+  }else{preview.style.display='none';}
+}
+
+function _removeMesh(i){
+  _RES.meshTerms.splice(i,1);_renderMeshChips();
+}
+
+function _buildPubMedQuery(){
+  const kw=(document.getElementById('res-keywords')?.value||'').trim();
+  const age=document.getElementById('res-age')?.value||'';
+  const yearRange=document.getElementById('res-year')?.value||'';
+
+  let parts=[];
+  // MeSH terms if available, else raw keywords
+  if(_RES.meshTerms.length){
+    parts.push('('+_RES.meshTerms.map(t=>`"${t}"[MeSH Terms]`).join(' OR ')+')');
+  } else if(kw){
+    parts.push('('+kw.split(/[,;]+/).map(k=>`"${k.trim()}"[Title/Abstract]`).filter(Boolean).join(' OR ')+')');
+  }
+  if(age&&RES_AGE_MESH[age])parts.push(RES_AGE_MESH[age]);
+  if(_RES.selectedPubtypes.size>0){
+    parts.push('('+[..._RES.selectedPubtypes].join(' OR ')+')');
+  }
+  if(yearRange){
+    const yr=parseInt(yearRange);const now=new Date().getFullYear();
+    parts.push(`${now-yr}:${now}[dp]`);
+  }
+  return parts.join(' AND ');
+}
+
+function _buildEPMCQuery(){
+  const kw=(document.getElementById('res-keywords')?.value||'').trim();
+  const age=document.getElementById('res-age')?.value||'';
+  const yearRange=document.getElementById('res-year')?.value||'';
+
+  let parts=[];
+  if(_RES.meshTerms.length){
+    parts.push('('+_RES.meshTerms.map(t=>`"${t}"`).join(' OR ')+')');
+  } else if(kw){
+    parts.push(kw.split(/[,;]+/).map(k=>`"${k.trim()}"`).filter(Boolean).join(' OR '));
+  }
+  if(age&&RES_AGE_EPMC[age])parts.push(RES_AGE_EPMC[age]);
+  if(_RES.selectedPubtypes.size){
+    // Europe PMC pub type mapping
+    const ptMap={'systematic review[pt]':'PUBLICATION_TYPE:"systematic review"','meta-analysis[pt]':'PUBLICATION_TYPE:"meta-analysis"','randomized controlled trial[pt]':'PUBLICATION_TYPE:"research-article"','clinical trial[pt]':'PUBLICATION_TYPE:"research-article"','review[pt]':'PUBLICATION_TYPE:"review-article"','guideline[pt]':'PUBLICATION_TYPE:"guideline"'};
+    const epts=[..._RES.selectedPubtypes].map(p=>ptMap[p]).filter(Boolean);
+    if(epts.length)parts.push('('+epts.join(' OR ')+')');
+  }
+  if(yearRange){
+    const yr=parseInt(yearRange);const now=new Date().getFullYear();
+    parts.push(`(FIRST_PDATE:[${now-yr}-01-01 TO ${now}-12-31])`);
+  }
+  return parts.join(' AND ');
+}
+
+async function _doResearch(){
+  const kw=(document.getElementById('res-keywords')?.value||'').trim();
+  if(!kw&&!_RES.meshTerms.length){showToast('Escreve palavras-chave ou gera descritores MeSH primeiro','warn');return;}
+  const res=document.getElementById('res-results');
+  const exportBtn=document.getElementById('res-export-btn');
+  res.innerHTML='<div class="res-loading">🔍 A pesquisar artigos…</div>';
+  exportBtn.style.display='none';
+  _RES.results=[];
+
+  try{
+    const src=_RES.source;
+    const pmQ=_buildPubMedQuery();
+    const epQ=_buildEPMCQuery();
+
+    let pmResults=[],epmcResults=[];
+    if(src==='pubmed'||src==='both')pmResults=await _searchPubMed(pmQ);
+    if(src==='europepmc'||src==='both')epmcResults=await _searchEuropePMC(epQ);
+
+    _RES.results=[...pmResults,...epmcResults];
+    _renderResearchResults(_RES.results);
+    if(_RES.results.length)exportBtn.style.display='flex';
+  }catch(e){
+    res.innerHTML=`<div class="res-empty">❌ Erro: ${e.message}</div>`;
+  }
+}
+
+async function _searchPubMed(query){
+  if(!query)return[];
+  // Step 1: ESearch → get IDs
+  const searchUrl=`${PUBMED_BASE}esearch.fcgi?db=pubmed&term=${encodeURIComponent(query)}&retmax=10&retmode=json&sort=relevance`;
+  const sRes=await fetch(searchUrl);
+  if(!sRes.ok)throw new Error('PubMed ESearch falhou ('+sRes.status+')');
+  const sData=await sRes.json();
+  const ids=(sData.esearchresult?.idlist||[]);
+  if(!ids.length)return[];
+
+  // Step 2: ESummary → get article details
+  const sumUrl=`${PUBMED_BASE}esummary.fcgi?db=pubmed&id=${ids.join(',')}&retmode=json`;
+  const sumRes=await fetch(sumUrl);
+  if(!sumRes.ok)return[];
+  const sumData=await sumRes.json();
+  const result=sumData.result||{};
+
+  return ids.map(id=>{
+    const art=result[id]||{};
+    const authors=(art.authors||[]).slice(0,3).map(a=>a.name).join(', ')+(art.authors?.length>3?' et al.':'');
+    return{
+      source:'pubmed',id,
+      title:art.title||'(sem título)',
+      authors,
+      journal:art.fulljournalname||art.source||'',
+      year:art.pubdate?.substring(0,4)||'',
+      abstract:'',// abstract requires EFetch — too heavy; omit
+      pmid:id,
+      url:`https://pubmed.ncbi.nlm.nih.gov/${id}/`,
+      doi:art.elocationid?.replace('doi: ',''),
+    };
+  }).filter(a=>a.title);
+}
+
+async function _searchEuropePMC(query){
+  if(!query)return[];
+  const url=`${EUROPEPMC_BASE}search?query=${encodeURIComponent(query)}&format=json&pageSize=10&resultType=lite&sort=RELEVANCE`;
+  const res=await fetch(url);
+  if(!res.ok)throw new Error('Europe PMC falhou ('+res.status+')');
+  const data=await res.json();
+  const articles=(data.resultList?.result||[]);
+  return articles.map(art=>({
+    source:'europepmc',
+    id:art.id,
+    title:art.title||'(sem título)',
+    authors:art.authorString||'',
+    journal:art.journalTitle||art.source||'',
+    year:art.pubYear||'',
+    abstract:art.abstractText||'',
+    pmid:art.pmid||'',
+    url:art.pmid?`https://pubmed.ncbi.nlm.nih.gov/${art.pmid}/`:`https://europepmc.org/article/${art.source}/${art.id}`,
+    doi:art.doi||'',
+  })).filter(a=>a.title);
+}
+
+function _renderResearchResults(articles){
+  const res=document.getElementById('res-results');
+  if(!articles.length){res.innerHTML='<div class="res-empty">Sem resultados para os critérios seleccionados.<br>Tenta outros descritores ou filtros.</div>';return;}
+  res.innerHTML=`<div style="font-size:11px;color:var(--t3);margin-bottom:10px">${articles.length} artigo(s) encontrado(s)</div>`+
+    articles.map((art,i)=>`
+      <div class="res-art-card">
+        <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:4px">
+          <span class="res-art-badge ${art.source==='europepmc'?'epmc':''}">${art.source==='pubmed'?'PubMed':'Europe PMC'}</span>
+          ${art.year?`<span style="font-size:11px;color:var(--t3)">${art.year}</span>`:''}
+        </div>
+        <div class="res-art-title">${_escHtml(art.title)}</div>
+        <div class="res-art-meta">${art.authors?_escHtml(art.authors)+'<br>':''}${_escHtml(art.journal)}</div>
+        ${art.abstract?`<div class="res-art-abstract" id="abs-${i}">${_escHtml(art.abstract)}</div>`:''}
+        <div class="res-art-actions">
+          <a href="${art.url}" target="_blank" rel="noopener" class="btn btn-o btn-sm" style="font-size:11px;text-decoration:none">🔗 Ver artigo</a>
+          ${art.abstract?`<button class="btn-g" style="font-size:11px;padding:4px 9px" onclick="_togAbs(${i})">Resumo ▾</button>`:''}
+          ${art.doi?`<span style="font-size:10px;color:var(--t3);font-family:monospace;align-self:center">DOI: ${_escHtml(art.doi)}</span>`:''}
+        </div>
+      </div>`
+    ).join('');
+}
+
+function _togAbs(i){
+  const el2=document.getElementById('abs-'+i);
+  if(el2)el2.classList.toggle('open');
+}
+
+function _escHtml(s){
+  if(!s)return'';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function _exportResearch(){
+  if(!_RES.results.length){showToast('Sem resultados para exportar','warn');return;}
+  const kw=document.getElementById('res-keywords')?.value||'';
+  const lines=_RES.results.map((art,i)=>`${i+1}. ${art.title}\n   ${art.authors}\n   ${art.journal}${art.year?' ('+art.year+')':''}\n   ${art.url}${art.doi?'\n   DOI: '+art.doi:''}`).join('\n\n');
+  const body=`Pesquisa ShiftCare — ${kw}\nData: ${new Date().toLocaleDateString('pt-PT')}\n\n${lines}`;
+  window.location.href=`mailto:?subject=${encodeURIComponent('Pesquisa Científica — '+kw)}&body=${encodeURIComponent(body)}`;
+}
+
 function _updAboutPremium(){
   const el2=document.getElementById('about-prem-status');
   if(!el2)return;
@@ -1709,7 +2632,7 @@ function addPt(sc){
   if(isM){closeM('modal-addpt');renderDash();}else renderSetup();
   save();
 }
-function rmSetupPt(i){ST.patients.splice(i,1);renderSetup();save();}
+function rmSetupPt(i){ST.patients.splice(i,1);if(ST.idx>=ST.patients.length)ST.idx=Math.max(0,ST.patients.length-1);renderSetup();save();}
 function renderSetup(){
   const pts=ST.patients.filter(p=>p.status==='internado');
   el('pt-list').innerHTML=pts.map((p,pi)=>{const ri=ST.patients.indexOf(p);return`<div class="pt-item"><div class="pti"><div class="pti-name">${esc(p.name)}</div><div class="pti-sub">Cama ${esc(p.bed)} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}${p.diagMain?' · '+p.diagMain:''}</div></div><button class="rm-btn" onclick="rmSetupPt(${ri})">×</button></div>`;}).join('');
@@ -1918,7 +2841,7 @@ function renderHistorico(){
     </div>
   </div>`;}).join('');
 }
-function deleteHist(ri){if(!confirm('Eliminar definitivamente este registo?'))return;ST.patients.splice(ri,1);save();renderHistorico();}
+function deleteHist(ri){if(!confirm('Eliminar definitivamente este registo?'))return;ST.patients.splice(ri,1);if(ST.idx>=ST.patients.length)ST.idx=Math.max(0,ST.patients.length-1);save();renderHistorico();}
 
 // ══════════════════════════════════════════════
 // MODULE: DETAIL
@@ -1960,11 +2883,170 @@ function renVitals(){
   el('vitals-grid').innerHTML=VITALS_DEF.map(v=>{
     const val=p.vitals[v.k],st=val&&R[v.k]?vSt(val,R[v.k]):'';
     const rng=R[v.k]?`${R[v.k][0]}–${R[v.k][1]} ${v.unit}`:'';
-    return`<div class="vc ${st}" id="vc-${v.k}"><div class="vc-lbl">${v.label}</div><input class="vc-inp" type="number" value="${val||''}" placeholder="${v.ph}" oninput="onVI('${v.k}',this.value)" step="any"><div class="vc-foot"><span class="vc-unit">${v.unit}</span><span class="vc-range">${rng}</span></div></div>`;
+    const tr=_vTrend(p,v.k);
+    const trCls='vc-trend'+(tr==='↑↑'||tr==='↓↓'?' vc-trend-alrt':tr==='↑'||tr==='↓'?' vc-trend-warn':'');
+    return`<div class="vc ${st}" id="vc-${v.k}"><div class="vc-lbl">${v.label}<span id="vt-${v.k}" class="${trCls}" title="Tendência">${tr}</span></div><input class="vc-inp" type="number" value="${val||''}" placeholder="${v.ph}" oninput="onVI('${v.k}',this.value)" step="any"><div class="vc-foot"><span class="vc-unit">${v.unit}</span><span class="vc-range">${rng}</span></div></div>`;
   }).join('');
   renVAlert();
+  renPEWS();
 }
-function onVI(k,v){const p=ST.patients[ST.idx];if(!p)return;p.vitals[k]=v;p.vitals.lastUp=new Date().toISOString();const R=vRanges(p.ageDays);const st=v&&R[k]?vSt(v,R[k]):'';const vc=el('vc-'+k);if(vc)vc.className='vc '+st;renVAlert();updBadge();save();}
+/* Calcula tendência para um sinal vital com base nos últimos 3 registos do log */
+/* ─── PEWS — Pediatric Early Warning Score ────────────────────────────────
+   Baseado no Brighton PEWS (Monaghan 2005) adaptado para cálculo automático.
+   Componentes:
+     Comportamento (0-3)  → input manual do enfermeiro
+     Cardiovascular (0-3) → calculado a partir de FC vs vRanges
+     Respiratório  (0-3)  → calculado a partir de FR + SpO2 + suporte O2
+   Total 0-9; semáforo: 0-1 verde · 2-3 amarelo · 4-5 laranja · ≥6 vermelho */
+const PEWS_BEHAVIOR_LABELS=['Adequado/Brinca','A dormir','Irritável','Letárgico/Confuso'];
+const PEWS_ACTIONS=[
+  'Monitorização de rotina',
+  'Informar enfermeiro responsável · Aumentar frequência de registo',
+  'Chamar médico de urgência · Monitorização contínua',
+  '🚨 ACTIVAR EQUIPA DE EMERGÊNCIA IMEDIATAMENTE'
+];
+
+function calcPEWS(p){
+  const R=vRanges(p.ageDays);
+  const hr=parseFloat(p.vitals.hr)||0;
+  const rr=parseFloat(p.vitals.rr)||0;
+  const spo2=parseFloat(p.vitals.spo2)||0;
+  const hasO2=p.vent&&p.vent.mode&&p.vent.mode!=='Ar Ambiente'&&p.vent.mode!=='';
+
+  /* Comportamento */
+  const behScore=parseInt(p.pewsBehavior)||0;
+
+  /* Cardiovascular — baseado em FC */
+  let cvScore=0;
+  if(hr>0&&R.hr){
+    const [lo,hi]=R.hr;
+    const margin=hi-lo;
+    if(hr<lo){
+      /* Bradicardia: qualquer → 3 */
+      cvScore=3;
+    } else if(hr>hi+margin*0.3){
+      cvScore=3;
+    } else if(hr>hi+margin*0.2){
+      cvScore=2;
+    } else if(hr>hi+margin*0.1||hr>hi){
+      cvScore=1;
+    }
+  }
+
+  /* Respiratório — baseado em FR e SpO2 */
+  let respScore=0;
+  if(rr>0&&R.rr){
+    const [rlo,rhi]=R.rr;
+    const margin=rhi-rlo;
+    if(rr<rlo-5){
+      respScore=3;/* bradipneia grave */
+    } else if(rr>rhi+margin*0.4){
+      respScore=3;
+    } else if(rr>rhi+margin*0.2||hasO2&&rr>rhi){
+      respScore=2;
+    } else if(rr>rhi||rr>rhi-2){
+      respScore=1;
+    }
+  }
+  if(spo2>0){
+    if(spo2<90)respScore=Math.max(respScore,3);
+    else if(spo2<94)respScore=Math.max(respScore,2);
+    else if(spo2<95&&hasO2)respScore=Math.max(respScore,1);
+  }
+
+  const total=behScore+cvScore+respScore;
+  const level=total>=6?3:total>=4?2:total>=2?1:0;
+  return{beh:behScore,cv:cvScore,resp:respScore,total,level};
+}
+
+function renPEWS(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const wrap=el('pews-wrap');if(!wrap)return;
+  const sc=calcPEWS(p);
+  const lvlLabels=['Normal','Atenção','Escalação','EMERGÊNCIA'];
+  const lvlClasses=['pews-lvl-0','pews-lvl-1','pews-lvl-2','pews-lvl-3'];
+  const totalColors=['var(--grn)','var(--org)','#ea580c','var(--red)'];
+  const dClass=n=>'pews-d-val pews-d-'+Math.min(n,3);
+
+  const domainLabel=(score,type)=>{
+    if(score===0)return type==='beh'?PEWS_BEHAVIOR_LABELS[p.pewsBehavior||0]:'Normal';
+    if(score===1)return'Ligeiro';
+    if(score===2)return'Moderado';
+    return'Grave';
+  };
+
+  wrap.innerHTML=`
+    <div class="pews-hdr">
+      <span class="pews-title">PEWS</span>
+      <div class="pews-score-pill">
+        <span class="pews-total" style="color:${totalColors[sc.level]}">${sc.total}</span>
+        <span class="pews-lvl ${lvlClasses[sc.level]}">${lvlLabels[sc.level]}</span>
+      </div>
+    </div>
+    <div class="pews-domains">
+      <div class="pews-domain">
+        <div class="pews-d-lbl">Comportamento</div>
+        <div class="${dClass(sc.beh)}">${sc.beh}</div>
+        <div class="pews-d-sub">${PEWS_BEHAVIOR_LABELS[p.pewsBehavior||0]}</div>
+      </div>
+      <div class="pews-domain">
+        <div class="pews-d-lbl">Cardiovasc.</div>
+        <div class="${dClass(sc.cv)}">${sc.cv}</div>
+        <div class="pews-d-sub">${p.vitals.hr?'FC '+p.vitals.hr+'bpm':'Sem FC'}</div>
+      </div>
+      <div class="pews-domain">
+        <div class="pews-d-lbl">Respiratório</div>
+        <div class="${dClass(sc.resp)}">${sc.resp}</div>
+        <div class="pews-d-sub">${p.vitals.rr?'FR '+p.vitals.rr:'—'}${p.vitals.spo2?' · SpO₂ '+p.vitals.spo2+'%':''}</div>
+      </div>
+    </div>
+    <div class="pews-beh">
+      <span class="pews-beh-lbl">Comportamento:</span>
+      <div class="pews-beh-opts">
+        ${PEWS_BEHAVIOR_LABELS.map((l,i)=>`<button class="pews-beh-btn${(p.pewsBehavior||0)===i?' sel':''}" onclick="setPewsBeh(${i})">${i} — ${l}</button>`).join('')}
+      </div>
+    </div>
+    <div class="pews-action">${sc.level===0?'✓ ':sc.level===1?'⚠ ':sc.level===2?'⚡ ':'🚨 '}${PEWS_ACTIONS[sc.level]}</div>`;
+}
+
+function setPewsBeh(v){
+  const p=ST.patients[ST.idx];if(!p)return;
+  p.pewsBehavior=v;save();renPEWS();
+}
+
+function _vTrend(p,k){
+  if(!p.vitalsLog)return'';
+  const vals=p.vitalsLog.filter(e=>e.k===k&&e.v!=='').slice(-3).map(e=>parseFloat(e.v)).filter(n=>!isNaN(n));
+  if(vals.length<2)return'';
+  const last=vals[vals.length-1],prev=vals[vals.length-2];
+  const delta=last-prev;
+  const R=vRanges(p.ageDays);const range=R[k]?(R[k][1]-R[k][0]):100;
+  const pct=Math.abs(delta)/range;
+  if(vals.length===3){
+    const allUp=vals[0]<vals[1]&&vals[1]<vals[2];
+    const allDn=vals[0]>vals[1]&&vals[1]>vals[2];
+    if(allUp)return pct>0.08?'↑↑':'↑';
+    if(allDn)return pct>0.08?'↓↓':'↓';
+  }
+  if(delta>0&&pct>0.04)return'↑';
+  if(delta<0&&pct>0.04)return'↓';
+  return'';
+}
+function onVI(k,v){
+  const p=ST.patients[ST.idx];if(!p)return;
+  p.vitals[k]=v;p.vitals.lastUp=new Date().toISOString();
+  /* Regista no log de tendência */
+  if(v!==''){
+    if(!p.vitalsLog)p.vitalsLog=[];
+    p.vitalsLog.push({k,v,ts:new Date().toISOString()});
+    if(p.vitalsLog.length>30)p.vitalsLog=p.vitalsLog.slice(-30);
+  }
+  const R=vRanges(p.ageDays);const st=v&&R[k]?vSt(v,R[k]):'';
+  const vc=el('vc-'+k);if(vc)vc.className='vc '+st;
+  /* Actualiza indicador de tendência sem re-render completo */
+  const tt=el('vt-'+k);if(tt){const tr=_vTrend(p,k);tt.textContent=tr;tt.className='vc-trend'+(tr==='↑↑'||tr==='↓↓'?' vc-trend-alrt':tr==='↑'||tr==='↓'?' vc-trend-warn':'');}
+  renVAlert();updBadge();renPEWS();save();
+}
 function renVAlert(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);const e=el('vitals-alert');if(e)e.innerHTML=ac>0?`<div class="alert-ban" role="alert">⚠ ${ac} constante(s) fora do intervalo pediátrico normal</div>`:'';}
 function clearVit(){const p=ST.patients[ST.idx];if(!p||!confirm('Limpar sinais vitais?'))return;VITALS_DEF.forEach(v=>p.vitals[v.k]='');save();renVitals();}
 function openCam(){el('photo-input').click();}
@@ -2352,7 +3434,7 @@ function gen12hReport(){
   const mins=ST.shiftStart?Math.round((Date.now()-new Date(ST.shiftStart))/60000)%60:0;
   const now=new Date().toLocaleString('pt-PT');
   const active=ST.patients.filter(p=>p.status==='internado');
-  let lines=['═══ RESUMO DO TURNO — ShiftCare v3.0 ═══',
+  let lines=['═══ RESUMO DO TURNO — ShiftCare v3.3.2 ═══',
     'Hora: '+now+' | Duração: '+elapsed+'h'+mins+'min | Doentes: '+active.length,''];
   active.forEach(p=>{
     const R=vRanges(p.ageDays);
@@ -2430,52 +3512,64 @@ function copyTransferCode(){
   }
 }
 
+/* Utilitário partilhado — aplica campos clínicos a um objecto de doente já criado */
+function _applyPatientFields(np,pObj){
+  if(pObj.antecedentes)np.antecedentes=pObj.antecedentes;
+  if(pObj.hda)np.hda=pObj.hda;
+  if(pObj.vitals&&typeof pObj.vitals==='object')np.vitals={...np.vitals,...pObj.vitals};
+  if(Array.isArray(pObj.devices))np.devices=pObj.devices;
+  if(Array.isArray(pObj.medications))np.medications=pObj.medications;
+  if(pObj.nutrition)np.nutrition=pObj.nutrition;
+  if(Array.isArray(pObj.notes))np.notes=pObj.notes;
+  if(Array.isArray(pObj.todos))np.todos=pObj.todos;
+  if(pObj.abcde)np.abcde=pObj.abcde;
+  if(pObj.positioning)np.positioning=pObj.positioning;
+  if(pObj.vent&&pObj.vent.mode)np.vent=pObj.vent;
+  if(Array.isArray(pObj.tasks)&&pObj.tasks.length)np.tasks=pObj.tasks;
+  if(pObj.unitCheck)np.unitCheck=pObj.unitCheck;
+  if(Array.isArray(pObj.devInactive)&&pObj.devInactive.length)np.devInactive=pObj.devInactive;
+  if(Array.isArray(pObj.medHistory)&&pObj.medHistory.length)np.medHistory=pObj.medHistory;
+}
+
 function pasteTransferCode(){
   const code=prompt('Cole o código de transferência:');
-  if(!code)return;
+  if(!code||!code.trim())return;
 
   try{
-    let data;
     if(code.startsWith('BULK|')){
       const compressed=code.substring(5);
       if(typeof LZString==='object'&&LZString.decompressFromBase64){
         const decompressed=LZString.decompressFromBase64(compressed);
-        data=JSON.parse(decompressed);
-        // Import all patients
-        if(data.patients&&Array.isArray(data.patients)){
-          let count=0;
-          data.patients.forEach(pData=>{
-            try{
-              const pObj=typeof pData==='string'?JSON.parse(pData):pData;
-              if(pObj.name&&!ST.patients.some(p=>p.name===pObj.name&&p.bed===pObj.bed)){
-                ST.patients.push(mkPt({...pObj}));
-                const np=ST.patients[ST.patients.length-1];
-                if(pObj.antecedentes)np.antecedentes=pObj.antecedentes;
-                if(pObj.hda)np.hda=pObj.hda;
-                if(pObj.vitals)np.vitals=pObj.vitals;
-                if(pObj.devices)np.devices=pObj.devices;
-                if(pObj.medications)np.medications=pObj.medications;
-                if(pObj.nutrition)np.nutrition=pObj.nutrition;
-                if(pObj.notes)np.notes=pObj.notes;
-                if(pObj.todos)np.todos=pObj.todos;
-                if(pObj.abcde)np.abcde=pObj.abcde;
-                if(pObj.positioning)np.positioning=pObj.positioning;
-                if(pObj.vent&&pObj.vent.mode)np.vent=pObj.vent;
-                if(pObj.tasks&&pObj.tasks.length)np.tasks=pObj.tasks;
-                if(pObj.unitCheck)np.unitCheck=pObj.unitCheck;
-                if(pObj.devInactive&&pObj.devInactive.length)np.devInactive=pObj.devInactive;
-                if(pObj.medHistory&&pObj.medHistory.length)np.medHistory=pObj.medHistory;
-                count++;
-              }
-            }catch(e){}
-          });
-          save();
-          showToast(`${count} doentes importados ✓`,'ok');
-          return;
+        const data=JSON.parse(decompressed);
+        if(!data.patients||!Array.isArray(data.patients)){
+          alert('❌ Código inválido: campo "patients" em falta ou malformado.');return;
         }
+        let imported=0,skipped=0,invalid=0;
+        data.patients.forEach(pData=>{
+          try{
+            const pObj=typeof pData==='string'?JSON.parse(pData):pData;
+            /* Validação de schema */
+            const vr=_validatePatientObj(pObj);
+            if(!vr.ok){invalid++;return;}
+            /* Evita duplicados */
+            if(ST.patients.some(p=>p.name===pObj.name&&p.bed===pObj.bed)){skipped++;return;}
+            ST.patients.push(mkPt({...pObj}));
+            _applyPatientFields(ST.patients[ST.patients.length-1],pObj);
+            imported++;
+          }catch(e){invalid++;}
+        });
+        _trimData();save();
+        const msg=[
+          imported?`${imported} doente(s) importado(s) ✓`:'',
+          skipped?`${skipped} ignorado(s) (duplicado)`:'',
+          invalid?`${invalid} rejeitado(s) (dados inválidos)`:''
+        ].filter(Boolean).join(' · ');
+        showToast(msg||'Nenhum doente importado','ok');
+        if(imported>0){renderDash();showScreen('s-dashboard');}
+        return;
       }
     }
-    alert('Código inválido ou incompatível.');
+    alert('Código inválido ou incompatível. Certifica-te que copiaste o código completo.');
   }catch(e){
     alert('Erro ao importar: '+e.message);
   }
@@ -2492,7 +3586,9 @@ function confMed(){
   if(!p.medications)p.medications=[];
     // Check pediatric dose before pushing
   const weightKg=p.weightKg;
-  if(weightKg&&name){
+  /* A-04: perfusões em mcg/min ou mL/h — unidade incompatível com PEDI_DOSES (mg/kg);
+     só aplica alerta de dose em medicações em bolus */
+  if(type!=='perf'&&weightKg&&name){
     const doseAlert=getDoseAlert(name,dose,weightKg);
     if(doseAlert){
       if(doseAlert.status==='danger'){
@@ -3208,8 +4304,10 @@ function _onQRCode(raw){
       data=JSON.parse(raw);
     }
 
-    if(!data||!data.name){
-      if(status)status.textContent='QR inválido. Tente novamente.';
+    /* Validação de schema no QR scanned */
+    const _qrVal=_validatePatientObj(data);
+    if(!_qrVal.ok||!data.name){
+      if(status)status.textContent='QR inválido: '+(_qrVal.errors[0]||'sem nome');
       setTimeout(()=>startScan(),1500);
       return;
     }
@@ -3222,23 +4320,7 @@ function _onQRCode(raw){
         wt:data.wt,alrg:data.alrg,diag:data.diag,diagSec:data.diagSec||[],
         gestWeeks:data.gestWeeks,gestDays:data.gestDays,birthDate:data.birthDate
       }));
-      // Restore full clinical data if present
-      const p=ST.patients[ST.patients.length-1];
-      if(data.antecedentes)p.antecedentes=data.antecedentes;
-      if(data.hda)p.hda=data.hda;
-      if(data.vitals)p.vitals=data.vitals;
-      if(data.devices)p.devices=data.devices;
-      if(data.medications)p.medications=data.medications;
-      if(data.nutrition)p.nutrition=data.nutrition;
-      if(data.notes)p.notes=data.notes;
-      if(data.todos)p.todos=data.todos;
-      if(data.abcde)p.abcde=data.abcde;
-      if(data.positioning)p.positioning=data.positioning;
-      if(data.vent&&data.vent.mode)p.vent=data.vent;
-      if(data.tasks&&data.tasks.length)p.tasks=data.tasks;
-      if(data.unitCheck)p.unitCheck=data.unitCheck;
-      if(data.devInactive&&data.devInactive.length)p.devInactive=data.devInactive;
-      if(data.medHistory&&data.medHistory.length)p.medHistory=data.medHistory;
+      _applyPatientFields(ST.patients[ST.patients.length-1],data);
       save();
     }
 
@@ -3284,15 +4366,15 @@ function importPastedCode(){
           data.patients.forEach(pStr=>{
             try{
               const pObj=typeof pStr==='string'?JSON.parse(pStr):pStr;
-              if(pObj.name&&!ST.patients.some(p=>p.name===pObj.name&&p.bed===pObj.bed)){
+              const _v=_validatePatientObj(pObj);
+              if(_v.ok&&!ST.patients.some(p=>p.name===pObj.name&&p.bed===pObj.bed)){
                 ST.patients.push(mkPt(pObj));
-                const np2=ST.patients[ST.patients.length-1];
-                ['antecedentes','hda','vitals','devices','medications','nutrition','notes','todos','abcde','positioning','vent','tasks','unitCheck','devInactive','medHistory'].forEach(k=>{if(pObj[k]!==undefined&&pObj[k]!==null&&pObj[k]!=='')np2[k]=pObj[k];});
+                _applyPatientFields(ST.patients[ST.patients.length-1],pObj);
                 count++;
               }
             }catch(e){}
           });
-          save();
+          _trimData();save();
           showToast(`${count} doentes importados ✓`,'ok');
           input.value='';
           renderDash();
@@ -3303,14 +4385,16 @@ function importPastedCode(){
     }
     // Single patient code
     let pObj=code.startsWith('LZ|')?JSON.parse(typeof LZString==='object'?LZString.decompressFromBase64(code.substring(3)):code):JSON.parse(code);
-    if(pObj.name){
+    const _sv=_validatePatientObj(pObj);
+    if(_sv.ok){
       if(!ST.patients.some(p=>p.name===pObj.name&&p.bed===pObj.bed)){
         ST.patients.push(mkPt(pObj));
-        const np3=ST.patients[ST.patients.length-1];
-        ['antecedentes','hda','vitals','devices','medications','nutrition','notes','todos','abcde','positioning','vent','tasks','unitCheck','devInactive','medHistory'].forEach(k=>{if(pObj[k]!==undefined&&pObj[k]!==null&&pObj[k]!=='')np3[k]=pObj[k];});
-        save();
+        _applyPatientFields(ST.patients[ST.patients.length-1],pObj);
+        _trimData();save();
         count=1;
       }
+    } else {
+      alert('❌ Código inválido:\n'+_sv.errors.join('\n'));return;
     }
     if(count>0){
       showToast(`${count} doente(s) importado(s) ✓`,'ok');
@@ -3601,16 +4685,127 @@ function finNewShiftSamePatients(){
 }
 
 function exportShiftReport(){
+  /* Mantido como fallback: copia texto simples */
   const report=gen12hReport();
   try{
     navigator.clipboard.writeText(report).then(()=>{
       showToast('Relatório copiado para a área de transferência ✓','ok');
-    }).catch(()=>{
-      alert('Não foi possível copiar.\n\n'+report);
-    });
-  }catch(e){
-    alert('Erro: '+e.message+'\n\n'+report);
+    }).catch(()=>alert('Não foi possível copiar.\n\n'+report));
+  }catch(e){alert('Erro: '+e.message+'\n\n'+report);}
+}
+
+function exportShiftPDF(){
+  const active=ST.patients.filter(p=>p.status==='internado');
+  if(!active.length){showToast('Sem doentes activos para exportar.','error');return;}
+  const elapsed=ST.shiftStart?Math.floor((Date.now()-new Date(ST.shiftStart))/3600000):0;
+  const mins=ST.shiftStart?Math.round((Date.now()-new Date(ST.shiftStart))/60000)%60:0;
+  const now=new Date().toLocaleString('pt-PT');
+
+  const ptHTML=active.map(p=>{
+    const R=vRanges(p.ageDays);
+    const alrtVitals=VITALS_DEF.filter(v=>p.vitals[v.k]&&R[v.k]&&vSt(p.vitals[v.k],R[v.k])==='alrt');
+    const warnVitals=VITALS_DEF.filter(v=>p.vitals[v.k]&&R[v.k]&&vSt(p.vitals[v.k],R[v.k])==='warn');
+    const psc=calcPEWS(p);
+    const pewsColors=['#16a34a','#d97706','#ea580c','#dc2626'];
+    const pewsLabels=['Normal','Atenção','Escalação','EMERGÊNCIA'];
+    const pewsBadge=`<span style="background:${pewsColors[psc.level]}20;border:1px solid ${pewsColors[psc.level]}50;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:800;color:${pewsColors[psc.level]}">PEWS ${psc.total} — ${pewsLabels[psc.level]}</span>`;
+
+    const vitalsTable=VITALS_DEF.map(v=>{
+      const val=p.vitals[v.k]||'—';
+      const st=p.vitals[v.k]&&R[v.k]?vSt(p.vitals[v.k],R[v.k]):'';
+      const clr=st==='alrt'?'#DC2626':st==='warn'?'#D97706':'#111';
+      return`<td style="padding:5px 8px;border:1px solid #e5e7eb;color:${clr};font-weight:${st?'700':'400'};text-align:center"><div style="font-size:9px;color:#6b7280;text-transform:uppercase">${v.label}</div><div style="font-size:13px">${val}</div><div style="font-size:8px;color:#9ca3af">${v.unit}</div></td>`;
+    }).join('');
+
+    const activeMeds=(p.medications||[]).filter(m=>!m.suspended);
+    const medsHTML=activeMeds.length
+      ?activeMeds.map(m=>`<tr><td style="padding:4px 8px;border-bottom:1px solid #f3f4f6">${m.name}</td><td style="padding:4px 8px;border-bottom:1px solid #f3f4f6">${m.dose} ${m.unit}</td><td style="padding:4px 8px;border-bottom:1px solid #f3f4f6;color:#6b7280">${m.freq==='Contínua'?'Perfusão contínua'+(m.vel?' · '+m.vel:''):m.freq}</td></tr>`).join('')
+      :'<tr><td colspan="3" style="padding:4px 8px;color:#9ca3af">Sem medicação activa</td></tr>';
+
+    const devsHTML=(p.devices||[]).map(d=>`<span style="display:inline-block;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:2px 7px;font-size:11px;margin:2px">${d.icon||'🔧'} ${d.label}${d.location?' · '+d.location:''}</span>`).join('');
+
+    const pendTodos=(p.todos||[]).filter(t=>!t.done);
+    const todosHTML=pendTodos.length
+      ?pendTodos.map(t=>`<li style="margin-bottom:3px">${t.text}${t.scheduledAt?` <span style="color:#6b7280;font-size:10px">(${t.scheduledAt.slice(11,16)})</span>`:''}</li>`).join('')
+      :'<li style="color:#9ca3af">Sem pendentes</li>';
+
+    const recentNotes=(p.notes||[]).slice(0,3);
+    const notesHTML=recentNotes.length
+      ?recentNotes.map(n=>`<div style="border-left:3px solid #0D9488;padding:4px 8px;margin-bottom:4px;background:#f0fdfa;border-radius:0 4px 4px 0"><span style="font-size:10px;color:#6b7280">${ft(n.timestamp)}</span><br>${n.text}</div>`).join('')
+      :'<span style="color:#9ca3af;font-size:11px">Sem notas</span>';
+
+    const alertBanner=alrtVitals.length
+      ?`<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:6px 10px;margin-bottom:8px;color:#dc2626;font-weight:700;font-size:12px">⚠ ALERTAS: ${alrtVitals.map(v=>v.label+'='+p.vitals[v.k]+v.unit).join(' · ')}</div>`
+      :warnVitals.length
+      ?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:6px 10px;margin-bottom:8px;color:#d97706;font-weight:700;font-size:12px">⚡ ATENÇÃO: ${warnVitals.map(v=>v.label+'='+p.vitals[v.k]+v.unit).join(' · ')}</div>`
+      :'';
+
+    const caInfo=correctedAge(p);
+    return`<div style="page-break-inside:avoid;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:16px;overflow:hidden">
+      <div style="background:#0f172a;color:#fff;padding:8px 14px;display:flex;justify-content:space-between;align-items:center">
+        <div><span style="font-size:15px;font-weight:800">${p.name}</span> <span style="background:#1e293b;padding:2px 7px;border-radius:4px;font-size:11px">Cama ${p.bed}</span></div>
+        <div style="font-size:11px;color:#94a3b8">${ageLabel(p)}${caInfo?' (IC: '+caInfo+')':''} ${p.weightKg?'· '+p.weightKg+' kg':''}</div>
+      </div>
+      <div style="padding:10px 14px">
+        <div style="margin-bottom:6px">${pewsBadge}</div>
+        ${p.diagMain?`<div style="font-size:12px;color:#374151;margin-bottom:6px"><strong>DX:</strong> ${p.diagMain}${p.diagSec&&p.diagSec.length?' + '+p.diagSec.join(', '):''}</div>`:''}
+        ${p.allergies?`<div style="font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:4px;padding:3px 8px;margin-bottom:6px;color:#dc2626">⚠ Alergia: ${p.allergies}</div>`:''}
+        ${alertBanner}
+        <div style="margin-bottom:10px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#6b7280;margin-bottom:4px">Sinais Vitais</div>
+          <table style="width:100%;border-collapse:collapse">${vitalsTable}</table>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#6b7280;margin-bottom:4px">Medicação Activa</div>
+            <table style="width:100%;font-size:11px"><tbody>${medsHTML}</tbody></table>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#6b7280;margin-bottom:4px">Pendentes</div>
+            <ul style="margin:0;padding-left:16px;font-size:11px">${todosHTML}</ul>
+          </div>
+        </div>
+        ${devsHTML?`<div style="margin-top:8px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#6b7280;margin-bottom:4px">Dispositivos</div>${devsHTML}</div>`:''}
+        ${recentNotes.length?`<div style="margin-top:8px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#6b7280;margin-bottom:4px">Notas Recentes</div>${notesHTML}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const html=`<!DOCTYPE html><html lang="pt-PT"><head><meta charset="UTF-8">
+<title>ShiftCare — Relatório de Turno</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;font-size:12px;color:#111;background:#fff;padding:20px}
+  @media print{
+    body{padding:0}
+    @page{margin:15mm 12mm;size:A4 portrait}
+    .no-print{display:none!important}
   }
+</style></head><body>
+<div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #0D9488;padding-bottom:10px;margin-bottom:16px">
+  <div>
+    <div style="font-size:20px;font-weight:900;color:#0D9488;letter-spacing:-.5px">ShiftCare</div>
+    <div style="font-size:11px;color:#6b7280">Relatório de Turno — UCIP / UCIN</div>
+  </div>
+  <div style="text-align:right;font-size:11px;color:#6b7280">
+    <div>${now}</div>
+    <div>Duração: ${elapsed}h ${mins}min · ${active.length} doente(s)</div>
+  </div>
+</div>
+${ptHTML}
+<div style="margin-top:20px;padding-top:10px;border-top:1px solid #e5e7eb;font-size:9px;color:#9ca3af;text-align:center">
+  Gerado por ShiftCare v3.3.2 · Documento de apoio clínico — não substitui o processo de enfermagem oficial
+</div>
+<div class="no-print" style="margin-top:20px;text-align:center">
+  <button onclick="window.print()" style="background:#0D9488;color:#fff;border:none;border-radius:8px;padding:10px 28px;font-size:14px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
+  <button onclick="window.close()" style="background:#f1f5f9;color:#374151;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;margin-left:10px">Fechar</button>
+</div>
+</body><script>setTimeout(()=>window.print(),400);<\/script></html>`;
+
+  const w=window.open('','_blank');
+  if(!w){showToast('Pop-up bloqueado — permite pop-ups para este site.','error');return;}
+  w.document.write(html);
+  w.document.close();
 }
 
 function finArchiveAll(){
@@ -3775,6 +4970,27 @@ window.addEventListener('appinstalled',()=>{
   console.log('[ShiftCare] App installed to home screen');
 });
 
+/* ── Portrait lock (Screen Orientation API) ── */
+function _lockPortrait(){
+  try{
+    /* API disponível no Chrome Android e browsers modernos quando em PWA standalone */
+    if(screen.orientation&&screen.orientation.lock){
+      screen.orientation.lock('portrait').catch(()=>{/* silencioso: não suportado em browser normal */});
+    }
+  }catch(e){}
+}
+/* Tenta bloquear na primeira interacção do utilizador (necessária para iOS Safari) */
+document.addEventListener('click',function _firstClick(){
+  _lockPortrait();
+  document.removeEventListener('click',_firstClick);
+},{once:true});
+_lockPortrait();
+/* Fallback visual: CSS @media(orientation:landscape) já mostra o overlay;
+   este listener garante que re-tenta o lock se o utilizador ignorar o aviso */
+screen.orientation?.addEventListener('change',()=>{
+  if(screen.orientation.type.startsWith('landscape')){_lockPortrait();}
+});
+
 /* ── PWA: iOS hint ── */
 const _isIos=()=>/iphone|ipad|ipod/i.test(navigator.userAgent);
 const _isStandalone=()=>('standalone' in window.navigator)&&window.navigator.standalone;
@@ -3789,6 +5005,264 @@ function iosDismiss(){
   document.getElementById('ios-hint')?.classList.remove('show');
   localStorage.setItem(_iosKey,Date.now().toString());
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   SINCRONIZAÇÃO WEBSOCKET — ShiftCare Sync
+   Relay em tempo real entre dois dispositivos via Cloudflare
+   Durable Objects. Protocolo de mensagens:
+     { type:'state',  payload, ts }   — estado completo
+     { type:'delta',  path, value, ts } — actualização incremental
+     { type:'peer_joined', peers }    — novo colega ligado
+     { type:'peer_left', peers }      — colega desligado
+     { type:'ping' } / { type:'pong' } — keepalive automático
+   ══════════════════════════════════════════════════════════════════ */
+const _SYNC_WS_URL = 'wss://shiftcare.pedicode-app.workers.dev/sync/';
+const _SYNC_CODE_KEY = 'sc_sync_code';
+
+const _sync = {
+  ws:        null,
+  code:      null,
+  peers:     0,
+  status:    'off',  /* off | connecting | connected | error */
+  debounce:  null,
+};
+
+/* Gera código de sala aleatório: ex. A3F7 */
+function _syncGenCode(){
+  return Array.from(crypto.getRandomValues(new Uint8Array(4)))
+    .map(b=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b%32]).join('');
+}
+
+function openSyncModal(){
+  /* Se não há código guardado, gera um novo */
+  if(!_sync.code){
+    const saved=localStorage.getItem(_SYNC_CODE_KEY);
+    _sync.code=saved||_syncGenCode();
+    if(!saved)localStorage.setItem(_SYNC_CODE_KEY,_sync.code);
+  }
+  el('sync-room-code').textContent=_sync.code;
+  _syncUpdatePeersUI();
+  el('sync-join-inp').value='';
+  openM('modal-sync');
+  /* Liga automaticamente se ainda não ligado */
+  if(_sync.status==='off'||_sync.status==='error') _syncConnect(_sync.code);
+}
+
+function closeSyncModal(){ closeM('modal-sync'); }
+
+function syncCopyCode(){
+  navigator.clipboard.writeText(_sync.code||'').then(()=>showToast('Código copiado ✓','ok')).catch(()=>showToast('Copia o código manualmente: '+_sync.code,''));
+}
+
+function syncNewCode(){
+  _syncDisconnectWS();
+  _sync.code=_syncGenCode();
+  localStorage.setItem(_SYNC_CODE_KEY,_sync.code);
+  el('sync-room-code').textContent=_sync.code;
+  _syncConnect(_sync.code);
+}
+
+function syncJoinCode(){
+  const inp=el('sync-join-inp');
+  const code=(inp?.value||'').trim().toUpperCase();
+  if(!/^[A-Z0-9]{4,8}$/.test(code)){showToast('Código inválido (4–8 letras/números)','error');return;}
+  _syncDisconnectWS();
+  _sync.code=code;
+  localStorage.setItem(_SYNC_CODE_KEY,code);
+  el('sync-room-code').textContent=code;
+  inp.value='';
+  _syncConnect(code);
+}
+
+function syncDisconnect(){
+  _syncDisconnectWS();
+  _sync.code=null;
+  localStorage.removeItem(_SYNC_CODE_KEY);
+  closeSyncModal();
+  showToast('Sincronização desligada','');
+}
+
+function _syncConnect(code){
+  _syncDisconnectWS();
+  _sync.status='connecting';
+  _syncUpdateBadge();
+  const url=_SYNC_WS_URL+code;
+  try{
+    const ws=new WebSocket(url);
+    _sync.ws=ws;
+
+    ws.onopen=()=>{
+      _sync.status='connected';
+      _syncUpdateBadge();
+      _syncUpdatePeersUI();
+      /* Envia estado completo ao ligar */
+      _syncSendState();
+    };
+
+    ws.onmessage=(evt)=>{
+      try{
+        const msg=JSON.parse(evt.data);
+        if(msg.type==='pong')return;
+        if(msg.type==='peer_joined'){
+          _sync.peers=Math.max(0,msg.peers-1);
+          _syncUpdatePeersUI();
+          /* Novo colega ligou — envia estado completo */
+          _syncSendState();
+          showToast('👋 Colega ligado à sala de sincronização','ok');
+        }
+        if(msg.type==='peer_left'){
+          _sync.peers=Math.max(0,msg.peers-1);
+          _syncUpdatePeersUI();
+          showToast('Colega desligou da sala de sincronização','');
+        }
+        if(msg.type==='state'&&msg.payload){
+          _syncApplyState(msg.payload, msg.ts||0);
+        }
+        if(msg.type==='delta'&&msg.path!==undefined){
+          _syncApplyDelta(msg.path, msg.value, msg.ts||0);
+        }
+      }catch(e){console.warn('[Sync] mensagem inválida',e);}
+    };
+
+    ws.onclose=()=>{
+      if(_sync.status==='connected'){
+        _sync.status='error';
+        _syncUpdateBadge();
+        /* Tenta reconectar após 5 segundos */
+        setTimeout(()=>{ if(_sync.code&&_sync.status==='error') _syncConnect(_sync.code); },5000);
+      }
+    };
+
+    ws.onerror=()=>{
+      _sync.status='error';
+      _syncUpdateBadge();
+    };
+  }catch(e){
+    _sync.status='error';
+    _syncUpdateBadge();
+    console.warn('[Sync] Não foi possível ligar:',e.message);
+  }
+}
+
+function _syncDisconnectWS(){
+  if(_sync.ws){
+    try{_sync.ws.close();}catch{}
+    _sync.ws=null;
+  }
+  _sync.status='off';
+  _sync.peers=0;
+  _syncUpdateBadge();
+}
+
+/* Envia estado completo (debounced 2s) */
+function _syncSendState(){
+  if(!_sync.ws||_sync.ws.readyState!==WebSocket.OPEN)return;
+  const payload=JSON.stringify({p:ST.patients,ss:ST.shiftStart});
+  const compressed=typeof LZString==='object'?LZString.compressToBase64(payload):payload;
+  try{
+    _sync.ws.send(JSON.stringify({type:'state',payload:compressed,ts:Date.now()}));
+  }catch(e){console.warn('[Sync] Erro ao enviar estado',e);}
+}
+
+/* Chamado sempre que save() é invocado — envia delta com debounce */
+function _syncOnSave(){
+  if(!_sync.ws||_sync.ws.readyState!==WebSocket.OPEN)return;
+  clearTimeout(_sync.debounce);
+  _sync.debounce=setTimeout(()=>_syncSendState(), 1500);
+}
+
+/* Aplica estado recebido — merge por doente (last-write-wins por timestamp) */
+function _syncApplyState(compressed, remotTs){
+  try{
+    const raw=typeof LZString==='object'?LZString.decompressFromBase64(compressed):compressed;
+    const data=JSON.parse(raw);
+    if(!data.p||!Array.isArray(data.p))return;
+    let changed=false;
+    data.p.forEach(remPt=>{
+      const vr=_validatePatientObj(remPt);
+      if(!vr.ok)return;
+      const idx=ST.patients.findIndex(p=>p.id===remPt.id||(p.name===remPt.name&&p.bed===remPt.bed));
+      if(idx>=0){
+        /* Actualiza campos clínicos (last-write-wins) */
+        ['vitals','medications','notes','todos','devices','abcde','positioning','vent','nutrition','medHistory','vitalsLog','pewsBehavior'].forEach(k=>{
+          if(remPt[k]!==undefined)ST.patients[idx][k]=remPt[k];
+        });
+        changed=true;
+      } else {
+        /* Novo doente — importa com validação */
+        ST.patients.push(mkPt(remPt));
+        _applyPatientFields(ST.patients[ST.patients.length-1],remPt);
+        changed=true;
+      }
+    });
+    if(changed){
+      _trimData();
+      /* Grava localmente sem disparar novo sync (evita loop) */
+      try{localStorage.setItem('sc_v23',JSON.stringify({p:ST.patients,ss:ST.shiftStart}));}catch{}
+      /* Re-renderiza se estiver no dashboard ou detalhe */
+      if(ST.screen==='s-dashboard')renderDash();
+      if(ST.screen==='s-detail')renVitals();
+    }
+  }catch(e){console.warn('[Sync] Erro ao aplicar estado',e);}
+}
+
+/* Aplica delta pontual (futuro: actualizações granulares) */
+function _syncApplyDelta(path, value, ts){
+  /* Por agora re-usa applyState para simplicidade */
+  _syncApplyState(value, ts);
+}
+
+function _syncUpdateBadge(){
+  const badge=el('sync-badge');const ind=el('sync-indicator');const txt=el('sync-badge-txt');
+  if(!badge)return;
+  badge.className='';
+  ind.className='';
+  if(_sync.status==='connected'){
+    badge.classList.add('show');
+    txt.textContent=_sync.peers>0?`${_sync.peers+1} disp.`:'Sync';
+    ind.classList.add('connected');
+  } else if(_sync.status==='connecting'){
+    badge.classList.add('show','connecting');
+    txt.textContent='A ligar...';
+    ind.classList.add('connecting');
+  } else if(_sync.status==='error'){
+    badge.classList.add('show','error');
+    txt.textContent='Offline';
+    ind.classList.add('error');
+  }
+  /* Actualiza UI do modal se estiver aberto */
+  _syncUpdatePeersUI();
+}
+
+function _syncUpdatePeersUI(){
+  const pEl=el('sync-peers-status');if(!pEl)return;
+  if(_sync.status==='connected'&&_sync.peers>0){
+    pEl.textContent=`✅ ${_sync.peers} colega(s) ligado(s) — a sincronizar`;
+    pEl.style.color='var(--grn)';
+  } else if(_sync.status==='connected'){
+    pEl.textContent='⏳ À espera que o colega entre com o mesmo código...';
+    pEl.style.color='var(--t2)';
+  } else if(_sync.status==='connecting'){
+    pEl.textContent='A ligar ao servidor...';
+    pEl.style.color='var(--org)';
+  } else if(_sync.status==='error'){
+    pEl.textContent='❌ Sem ligação — a tentar reconectar...';
+    pEl.style.color='var(--red)';
+  } else {
+    pEl.textContent='A aguardar ligação...';
+    pEl.style.color='var(--t2)';
+  }
+}
+
+/* Reconecta automaticamente se havia código guardado na sessão anterior */
+(function _syncAutoReconnect(){
+  const saved=localStorage.getItem(_SYNC_CODE_KEY);
+  if(saved&&/^[A-Z0-9]{4,8}$/.test(saved)){
+    _sync.code=saved;
+    /* Liga em background após a app inicializar */
+    setTimeout(()=>_syncConnect(saved),2000);
+  }
+})();
 </script>
 </body>
 </html>
