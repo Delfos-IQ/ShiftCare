@@ -5,6 +5,24 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-PT/1.0.0/).
 
 ---
 
+## [3.4.0] — Abril 2026
+
+### Adicionado
+- **Alergias sempre visíveis** — badge vermelho sólido "⚠ ALERGIA: X" no cabeçalho do card; quando sem alergias, mostra "✓ Sem alergias" em verde subtil; campo na admissão com destaque vermelho e borda vermelha
+- **TAD (Tensão Diastólica)** — substituída a glicemia no painel principal de sinais vitais; alertas automáticos por faixa etária pediátrica (neonate 25–55 mmHg → adolescente 60–90 mmHg)
+- **Glicemia capilar** — campo secundário com indicador de hipo/hiperglicemia (<60 mg/dL / >180 mg/dL) abaixo do painel de vitais
+- **Registo de Avaliação de Vitais** — botão "✅ Registar Avaliação" guarda snapshot completo com timestamp; mostra as últimas 3 avaliações abaixo do formulário; adiciona automaticamente às notas de turno
+- **Módulo Eliminação** — novo tab com registo de diurese e dejecção: via (urinol, fralda, algália…), características (clara, concentrada, colúria, melenas…); registo automático nas notas de turno
+- **Alimentação — Intercorrências** — nova secção no tab Alimentação: tipo (Vomitou, Bolsou, Estase Gástrica) e características (Alimentar, Aquoso, Bilioso, Fecaloide); registo automático nas notas de turno
+
+- **ABCDE com botões** — avaliação ABCDE passa a ter opções predefinidas por componente (A: permeável, via comprometida, ETT…; B: padrão normal, dificuldade resp., taquipneia…; C: bem perfundido, TRC>2s, palidez…; D: AVPU, pupilas, convulsão…; E: normotermia, lesões, drenos…); múltipla selecção por componente; botão "Adicionar às Notas" cria registo estruturado nas notas de turno; textarea de observações adicional mantido
+- **Higiene & Cuidados rápidos** — secção de registo rápido movida do To-Do para Enfermagem: chips para Higiene parcial/completa, no leito/chuveiro, cuidados à boca, cateter e aspiração de secreções; cada chip regista automaticamente nas notas de turno
+- **Posicionamento** — renomeado "Lateralidade" → "Posicionamento"; opções actualizadas: Lateral Dto, Lateral Esq, Dorsal, Ventral, Semi-Fowler; mudança de posição regista automaticamente nas notas de turno
+- **To-Do simplificado** — removidas secções "Registo Rápido" (QCATS) e "Acesso Rápido" do tab To-Do; "Estado da Unidade" renomeado para "Verificação da Unidade/Posto"; Debitómetro adicionado ao UNIT_CHECK
+
+### Corrigido
+- **Medicação reativar/suspender** — bug crítico de índice: `tglSusp(i)` usava índice do array filtrado (só horárias ou só perfusões) em vez do índice real no array completo `p.medications`; corrigido com `indexOf()` para obter índice correcto em todos os casos
+
 ## [3.3.2] — Abril 2026
 
 ### Corrigido

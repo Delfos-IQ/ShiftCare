@@ -180,7 +180,8 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .pc-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:5px}
 .pc-meta-item{font-size:10px;opacity:.88}
 .pc-meta-item strong{opacity:1;font-weight:700}
-.pc-alrg{margin-top:6px;background:rgba(220,38,38,.3);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;display:inline-block}
+.pc-alrg{margin-top:6px;background:#dc2626;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:800;display:inline-block;color:#fff;letter-spacing:.03em;border:2px solid #fca5a5;box-shadow:0 2px 6px rgba(220,38,38,.45);text-transform:uppercase}
+.pc-alrg-none{margin-top:6px;background:rgba(16,185,129,.18);border-radius:6px;padding:3px 10px;font-size:10px;font-weight:600;display:inline-block;color:rgba(255,255,255,.65);border:1px solid rgba(16,185,129,.3)}
 .pc-diag{margin-top:6px;background:rgba(255,255,255,.15);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;display:inline-block}
 .pc-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .pc-sect{padding:7px 10px;border-bottom:1px solid var(--b)}
@@ -261,7 +262,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .task-time{font-size:10px;color:var(--t3);margin-top:2px}
 .task-add{display:flex;gap:6px;padding:7px 11px;border-top:1px solid var(--b)}
 .task-add input{font-size:12px;padding:7px 10px}
-/* Lateralidade */
+/* Posicionamento */
 .pos-wrap{display:flex;flex-wrap:wrap;gap:7px;padding:12px 13px}
 .pos-btn{padding:8px 13px;font-size:12px;font-weight:600;border:2px solid var(--b);border-radius:20px;background:var(--s);color:var(--t1);cursor:pointer;transition:all .15s}
 .pos-btn.active{background:var(--p);border-color:var(--p);color:#fff}
@@ -796,7 +797,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
           <div>
             <div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
-            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.3.2</div>
+            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.4.0</div>
           </div>
         </div>
         <div id="wl-status-home" style="display:flex;justify-content:center;margin-bottom:8px"></div>
@@ -855,9 +856,12 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
               </div>
             </div>
           </div>
-          <div class="form-row" style="margin-bottom:10px">
+          <div class="form-row" style="margin-bottom:6px">
             <div><label>Peso (kg)</label><input id="f-wt" type="number" step="0.001" min="0" placeholder="Ex: 1.650"></div>
-            <div><label>Alergias</label><input id="f-alrg" type="text" placeholder="Ex: Penicilina"></div>
+          </div>
+          <div style="margin-bottom:10px">
+            <label style="color:#dc2626;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.05em">⚠ Alergias</label>
+            <input id="f-alrg" type="text" placeholder="Ex: Penicilina, Ibuprofeno — deixar vazio se Sem alergias conhecidas" style="border:2px solid #fca5a5;background:rgba(254,242,242,.08);color:var(--t1)">
           </div>
           <div style="background:var(--pl);border-radius:var(--rads);padding:10px;margin-bottom:10px;border:1px solid var(--pm)">
             <div style="font-size:11px;font-weight:700;color:var(--pd);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">🍼 Neonatologia (opcional)</div>
@@ -982,6 +986,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
     <div class="tab-item" onclick="swTab('cuidados')">Cuidados</div>
     <div class="tab-item" onclick="swTab('medicacao')">Medicação</div>
     <div class="tab-item" onclick="swTab('alimentacao')">Alimentação</div>
+    <div class="tab-item" onclick="swTab('eliminacao')">Eliminação</div>
     <div class="tab-item" onclick="swTab('isbar')">Antec./ISBAR</div>
   </div>
   <div class="tab-body">
@@ -993,8 +998,11 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
       </div>
       <div id="capture-preview-wrap"><img id="capture-img" src="" alt=""></div>
       <div class="vt-full-grid" id="vitals-grid"></div>
+      <div id="gluc-wrap" style="margin-bottom:8px"></div>
+      <button class="btn btn-p" style="width:100%;margin-bottom:10px;font-size:14px;font-weight:700" onclick="registarAvaliacao()">✅ Registar Avaliação</button>
       <div id="vitals-alert"></div>
       <div id="pews-wrap" class="pews-wrap"></div>
+      <div id="vitals-history-wrap" style="margin-top:10px"></div>
     </div>
     <!-- CUIDADOS -->
     <div id="tab-cuidados" class="tab-pane">
@@ -1018,6 +1026,8 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
     </div>
     <!-- ALIMENTAÇÃO -->
     <div id="tab-alimentacao" class="tab-pane"></div>
+    <!-- ELIMINAÇÃO -->
+    <div id="tab-eliminacao" class="tab-pane"></div>
     <!-- ANTEC/ISBAR -->
     <div id="tab-isbar" class="tab-pane"></div>
   </div>
@@ -1135,7 +1145,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
         <div style="padding:0 15px 15px">
           <div class="about-row"><span>Versão</span><span class="about-val">3.3.2</span></div>
-          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v3.3.2</span></div>
+          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v3.4.0</span></div>
           <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
           <div class="about-row"><span>IA</span><span class="about-val">Integrada · Activa</span></div>
           <div class="about-row"><span>Idioma</span><span class="about-val">Português (PT)</span></div>
@@ -1214,7 +1224,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
       </div>
 
-            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.3.2 © 2026 · Todos os direitos reservados</div>
+            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.4.0 © 2026 · Todos os direitos reservados</div>
     </div>
   </div>
 </div>
@@ -1279,9 +1289,12 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
         </div>
       </div>
-      <div class="form-row" style="margin-bottom:10px">
+      <div class="form-row" style="margin-bottom:6px">
         <div><label>Peso (kg)</label><input id="m-wt" type="number" step="0.001" min="0" placeholder="Ex: 1.650"></div>
-        <div><label>Alergias</label><input id="m-alrg" type="text" placeholder="Ex: Penicilina"></div>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="color:#dc2626;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.05em">⚠ Alergias</label>
+        <input id="m-alrg" type="text" placeholder="Ex: Penicilina — deixar vazio se Sem alergias conhecidas" style="border:2px solid #fca5a5;background:rgba(254,242,242,.08);color:var(--t1)">
       </div>
       <div style="background:var(--pl);border-radius:var(--rads);padding:10px;margin-bottom:10px;border:1px solid var(--pm)">
         <div style="font-size:11px;font-weight:700;color:var(--pd);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">🍼 Neonatologia (opcional)</div>
@@ -1760,10 +1773,17 @@ const el=id=>document.getElementById(id);
 // ══════════════════════════════════════════════
 // MODULE: DATA
 // ══════════════════════════════════════════════
-const VITALS_DEF=[{k:'hr',label:'FC',unit:'bpm',ph:'140'},{k:'spo2',label:'SpO₂',unit:'%',ph:'98'},{k:'rr',label:'FR',unit:'rpm',ph:'40'},{k:'temp',label:'Temp',unit:'°C',ph:'36.8'},{k:'sbp',label:'TAS',unit:'mmHg',ph:'80'},{k:'gluc',label:'Glicemia',unit:'mg/dL',ph:'80'}];
+const VITALS_DEF=[{k:'hr',label:'FC',unit:'bpm',ph:'140'},{k:'spo2',label:'SpO₂',unit:'%',ph:'98'},{k:'rr',label:'FR',unit:'rpm',ph:'40'},{k:'temp',label:'Temp',unit:'°C',ph:'36.8'},{k:'sbp',label:'TAS',unit:'mmHg',ph:'80'},{k:'dbp',label:'TAD',unit:'mmHg',ph:'50'}];
 const DEF_TASKS=['Avaliação ABCDE completa','Controlo de sinais vitais','Administração de medicação','Balanço hídrico','Higiene e conforto','Estado da unidade','Comunicação à família'];
 const ABCDE_DEF=[{key:'A',title:'Airway — Via Aérea',desc:'Permeabilidade, secreções, dispositivos (ETT, máscara, O₂)'},{key:'B',title:'Breathing — Respiração',desc:'FR, SpO₂, padrão respiratório, trabalho ventilatório, auscultação'},{key:'C',title:'Circulation — Circulação',desc:'FC, TAS, perfusão periférica, TRC, cor da pele, diurese'},{key:'D',title:'Disability — Neurológico',desc:'Consciência (AVPU/GCS), pupilas, tónus, convulsões, dor'},{key:'E',title:'Exposure — Exposição',desc:'Temperatura, pele, lesões, edema, drenos, feridas, cateteres'}];
-const UNIT_CHECK=['Insuflador manual presente e funcional','Aspiração funcionante (teste)','Sondas de aspiração disponíveis','Débito-metro de O₂ (≥15 L/min)','Unidade organizada e limpa','Medicação de urgência acessível'];
+const UNIT_CHECK=['Insuflador manual presente e funcional','Aspiração funcionante (teste)','Sondas de aspiração disponíveis','Débito-metro de O₂ (≥15 L/min)','Debitómetro funcionante','Unidade organizada e limpa','Medicação de urgência acessível'];
+const ABCDE_OPTS={
+  A:['Permeável','Via comprometida','ETT oral','ETT nasal','Traqueostomia','Máscara O₂','Óculos O₂','Secreções abundantes','Via artificial em bom estado'],
+  B:['Padrão normal','Dificuldade resp.','Taquipneia','Bradipneia','Apneia','Ausculta limpa','Fervores','Sibilos','Roncos','Cianose labial','Tiragem'],
+  C:['Bem perfundido','TRC > 2s','Palidez','Cianose periférica','Pele marmoreada','Edema','Taquicardia','Bradicardia','Hipotensão','Normotenso'],
+  D:['Alerta (A)','Responde à voz (V)','Responde à dor (P)','Inconsciente (U)','Pupilas normais/isocóricas','Midríase','Miose','Anisocoria','Convulsão','Agitado','Sedado','Dor (FLACC)'],
+  E:['Normotermia','Hipertermia','Hipotermia','Pele íntegra','Lesões cutâneas','Edema generalizado','Drenos funcionantes','Ferida sem infecção','Ferida com sinais de infecção','Exantema'],
+};
 const TODO_ITEMS=[{cat:'Análises',items:['Sangue','Urina','Secreções','LCR','Exsudado']},{cat:'Gasimetria',items:['Capilar','Venosa','Arterial']},{cat:'Outros',items:['Balanço hídrico','Mudar drenos','Aspirar secreções','Pesar doente','ECG','Rx Tórax']}];
 const DEV_TYPES=[
   {id:'piv-r', label:'Acesso Venoso Periférico Direito',  x:23,y:44,icon:'💉',locs:null},
@@ -1807,7 +1827,15 @@ const NUTR_ADDITIVES=[
 const NUTR_MODE_FREQ=['Bolus','Perfusão Contínua','2/2h','3/3h','Horário Livre'];
 const NUTR_MODE_VIA=['Tetina','Sonda Dedo','Copo','SOG','SNG','Gastro'];
 
-function vRanges(d){d=Math.max(0,parseInt(d)||0);/* A-03: ageDays negativo (RN prematuro c/ data futura) tratado como neonatal */if(d<=28)return{hr:[100,180],rr:[40,60],sbp:[45,80],spo2:[88,100],temp:[36.3,37.5],gluc:[45,120]};if(d<=90)return{hr:[100,180],rr:[35,55],sbp:[60,95],spo2:[95,100],temp:[36.3,37.5],gluc:[50,120]};if(d<=365)return{hr:[100,160],rr:[30,50],sbp:[65,100],spo2:[95,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=730)return{hr:[90,150],rr:[24,40],sbp:[70,110],spo2:[95,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=1825)return{hr:[80,140],rr:[22,34],sbp:[80,112],spo2:[96,100],temp:[36.4,37.5],gluc:[60,120]};if(d<=4380)return{hr:[70,120],rr:[18,30],sbp:[85,118],spo2:[96,100],temp:[36.5,37.5],gluc:[60,120]};return{hr:[55,100],rr:[12,20],sbp:[90,130],spo2:[96,100],temp:[36.5,37.5],gluc:[70,120]};}
+function vRanges(d){d=Math.max(0,parseInt(d)||0);/* A-03: ageDays negativo (RN prematuro c/ data futura) tratado como neonatal */
+/* dbp = TAD (tensão diastólica); gluc = glicemia capilar (sem range de alerta — campo secundário) */
+if(d<=28)return{hr:[100,180],rr:[40,60],sbp:[45,80],dbp:[25,55],spo2:[88,100],temp:[36.3,37.5]};
+if(d<=90)return{hr:[100,180],rr:[35,55],sbp:[60,95],dbp:[35,65],spo2:[95,100],temp:[36.3,37.5]};
+if(d<=365)return{hr:[100,160],rr:[30,50],sbp:[65,100],dbp:[40,70],spo2:[95,100],temp:[36.4,37.5]};
+if(d<=730)return{hr:[90,150],rr:[24,40],sbp:[70,110],dbp:[45,75],spo2:[95,100],temp:[36.4,37.5]};
+if(d<=1825)return{hr:[80,140],rr:[22,34],sbp:[80,112],dbp:[50,80],spo2:[96,100],temp:[36.4,37.5]};
+if(d<=4380)return{hr:[70,120],rr:[18,30],sbp:[85,118],dbp:[55,85],spo2:[96,100],temp:[36.5,37.5]};
+return{hr:[55,100],rr:[12,20],sbp:[90,130],dbp:[60,90],spo2:[96,100],temp:[36.5,37.5]};}
 function vSt(v,r){if(v===''||v===null||v===undefined)return'';const n=parseFloat(v);if(isNaN(n))return'';if(n<r[0]||n>r[1])return'alrt';const s=r[1]-r[0];if(n<r[0]+s*.12||n>r[1]-s*.12)return'warn';return'ok';}
 function alrtCnt(p){
   const R=vRanges(p.ageDays);
@@ -1873,11 +1901,12 @@ function mkPt(o){
     antecedentes:'',hda:'',
     positioning:'',
     vent:{mode:'',params:{}},
-    vitals:{hr:'',spo2:'',rr:'',temp:'',sbp:'',gluc:'',lastUp:null},
+    vitals:{hr:'',spo2:'',rr:'',temp:'',sbp:'',dbp:'',gluc:'',lastUp:null},
     vitalsLog:[],/* histórico para alertas de tendência — [{k,v,ts}] max 30 */
+    vitalsHistory:[],/* snapshots completos — [{ts, vals:{...}}] max 10 */
     pewsBehavior:0,/* 0=adequado 1=dormindo 2=irritável 3=letárgico */
     tasks:DEF_TASKS.map((t,i)=>({id:i,text:t,done:false,doneAt:null})),
-    abcde:{A:'',B:'',C:'',D:'',E:''},unitCheck:{},
+    abcde:{A:'',B:'',C:'',D:'',E:''},abcdeSel:{A:[],B:[],C:[],D:[],E:[]},unitCheck:{},
     devices:[],devInactive:[],
     medications:[],medHistory:[],
     notes:[],todos:[],
@@ -2736,7 +2765,7 @@ function dashCard(p,ri){
             ${ca?`<div class="pc-meta-item" style="grid-column:1/-1">📊 <strong>${ca}</strong></div>`:''}
           </div>
           ${p.diagMain?`<div class="pc-diag">${esc(p.diagMain)}</div>`:''}
-          ${alrg?`<div class="pc-alrg">⚠ Alergia: ${alrg}</div>`:''}
+          ${alrg?`<div class="pc-alrg">⚠ ALERGIA: ${esc(alrg)}</div>`:`<div class="pc-alrg-none">✓ Sem alergias</div>`}
           ${getVentLabel(p)?`<div class="vent-badge">🫁 ${getVentLabel(p)}</div>`:''}
         </div>
         <button class="btn-mic-card" data-voice-btn="${ri}" onclick="quickVoiceNote(${ri})" title="Nota rápida por voz">🎤</button>
@@ -2861,7 +2890,7 @@ function renInfoBar(){
 }
 function updBadge(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);el('det-badge').innerHTML=ac>0?`<span class="badge badge-r">⚠ ${ac}</span>`:''}
 
-const TABS=['vitais','cuidados','medicacao','alimentacao','isbar'];
+const TABS=['vitais','cuidados','medicacao','alimentacao','eliminacao','isbar'];
 function swTab(tab){
   ST.detTab=tab;
   if(tab!=='notas')clrQ();
@@ -2872,6 +2901,7 @@ function swTab(tab){
   if(tab==='cuidados')renCsec(ST.csec||'enf');
   if(tab==='medicacao')renMsec(ST.msec||'hor');
   if(tab==='alimentacao')renAlim();
+  if(tab==='eliminacao')renElim();
   if(tab==='isbar')renISBAR();
 }
 
@@ -2888,8 +2918,19 @@ function renVitals(){
     const trCls='vc-trend'+(tr==='↑↑'||tr==='↓↓'?' vc-trend-alrt':tr==='↑'||tr==='↓'?' vc-trend-warn':'');
     return`<div class="vc ${st}" id="vc-${v.k}"><div class="vc-lbl">${v.label}<span id="vt-${v.k}" class="${trCls}" title="Tendência">${tr}</span></div><input class="vc-inp" type="number" value="${val||''}" placeholder="${v.ph}" oninput="onVI('${v.k}',this.value)" step="any"><div class="vc-foot"><span class="vc-unit">${v.unit}</span><span class="vc-range">${rng}</span></div></div>`;
   }).join('');
+  /* Glicemia capilar — campo secundário (sem alertas automáticos) */
+  const gw=el('gluc-wrap');if(gw){
+    const gv=p.vitals.gluc||'';
+    gw.innerHTML=`<div style="background:var(--s2);border-radius:10px;padding:9px 12px;border:1px solid var(--b);display:flex;align-items:center;gap:10px">
+      <span style="font-size:11px;font-weight:700;color:var(--t2);min-width:80px">🩸 Glicemia capilar</span>
+      <input type="number" step="1" min="0" value="${gv}" placeholder="mg/dL" style="flex:1;background:var(--s1);border:1px solid var(--b);border-radius:6px;padding:5px 8px;color:var(--t1);font-size:14px;font-weight:700;text-align:center" oninput="onVI('gluc',this.value)">
+      <span style="font-size:11px;color:var(--t3)">mg/dL</span>
+      ${gv?`<span style="font-size:10px;color:${parseFloat(gv)<60?'var(--red)':parseFloat(gv)>180?'#ef4444':'var(--grn)'};font-weight:700">${parseFloat(gv)<60?'↓ HIPOGLICEMIA':parseFloat(gv)>180?'↑ HIPERGLICEMIA':'✓ Normal'}</span>`:''}
+    </div>`;
+  }
   renVAlert();
   renPEWS();
+  renVitalsHistory();
 }
 /* Calcula tendência para um sinal vital com base nos últimos 3 registos do log */
 /* ─── PEWS — Pediatric Early Warning Score ────────────────────────────────
@@ -3049,7 +3090,39 @@ function onVI(k,v){
   renVAlert();updBadge();renPEWS();save();
 }
 function renVAlert(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);const e=el('vitals-alert');if(e)e.innerHTML=ac>0?`<div class="alert-ban" role="alert">⚠ ${ac} constante(s) fora do intervalo pediátrico normal</div>`:'';}
-function clearVit(){const p=ST.patients[ST.idx];if(!p||!confirm('Limpar sinais vitais?'))return;VITALS_DEF.forEach(v=>p.vitals[v.k]='');save();renVitals();}
+function clearVit(){const p=ST.patients[ST.idx];if(!p||!confirm('Limpar sinais vitais?'))return;VITALS_DEF.forEach(v=>p.vitals[v.k]='');p.vitals.gluc='';save();renVitals();}
+
+function registarAvaliacao(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const vals={};VITALS_DEF.forEach(v=>{if(p.vitals[v.k])vals[v.k]=p.vitals[v.k];});
+  if(p.vitals.gluc)vals.gluc=p.vitals.gluc;
+  if(!Object.keys(vals).length){alert('Preencha pelo menos um sinal vital antes de registar.');return;}
+  if(!p.vitalsHistory)p.vitalsHistory=[];
+  p.vitalsHistory.unshift({ts:new Date().toISOString(),vals});
+  if(p.vitalsHistory.length>10)p.vitalsHistory=p.vitalsHistory.slice(0,10);
+  /* Adiciona às notas de turno */
+  const R=vRanges(p.ageDays);
+  const vStr=VITALS_DEF.filter(v=>vals[v.k]).map(v=>{const st=R[v.k]?vSt(vals[v.k],R[v.k]):'';const flag=st==='alrt'?' ⚠':st==='warn'?' ↗':'';return `${v.label}: ${vals[v.k]}${v.unit}${flag}`;}).join(' | ')+(vals.gluc?` | Glicemia: ${vals.gluc}mg/dL`:'');
+  addNoteAuto('📊 Registo vitais — '+vStr);
+  save();renVitals();renVitalsHistory();
+}
+
+function renVitalsHistory(){
+  const p=ST.patients[ST.idx];const hw=el('vitals-history-wrap');if(!p||!hw)return;
+  const hist=(p.vitalsHistory||[]).slice(0,3);
+  if(!hist.length){hw.innerHTML='';return;}
+  const R=vRanges(p.ageDays);
+  const allK=[...VITALS_DEF.map(v=>v.k),'gluc'];
+  const labels={...Object.fromEntries(VITALS_DEF.map(v=>[v.k,v.label])),gluc:'Glicemia'};
+  const units={...Object.fromEntries(VITALS_DEF.map(v=>[v.k,v.unit])),gluc:'mg/dL'};
+  hw.innerHTML=`<div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Últimas avaliações</div>`+hist.map((snap,i)=>{
+    const items=allK.filter(k=>snap.vals[k]).map(k=>{const st=R[k]?vSt(snap.vals[k],R[k]):'';const col=st==='alrt'?'var(--red)':st==='warn'?'var(--org)':'var(--t2)';return`<span style="color:${col};font-size:11px">${labels[k]}: <strong>${snap.vals[k]}</strong>${units[k]}</span>`;}).join(' &nbsp;·&nbsp; ');
+    return`<div style="background:var(--s2);border-radius:8px;padding:8px 12px;margin-bottom:5px;border:1px solid var(--b)">
+      <div style="font-size:10px;color:var(--t3);margin-bottom:3px">${ft(snap.ts)}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">${items}</div>
+    </div>`;
+  }).join('');
+}
 function openCam(){el('photo-input').click();}
 async function onPhoto(evt){if(!isPremium()){showPremiumModal('camera');evt.target.value='';return;}const file=evt.target.files[0];if(!file)return;const r=new FileReader();r.onload=async e=>{const b64=e.target.result.split(',')[1],mt=file.type||'image/jpeg';el('capture-img').src=e.target.result;el('capture-preview-wrap').style.display='block';const btn=el('cam-btn');if(btn){btn.textContent='⏳ A interpretar...';btn.disabled=true;}try{const res=await callAI({type:'vitals_image',b64,mt});const vals=JSON.parse((res.text||'{}').replace(/```json|```/g,'').trim());const p=ST.patients[ST.idx];if(!p)return;VITALS_DEF.forEach(v=>{if(vals[v.k]!==undefined)p.vitals[v.k]=String(vals[v.k]);});p.vitals.lastUp=new Date().toISOString();save();renVitals();alert(`✅ ${Object.keys(vals).length} valor(es) interpretado(s). Verifique!`);}catch(err){alert('Erro ao interpretar: '+err.message);}finally{el('capture-preview-wrap').style.display='none';if(btn){btn.textContent='📷 Capturar Ecrã';btn.disabled=false;}}};r.readAsDataURL(file);evt.target.value='';}
 
@@ -3062,16 +3135,25 @@ function renCsec(s){if(s==='enf')renEnf();if(s==='dev')renDev();if(s==='todo')re
 // ─── Enfermagem ─────────────────────────────
 function renEnf(){
   const p=ST.patients[ST.idx];if(!p)return;
+  if(!p.abcdeSel)p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};
   const chkSvg='<svg class="chk-svg" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  // 1. Notes (first)
-  const notes=p.notes.length?p.notes.map(n=>`<div class="note-it"><span class="note-t">${ft(n.timestamp)}</span><span class="note-txt">${esc(n.text)}</span></div>`).join(''):'<div class="empty-st">Sem notas</div>';
-  // 2. ABCDE (second)
-  const abcde=ABCDE_DEF.map(a=>`<div class="abcde-item"><div class="abcde-hdr"><div class="abcde-key">${a.key}</div><div><div class="abcde-title">${a.title}</div><div class="abcde-desc">${a.desc}</div></div></div><textarea class="abcde-inp" rows="2" placeholder="Observações..." oninput="saveABCDE('${a.key}',this.value)">${p.abcde?.[a.key]||''}</textarea></div>`).join('');
-  // 3. Cuidados (third)
+  // 1. Notas do turno
+  const notes=p.notes.length?p.notes.slice(0,8).map(n=>`<div class="note-it"><span class="note-t">${ft(n.timestamp)}</span><span class="note-txt">${esc(n.text)}</span></div>`).join(''):'<div class="empty-st">Sem notas</div>';
+  // 2. ABCDE com botões
+  const abcde=ABCDE_DEF.map(a=>{
+    const sel=p.abcdeSel?.[a.key]||[];
+    const opts=(ABCDE_OPTS[a.key]||[]).map(o=>`<button class="i-chip${sel.includes(o)?' sel':''}" onclick="tglABCDE('${a.key}','${o.replace(/'/g,"\\'")}');renEnf()" style="font-size:11px;padding:5px 9px">${o}</button>`).join('');
+    return`<div class="abcde-item">
+      <div class="abcde-hdr"><div class="abcde-key">${a.key}</div><div><div class="abcde-title">${a.title}</div></div></div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px">${opts}</div>
+      <textarea class="abcde-inp" rows="1" placeholder="Observações adicionais..." oninput="saveABCDE('${a.key}',this.value)" style="min-height:34px">${p.abcde?.[a.key]||''}</textarea>
+    </div>`;
+  }).join('');
+  // 3. Lista de cuidados
   const tasks=p.tasks.map(t=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTask('${t.id}')">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${esc(t.text)}</div>${t.done&&t.doneAt?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div></div>`).join('');
-  // 4. Lateralidade (fourth — new)
+  // 4. Posicionamento
   const pos=p.positioning||'';
-  const posOpts=['Direita','Esquerda','Dorsal','Semi-Fowler','Ventral'];
+  const posOpts=['Lateral Dto','Lateral Esq','Dorsal','Ventral','Semi-Fowler'];
   const posButtons=posOpts.map(o=>`<button class="pos-btn${pos===o?' active':''}" onclick="setPositioning('${o}')">${o}</button>`).join('');
   el('csec-enf').innerHTML=`
     <div class="sub-card">
@@ -3088,9 +3170,21 @@ function renEnf(){
       </div>
       <div style="padding:0 13px">${notes}</div>
     </div>
-    <div class="sub-card"><div class="sub-card-hdr">Avaliação ABCDE</div>${abcde}</div>
-    <div class="sub-card"><div class="sub-card-hdr">Lista de Cuidados</div>${tasks}<div class="task-add"><input id="new-task-inp" type="text" placeholder="Adicionar cuidado..."><button class="btn btn-o btn-sm" onclick="addCustomTask()">+</button></div></div>
-    <div class="sub-card"><div class="sub-card-hdr">Lateralidade</div>
+    <div class="sub-card">
+      <div class="sub-card-hdr">Avaliação ABCDE
+        <button class="btn btn-p btn-sm" onclick="addABCDEToNotes()" style="font-size:11px">+ Notas</button>
+      </div>
+      ${abcde}
+    </div>
+    <div class="sub-card">
+      <div class="sub-card-hdr">Cuidados & Higiene</div>
+      ${tasks}
+      <div style="padding:10px 13px;border-top:1px solid var(--b);display:flex;flex-wrap:wrap;gap:6px">
+        ${['Higiene parcial','Higiene completa','Higiene no leito','Higiene no chuveiro','Cuidados à boca','Cuidados ao cateter','Aspiração de secreções'].map(c=>`<button class="i-chip" onclick="registarCuidado('${c}')" style="font-size:11px;padding:5px 10px">✓ ${c}</button>`).join('')}
+      </div>
+      <div class="task-add"><input id="new-task-inp" type="text" placeholder="Adicionar cuidado..."><button class="btn btn-o btn-sm" onclick="addCustomTask()">+</button></div>
+    </div>
+    <div class="sub-card"><div class="sub-card-hdr">Posicionamento</div>
       <div class="pos-wrap">${posButtons}</div>
       ${pos?`<div class="pos-current">Posição actual: <strong>${pos}</strong></div>`:''}
     </div>`;
@@ -3098,7 +3192,20 @@ function renEnf(){
 function focusNoteInp(){const e=el('note-inp-enf');if(e){e.focus();e.scrollIntoView({behavior:'smooth'});}}
 function addNoteEnf(){const inp=el('note-inp-enf');if(!inp||!inp.value.trim())return;addNoteText(inp.value.trim());inp.value='';showToast('Nota registada ✓','ok');renEnf();}
 function addNoteText(txt){const p=ST.patients[ST.idx];if(!p)return;p.notes.unshift({id:uid(),text:txt,timestamp:new Date().toISOString()});save();}
+function addNoteAuto(txt){addNoteText(txt);}
 let _abcT={};function saveABCDE(k,v){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcde)p.abcde={};p.abcde[k]=v;clearTimeout(_abcT[k]);_abcT[k]=setTimeout(()=>save(),600);}
+function tglABCDE(k,opt){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcdeSel)p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};const arr=p.abcdeSel[k]||(p.abcdeSel[k]=[]);const i=arr.indexOf(opt);if(i>=0)arr.splice(i,1);else arr.push(opt);save();}
+function addABCDEToNotes(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  if(!p.abcdeSel)p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};
+  const lines=ABCDE_DEF.map(a=>{const sel=(p.abcdeSel[a.key]||[]);const txt=p.abcde?.[a.key]||'';const parts=[...sel];if(txt)parts.push(txt);return parts.length?`${a.key}: ${parts.join(', ')}`:'';}).filter(Boolean);
+  if(!lines.length){showToast('Seleccione opções ABCDE primeiro','warn');return;}
+  addNoteAuto('🔍 ABCDE — '+lines.join(' | '));
+  showToast('Avaliação ABCDE registada nas notas ✓','ok');
+  /* Reset selections after registering */
+  p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};save();renEnf();
+}
+function registarCuidado(txt){addNoteAuto('✓ '+txt);showToast(txt+' registado ✓','ok');}
 function tglUC(i){
   const p=ST.patients[ST.idx];if(!p)return;
   if(!p.unitCheck)p.unitCheck={};
@@ -3137,10 +3244,12 @@ function tglTask(tid){
 }
 function addCustomTask(){const inp=el('new-task-inp');if(!inp||!inp.value.trim())return;const p=ST.patients[ST.idx];if(!p)return;p.tasks.push({id:uid(),text:inp.value.trim(),done:false,doneAt:null});learnTask(inp.value.trim());inp.value='';save();renEnf();}
 
-// ─── Lateralidade ────────────────────────────
+// ─── Posicionamento ───────────────────────────
 function setPositioning(val){
   const p=ST.patients[ST.idx];if(!p)return;
-  p.positioning=(p.positioning===val)?'':val; // toggle off if same
+  const prev=p.positioning;
+  p.positioning=(p.positioning===val)?'':val;
+  if(p.positioning&&p.positioning!==prev)addNoteAuto('🔄 Posicionamento: '+p.positioning);
   save();renEnf();
 }
 
@@ -3341,23 +3450,12 @@ function renTodo(){
                   (t.done&&t.doneAt?`<span class="time-tag done-ok">✓ ${ft(t.doneAt)}</span>`:'');
     const schedInput=!t.done?`<input type="time" class="task-sched-inp" value="${t.scheduledAt||''}" onchange="setTodoSched(${i},this.value)" title="Hora planeada">`:'';
     return `<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTodo(${i})">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${esc(t.text)}</div>${timeTags?`<div class="task-times">${timeTags}</div>`:''}${schedInput}</div><button class="rm-btn" onclick="rmTodo(${i})">×</button></div>`;
-  }).join('')||'<div class="empty-st">Sem tarefas</div>';
-  // Unit Check (moved from Enfermagem)
+  }).join('')||'<div class="empty-st">Sem tarefas pendentes</div>';
+  // Verificação da unidade/posto
   const uc=UNIT_CHECK.map((item,i)=>{const done=p.unitCheck?.[i]||false;return`<div class="task-it"><div class="task-chk ${done?'done':''}" onclick="tglUC(${i})">${done?chkSvg:''}</div><div class="task-lbl ${done?'done':''}">${item}</div></div>`;}).join('');
-  // Acesso Rápido (pre-defined to-do items)
-  const qH=TODO_ITEMS.map(c=>`<div style="margin-bottom:9px"><div class="sect-lbl">${c.cat}</div><div style="display:flex;flex-wrap:wrap;gap:5px">${c.items.map(item=>`<button class="i-chip" onclick="addTodoQ('${item}')">${item}</button>`).join('')}</div></div>`).join('');
   el('csec-todo').innerHTML=`
     <div class="sub-card"><div class="sub-card-hdr">To-Do do Turno</div>${listH}<div class="task-add"><input id="todo-inp" type="text" placeholder="Adicionar tarefa..."><button class="btn btn-o btn-sm" onclick="addTodoC()">+</button></div></div>
-    <div class="sub-card"><div class="sub-card-hdr">Estado da Unidade</div>${uc}</div>
-    <div class="sub-card"><div class="sub-card-hdr">Registo Rápido</div>
-      <div style="padding:9px 13px">
-        <input type="text" id="quick-search" placeholder="Pesquisar..." oninput="filtQ(this.value)" style="font-size:12px;margin-bottom:8px">
-        <div id="qbuilder" class="qbuilder"><div class="qb-prev" id="qb-prev"></div><div class="qb-acts"><button class="btn btn-p btn-sm" onclick="confQ()">Registar</button><button class="btn btn-o btn-sm" onclick="clrQ()">Limpar</button></div></div>
-        <div id="quick-cats"></div>
-      </div>
-    </div>
-    <div class="sub-card"><div class="sub-card-hdr">Acesso Rápido</div><div style="padding:12px">${qH}</div></div>`;
-  renQCats('');
+    <div class="sub-card"><div class="sub-card-hdr">Verificação da Unidade/Posto</div>${uc}</div>`;
 }
 function addTodoQ(text){const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];if(p.todos.find(t=>t.text===text&&!t.done))return;p.todos.push({id:uid(),text,done:false,doneAt:null,scheduledAt:null});save();renTodo();}
 function addTodoC(){const inp=el('todo-inp');if(!inp||!inp.value.trim())return;const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];p.todos.push({id:uid(),text:inp.value.trim(),done:false,doneAt:null,scheduledAt:null});inp.value='';save();renTodo();}
@@ -3375,13 +3473,15 @@ function dosesInShift(doses,sh){return doses.filter(h=>{if(sh.start<sh.end)retur
 function renMedH(){
   const p=ST.patients[ST.idx];if(!p)return;
   const meds=(p.medications||[]).filter(m=>m.freq!=='Contínua');
-  const h=meds.map((m,i)=>medCardH(m,i)).join('')||'<div class="empty-st">Sem medicações horárias</div>';
+  /* BUG FIX: usar indexOf para obter índice real no array completo (não no filtrado) */
+  const h=meds.map(m=>medCardH(m,p.medications.indexOf(m))).join('')||'<div class="empty-st">Sem medicações horárias</div>';
   el('med-content').innerHTML=`<button class="btn btn-p" style="width:100%;margin-bottom:12px" onclick="openMedModal('hor')">+ Adicionar Medicação</button>${h}`;
 }
 function renPerf(){
   const p=ST.patients[ST.idx];if(!p)return;
   const meds=(p.medications||[]).filter(m=>m.freq==='Contínua');
-  const h=meds.map((m,i)=>perfCardH(m,i)).join('')||'<div class="empty-st">Sem perfusões</div>';
+  /* BUG FIX: idem — índice real */
+  const h=meds.map(m=>perfCardH(m,p.medications.indexOf(m))).join('')||'<div class="empty-st">Sem perfusões</div>';
   el('med-content').innerHTML=`<button class="btn btn-p" style="width:100%;margin-bottom:12px" onclick="openMedModal('perf')">+ Adicionar Perfusão</button>${h}`;
 }
 function renMedHist(){
@@ -3435,7 +3535,7 @@ function gen12hReport(){
   const mins=ST.shiftStart?Math.round((Date.now()-new Date(ST.shiftStart))/60000)%60:0;
   const now=new Date().toLocaleString('pt-PT');
   const active=ST.patients.filter(p=>p.status==='internado');
-  let lines=['═══ RESUMO DO TURNO — ShiftCare v3.3.2 ═══',
+  let lines=['═══ RESUMO DO TURNO — ShiftCare v3.4.0 ═══',
     'Hora: '+now+' | Duração: '+elapsed+'h'+mins+'min | Doentes: '+active.length,''];
   active.forEach(p=>{
     const R=vRanges(p.ageDays);
@@ -3631,10 +3731,12 @@ function getNutr(p) {
       staging: { type:'', additives:[], modeFreq:'', modeVia:'', volume:'', notes:'' },
       active:   [],
       inactive: [],
+      intercorrencias: [],
     };
   }
   if (!p.nutrition.active)   p.nutrition.active   = [];
   if (!p.nutrition.inactive) p.nutrition.inactive = [];
+  if (!p.nutrition.intercorrencias) p.nutrition.intercorrencias = [];
   return p.nutrition;
 }
 
@@ -3763,7 +3865,38 @@ function renAlim() {
       <div class="sub-card-hdr">Alimentação Activa</div>
       <div style="padding:9px 13px">${activeRecs}</div>
     </div>
-    ${inactiveSection}`;
+    ${inactiveSection}
+    <div class="sub-card" id="intercorr-wrap">
+      <div class="sub-card-hdr">Intercorrências Alimentares</div>
+      <div style="padding:13px">
+        <div class="sect-lbl">Tipo de intercorrência</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px" id="ic-type-row">
+          ${['Vomitou','Bolsou','Estase Gástrica'].map(t=>`<button class="add-chip" id="ic-t-${t.replace(/\s/g,'_')}" onclick="icToggleType('${t}')">${t}</button>`).join('')}
+        </div>
+        <div class="sect-lbl">Características</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:13px" id="ic-char-row">
+          ${['Alimentar','Aquoso','Bilioso','Fecaloide'].map(c=>`<button class="add-chip" id="ic-c-${c}" onclick="icToggleChar('${c}')">${c}</button>`).join('')}
+        </div>
+        <button class="btn btn-o" style="width:100%;font-weight:700" onclick="registarIntercorrencia()">⚠ Registar Intercorrência</button>
+        <div id="ic-history" style="margin-top:10px"></div>
+      </div>
+    </div>`;
+}
+
+const _icSel={type:null,chars:[]};
+function icToggleType(t){_icSel.type=_icSel.type===t?null:t;document.querySelectorAll('#ic-type-row .add-chip').forEach(b=>{b.classList.toggle('sel',b.textContent===_icSel.type);});}
+function icToggleChar(c){const idx=_icSel.chars.indexOf(c);if(idx>=0)_icSel.chars.splice(idx,1);else _icSel.chars.push(c);document.querySelectorAll('#ic-char-row .add-chip').forEach(b=>{b.classList.toggle('sel',_icSel.chars.includes(b.textContent));});}
+function registarIntercorrencia(){
+  if(!_icSel.type){showToast('Seleccione o tipo de intercorrência','warn');return;}
+  const p=ST.patients[ST.idx];if(!p)return;
+  const n=getNutr(p);
+  const rec={id:uid(),ts:new Date().toISOString(),type:_icSel.type,chars:[..._icSel.chars]};
+  n.intercorrencias.unshift(rec);
+  if(n.intercorrencias.length>20)n.intercorrencias=n.intercorrencias.slice(0,20);
+  const txt='⚠ Intercorrência alimentar: '+rec.type+(rec.chars.length?' · '+rec.chars.join(', '):'');
+  addNoteAuto(txt);
+  _icSel.type=null;_icSel.chars=[];
+  save();showToast('Intercorrência registada ✓','ok');renAlim();
 }
 
 function nutrRecordHTML(r, i, isInactive) {
@@ -3849,6 +3982,74 @@ function nutrSummary(p) {
   const n = getNutr(p);
   if (!n.active.length) return 'Sem alimentação activa';
   return n.active.map(r => [nutrTypeLabel(r.type), ...(r.additives||[]), r.modeFreq, r.modeVia, r.volume].filter(Boolean).join(' · ')).join(' | ');
+}
+
+// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// MODULE: ELIMINAÇÃO
+// ══════════════════════════════════════════════
+const _elimSel={tipo:null,via:null,chars:[]};
+const ELIM_TIPOS=[
+  {k:'urina',  label:'Urinou',   icon:'💧'},
+  {k:'fezes',  label:'Defecou',  icon:'🟫'},
+];
+const ELIM_VIA_URINA=['Urinol','Fralda','Arrastadeira','Algália'];
+const ELIM_VIA_FEZES=['Fralda','Arrastadeira','WC'];
+const ELIM_CHAR_URINA=['Clara','Concentrada','Amarelada','Colúria','Hematúria'];
+const ELIM_CHAR_FEZES=['Líquidas','Semi-líquidas','Moles','Pastosas','Moldadas','Duras','Amareladas','Acastanhadas','Acólicas','Melenas'];
+
+function renElim(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  if(!p.eliminacao)p.eliminacao=[];
+  const hist=p.eliminacao.slice(0,5);
+  const tipo=_elimSel.tipo;
+  const vias=tipo==='urina'?ELIM_VIA_URINA:tipo==='fezes'?ELIM_VIA_FEZES:[];
+  const chars=tipo==='urina'?ELIM_CHAR_URINA:tipo==='fezes'?ELIM_CHAR_FEZES:[];
+
+  el('tab-eliminacao').innerHTML=`
+    <div class="sub-card">
+      <div class="sub-card-hdr">Registo de Eliminação</div>
+      <div style="padding:13px">
+        <div class="sect-lbl">Tipo</div>
+        <div style="display:flex;gap:8px;margin-bottom:13px">
+          ${ELIM_TIPOS.map(t=>`<button class="nutr-type-btn${tipo===t.k?' active':''}" style="flex:1" onclick="elimSetTipo('${t.k}');renElim()">${t.icon} ${t.label}</button>`).join('')}
+        </div>
+        ${tipo?`
+        <div class="sect-lbl">Via / Local</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px">
+          ${vias.map(v=>`<button class="add-chip${_elimSel.via===v?' sel':''}" onclick="elimSetVia('${v}');renElim()">${v}</button>`).join('')}
+        </div>
+        <div class="sect-lbl">Características</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:13px">
+          ${chars.map(c=>`<button class="add-chip${_elimSel.chars.includes(c)?' sel':''}" onclick="elimToggleChar('${c}');renElim()">${c}</button>`).join('')}
+        </div>`:'<div style="color:var(--t3);font-size:13px;text-align:center;padding:10px 0">Seleccione o tipo de eliminação</div>'}
+        <button class="btn btn-p" style="width:100%;font-size:14px;font-weight:700${!tipo?' opacity:.5;pointer-events:none':''}" onclick="registarEliminacao()">✅ Registar Eliminação</button>
+      </div>
+    </div>
+    ${hist.length?`<div class="sub-card"><div class="sub-card-hdr">Últimos registos</div><div style="padding:9px 13px">
+      ${hist.map(r=>`<div style="background:var(--s2);border-radius:8px;padding:7px 11px;margin-bottom:5px;border:1px solid var(--b)">
+        <span style="font-size:10px;color:var(--t3)">${ft(r.ts)}</span>&nbsp;
+        <strong style="font-size:12px">${r.tipo==='urina'?'💧 Urinou':'🟫 Defecou'}</strong>
+        ${r.via?`<span style="font-size:11px;color:var(--t2)"> · ${r.via}</span>`:''}
+        ${r.chars&&r.chars.length?`<span style="font-size:11px;color:var(--t3)"> · ${r.chars.join(', ')}</span>`:''}
+      </div>`).join('')}
+    </div></div>`:''}`;}
+
+function elimSetTipo(t){_elimSel.tipo=_elimSel.tipo===t?null:t;_elimSel.via=null;_elimSel.chars=[];}
+function elimSetVia(v){_elimSel.via=_elimSel.via===v?null:v;}
+function elimToggleChar(c){const i=_elimSel.chars.indexOf(c);if(i>=0)_elimSel.chars.splice(i,1);else _elimSel.chars.push(c);}
+function registarEliminacao(){
+  const p=ST.patients[ST.idx];if(!p||!_elimSel.tipo)return;
+  if(!p.eliminacao)p.eliminacao=[];
+  const rec={id:uid(),ts:new Date().toISOString(),tipo:_elimSel.tipo,via:_elimSel.via,chars:[..._elimSel.chars]};
+  p.eliminacao.unshift(rec);
+  if(p.eliminacao.length>30)p.eliminacao=p.eliminacao.slice(0,30);
+  const emoji=rec.tipo==='urina'?'💧':'🟫';
+  const label=rec.tipo==='urina'?'Urinou':'Defecou';
+  const txt=`${emoji} Eliminação: ${label}${rec.via?' · '+rec.via:''}${rec.chars.length?' · '+rec.chars.join(', '):''}`;
+  addNoteAuto(txt);
+  _elimSel.tipo=null;_elimSel.via=null;_elimSel.chars=[];
+  save();showToast('Eliminação registada ✓','ok');renElim();
 }
 
 // ══════════════════════════════════════════════
@@ -4795,7 +4996,7 @@ function exportShiftPDF(){
 </div>
 ${ptHTML}
 <div style="margin-top:20px;padding-top:10px;border-top:1px solid #e5e7eb;font-size:9px;color:#9ca3af;text-align:center">
-  Gerado por ShiftCare v3.3.2 · Documento de apoio clínico — não substitui o processo de enfermagem oficial
+  Gerado por ShiftCare v3.4.0 · Documento de apoio clínico — não substitui o processo de enfermagem oficial
 </div>
 <div class="no-print" style="margin-top:20px;text-align:center">
   <button onclick="window.print()" style="background:#0D9488;color:#fff;border:none;border-radius:8px;padding:10px 28px;font-size:14px;font-weight:700;cursor:pointer">🖨 Imprimir / Guardar PDF</button>
