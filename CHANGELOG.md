@@ -20,6 +20,17 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-PT/1.0.0/).
 - **Posicionamento** — renomeado "Lateralidade" → "Posicionamento"; opções actualizadas: Lateral Dto, Lateral Esq, Dorsal, Ventral, Semi-Fowler; mudança de posição regista automaticamente nas notas de turno
 - **To-Do simplificado** — removidas secções "Registo Rápido" (QCATS) e "Acesso Rápido" do tab To-Do; "Estado da Unidade" renomeado para "Verificação da Unidade/Posto"; Debitómetro adicionado ao UNIT_CHECK
 
+- **Sincronização WebSocket — cliente** — quatro fixes para estabilidade em redes móveis:
+  - `ws.onclose` reconecta agora também quando o estado era `'connecting'` (não só `'connected'`), corrigindo o loop de timeout em 3G/4G
+  - Keepalive ping a cada 25 s via `setInterval` enquanto a ligação está aberta, prevenindo o fecho da conexão idle por operadoras móveis
+  - `_sync.pingInterval` limpo em `_syncDisconnectWS()` para evitar pings em ligações mortas
+  - Worker: alarm configurado via `this.state.storage.setAlarm()` (substituiu a chamada incorrecta a `/__alarm`); snapshot enviado aos clientes novos ao ligar
+- **Dispositivos — figuras etárias** — silhueta SVG distinguível por grupo etário: Neonato (macrocefalia, tronco curto, membros vestigiais + label), Lactente (cabeça grande, barriga proeminente + label), Criança (proporções adultas, pescoço visível + label); tamanho aumentado de 160 × 160 px → 200 × 200 px
+- **Cateter Venoso Central femoral** — dots de CVC com localização "Femoral Direita/Esquerda" posicionados na região inguinal (y ≈ 74) em vez do pescoço (y ≈ 20); a lógica de pontos agora itera sobre `p.devices` (instâncias reais) permitindo múltiplos dispositivos do mesmo tipo
+
+- **Alimentação — Intercorrências** — corrigido: chips de tipo e característica agora refletem a seleção atual ao re-renderizar (estado via `_icSel`, não manipulação direta do DOM); histórico das últimas 5 intercorrências visível após cada registo; botão "Registar" fica inativo enquanto nenhum tipo está selecionado
+- **Eliminação** — módulo completo e funcional: tipos Urinou/Defecou com icon; via por tipo (Urinol/Fralda/Arrastadeira/Algália vs Fralda/Arrastadeira/WC); características urina (Clara/Concentrada/Amarelada/Colúria/Hematúria) e fezes (Líquidas…Melenas); histórico dos últimos 5 registos; auto-nota em cada registo
+
 ### Corrigido
 - **Medicação reativar/suspender** — bug crítico de índice: `tglSusp(i)` usava índice do array filtrado (só horárias ou só perfusões) em vez do índice real no array completo `p.medications`; corrigido com `indexOf()` para obter índice correcto em todos os casos
 

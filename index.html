@@ -3346,8 +3346,65 @@ function renDev(){
   const cat=ageCat(p);
   if(!p.devices)p.devices=[];if(!p.devInactive)p.devInactive=[];
   const chkSvg='<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const activeDots=DEV_TYPES.filter(dt=>!dt.neo||cat==='neo').map(dt=>{const a=p.devices.some(d=>d.typeId===dt.id);if(!a)return'';const col=dt.id.includes('art')||dt.id==='uac'?'#DC2626':dt.id.includes('cvc')||dt.id==='picc'||dt.id==='uvc'?'#3B82F6':dt.id==='ett'||dt.id==='capno'?'#10B981':dt.id.includes('epi')||dt.id.includes('peri')||dt.id==='bis'?'#7C3AED':'#F59E0B';return`<circle cx="${dt.x}" cy="${dt.y}" r="3.5" fill="${col}" stroke="white" stroke-width="1"><title>${dt.label}</title></circle>`;}).join('');
-  const fig=cat==='neo'?`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="12" r="10" fill="#FDE68A" stroke="#D97706"/><ellipse cx="50" cy="35" rx="14" ry="18" fill="#FDE68A" stroke="#D97706"/><path d="M36 27 Q26 32 22 44" stroke-linecap="round"/><path d="M64 27 Q74 32 78 44" stroke-linecap="round"/><path d="M43 52 Q40 65 38 78" stroke-linecap="round"/><path d="M57 52 Q60 65 62 78" stroke-linecap="round"/><circle cx="50" cy="40" r="2" fill="#E5E7EB" stroke="#9CA3AF"/></g>`:cat==='lac'?`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="11" r="9" fill="#FDE68A" stroke="#D97706"/><rect x="39" y="22" width="22" height="26" rx="4" fill="#FDE68A" stroke="#D97706"/><path d="M39 26 Q27 30 24 44" stroke-linecap="round"/><path d="M61 26 Q73 30 76 44" stroke-linecap="round"/><path d="M43 48 L40 70" stroke-linecap="round"/><path d="M57 48 L60 70" stroke-linecap="round"/></g>`:`<g stroke="#94A3B8" stroke-width="1.2" fill="none"><circle cx="50" cy="10" r="8" fill="#FDE68A" stroke="#D97706"/><rect x="40" y="20" width="20" height="24" rx="3" fill="#FDE68A" stroke="#D97706"/><path d="M40 24 Q30 28 27 42" stroke-linecap="round"/><path d="M60 24 Q70 28 73 42" stroke-linecap="round"/><path d="M44 44 L41 65" stroke-linecap="round"/><path d="M56 44 L59 65" stroke-linecap="round"/></g>`;
+  /* FIX #4: itera sobre instâncias reais (p.devices) para suportar múltiplos dispositivos
+     do mesmo tipo e aplicar coordenadas correctas por localização (ex. CVC femoral) */
+  const activeDots=p.devices.map(dev=>{
+    const dt=DEV_TYPES.find(d=>d.id===dev.typeId);
+    if(!dt)return'';
+    if(dt.neo&&cat!=='neo')return'';
+    let cx=dt.x,cy=dt.y;
+    /* Override: CVC femoral vai para região inguinal, não para o pescoço */
+    if(dt.id==='cvc'&&dev.location){
+      if(dev.location.includes('Femoral Direita')){cx=41;cy=74;}
+      else if(dev.location.includes('Femoral Esquerda')){cx=59;cy=74;}
+    }
+    const col=dt.id.includes('art')||dt.id==='uac'?'#DC2626':dt.id.includes('cvc')||dt.id==='picc'||dt.id==='uvc'?'#3B82F6':dt.id==='ett'||dt.id==='capno'?'#10B981':dt.id.includes('epi')||dt.id.includes('peri')||dt.id==='bis'?'#7C3AED':'#F59E0B';
+    const lbl=dt.label+(dev.location?' — '+dev.location:'');
+    return`<circle cx="${cx}" cy="${cy}" r="3.5" fill="${col}" stroke="white" stroke-width="1"><title>${lbl}</title></circle>`;
+  }).join('');
+  /* FIX #4: figuras por grupo etário com proporções anatómicas correctas */
+  const fig=cat==='neo'
+    /* Neonato: macrocefalia típica, tronco curto, membros muito curtos */
+    ?`<g stroke="#B45309" stroke-width="1.3" fill="none">
+        <circle cx="50" cy="15" r="13" fill="#FDE68A" stroke="#D97706"/>
+        <circle cx="45.5" cy="14" r="1.4" fill="#92400E"/><circle cx="54.5" cy="14" r="1.4" fill="#92400E"/>
+        <path d="M46 18.5 Q50 21 54 18.5" stroke="#D97706" stroke-width="0.9"/>
+        <rect x="47" y="27.5" width="6" height="3" rx="1" fill="#FDE68A" stroke="#D97706"/>
+        <ellipse cx="50" cy="42" rx="13" ry="11" fill="#FDE68A" stroke="#D97706"/>
+        <circle cx="50" cy="43" r="1.6" fill="none" stroke="#D97706" stroke-width="0.9"/>
+        <path d="M37 35 Q26 33 22 42" stroke-linecap="round" stroke="#94A3B8"/>
+        <path d="M63 35 Q74 33 78 42" stroke-linecap="round" stroke="#94A3B8"/>
+        <path d="M44 53 Q41 64 40 73" stroke-linecap="round" stroke="#94A3B8"/>
+        <path d="M56 53 Q59 64 60 73" stroke-linecap="round" stroke="#94A3B8"/>
+        <text x="50" y="96" text-anchor="middle" font-size="6" fill="#0F766E" font-family="system-ui,sans-serif" font-weight="600">Neonato</text>
+      </g>`
+    :cat==='lac'
+    /* Lactente: cabeça grande mas <neo, barriga proeminente */
+    ?`<g stroke="#B45309" stroke-width="1.3" fill="none">
+        <circle cx="50" cy="12" r="10.5" fill="#FDE68A" stroke="#D97706"/>
+        <circle cx="45.5" cy="11" r="1.2" fill="#92400E"/><circle cx="54.5" cy="11" r="1.2" fill="#92400E"/>
+        <path d="M46.5 15.5 Q50 18 53.5 15.5" stroke="#D97706" stroke-width="0.9"/>
+        <rect x="47" y="22" width="6" height="3" rx="1" fill="#FDE68A" stroke="#D97706"/>
+        <ellipse cx="50" cy="38" rx="12" ry="13" fill="#FDE68A" stroke="#D97706"/>
+        <path d="M38 29 Q26 33 24 46" stroke-linecap="round" stroke="#94A3B8"/>
+        <path d="M62 29 Q74 33 76 46" stroke-linecap="round" stroke="#94A3B8"/>
+        <path d="M44 51 Q41 63 40 74" stroke-linecap="round" stroke="#94A3B8"/>
+        <path d="M56 51 Q59 63 60 74" stroke-linecap="round" stroke="#94A3B8"/>
+        <text x="50" y="96" text-anchor="middle" font-size="6" fill="#0F766E" font-family="system-ui,sans-serif" font-weight="600">Lactente</text>
+      </g>`
+    /* Criança: proporções mais adultas, pescoço visível */
+    :`<g stroke="#B45309" stroke-width="1.3" fill="none">
+        <circle cx="50" cy="9" r="8.5" fill="#FDE68A" stroke="#D97706"/>
+        <circle cx="46" cy="8" r="1.1" fill="#92400E"/><circle cx="54" cy="8" r="1.1" fill="#92400E"/>
+        <path d="M47 12.5 Q50 15 53 12.5" stroke="#D97706" stroke-width="0.9"/>
+        <rect x="47.5" y="17" width="5" height="4" rx="1" fill="#FDE68A" stroke="#D97706"/>
+        <rect x="40" y="21" width="20" height="25" rx="4" fill="#FDE68A" stroke="#D97706"/>
+        <path d="M40 25 Q29 29 26 43" stroke-linecap="round" stroke="#94A3B8"/>
+        <path d="M60 25 Q71 29 74 43" stroke-linecap="round" stroke="#94A3B8"/>
+        <path d="M44 46 L41 68" stroke-linecap="round" stroke="#94A3B8"/>
+        <path d="M56 46 L59 68" stroke-linecap="round" stroke="#94A3B8"/>
+        <text x="50" y="96" text-anchor="middle" font-size="6" fill="#0F766E" font-family="system-ui,sans-serif" font-weight="600">Criança</text>
+      </g>`;
   const devList=p.devices.map((d,i)=>`<div class="dev-item"><span class="dev-icon">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl">${esc(d.label)}</div>${d.location?`<div class="dev-sub">${esc(d.location)}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${esc(d.gauge)}${d.side?' · '+d.side:''}</div>`:''}</div><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red);border-color:#FECACA" onclick="retireDev(${i})">Retirar</button></div>`).join('')||'<div class="empty-st">Sem dispositivos activos</div>';
   const inactList=p.devInactive.map((d,i)=>`<div class="dev-item" style="opacity:.6"><span class="dev-icon" style="opacity:.5">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl" style="text-decoration:line-through">${esc(d.label)}</div>${d.location?`<div class="dev-sub">${esc(d.location)}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${esc(d.gauge)}${d.side?' · '+d.side:''}</div>`:''}<div class="dev-removed-lbl">Retirado: ${d.removedAt?fd(d.removedAt):'—'}</div></div><button class="rm-btn" onclick="delInactiveDev(${i})" title="Eliminar">🗑</button></div>`).join('');
   const chips=DEV_TYPES.filter(dt=>!dt.neo||cat==='neo').map(dt=>{const a=p.devices.some(d=>d.typeId===dt.id);return`<button class="i-chip${a?' sel':''}" onclick="tglDevQ('${dt.id}')" style="font-size:11px;padding:5px 9px">${dt.icon} ${dt.label.split(' ').slice(-1)[0]}</button>`;}).join('');
@@ -3355,7 +3412,7 @@ function renDev(){
     ${renVentCard(p)}
     <div class="sub-card"><div class="sub-card-hdr">Dispositivos Activos<button class="btn btn-o btn-sm" onclick="openDevModal()">+ Adicionar</button></div>${devList}</div>
     <div class="sub-card"><div class="sub-card-hdr">Figura do Doente</div>
-      <div style="display:flex;justify-content:center;padding:14px"><svg viewBox="0 0 100 100" width="160" height="160" style="overflow:visible">${fig}${activeDots}<text x="5" y="97" font-size="7" font-weight="700" fill="#0F766E" font-family="system-ui,sans-serif">D</text><text x="89" y="97" font-size="7" font-weight="700" fill="#0F766E" font-family="system-ui,sans-serif">E</text></svg></div>
+      <div style="display:flex;justify-content:center;padding:14px"><svg viewBox="0 0 100 100" width="200" height="200" style="overflow:visible">${fig}${activeDots}<text x="5" y="90" font-size="6" font-weight="700" fill="#0F766E" font-family="system-ui,sans-serif">D</text><text x="91" y="90" font-size="6" font-weight="700" fill="#0F766E" font-family="system-ui,sans-serif">E</text></svg></div>
       <div style="padding:0 13px 13px;display:flex;flex-wrap:wrap;gap:5px">${chips}</div>
     </div>
     ${p.devInactive.length?`<div class="sub-card"><div class="sub-card-hdr">Dispositivos Retirados</div>${inactList}</div>`:''}`;
@@ -3870,22 +3927,29 @@ function renAlim() {
       <div class="sub-card-hdr">Intercorrências Alimentares</div>
       <div style="padding:13px">
         <div class="sect-lbl">Tipo de intercorrência</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px" id="ic-type-row">
-          ${['Vomitou','Bolsou','Estase Gástrica'].map(t=>`<button class="add-chip" id="ic-t-${t.replace(/\s/g,'_')}" onclick="icToggleType('${t}')">${t}</button>`).join('')}
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px">
+          ${['Vomitou','Bolsou','Estase Gástrica'].map(t=>`<button class="add-chip${_icSel.type===t?' sel':''}" onclick="icToggleType('${t}');renAlim()">${t}</button>`).join('')}
         </div>
         <div class="sect-lbl">Características</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:13px" id="ic-char-row">
-          ${['Alimentar','Aquoso','Bilioso','Fecaloide'].map(c=>`<button class="add-chip" id="ic-c-${c}" onclick="icToggleChar('${c}')">${c}</button>`).join('')}
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:13px">
+          ${['Alimentar','Aquoso','Bilioso','Fecaloide'].map(c=>`<button class="add-chip${_icSel.chars.includes(c)?' sel':''}" onclick="icToggleChar('${c}');renAlim()">${c}</button>`).join('')}
         </div>
-        <button class="btn btn-o" style="width:100%;font-weight:700" onclick="registarIntercorrencia()">⚠ Registar Intercorrência</button>
-        <div id="ic-history" style="margin-top:10px"></div>
+        <button class="btn btn-o" style="width:100%;font-weight:700${!_icSel.type?' opacity:.5;pointer-events:none':''}" onclick="registarIntercorrencia()">⚠ Registar Intercorrência</button>
+        ${n.intercorrencias&&n.intercorrencias.length?`<div style="margin-top:12px">
+          <div class="sect-lbl">Últimas intercorrências</div>
+          ${n.intercorrencias.slice(0,5).map(r=>`<div style="background:var(--s2);border-radius:8px;padding:7px 11px;margin-bottom:5px;border:1px solid var(--b)">
+            <span style="font-size:10px;color:var(--t3)">${ft(r.ts)}</span>&nbsp;
+            <strong style="font-size:12px;color:#F59E0B">⚠ ${esc(r.type)}</strong>
+            ${r.chars&&r.chars.length?`<span style="font-size:11px;color:var(--t2)"> · ${r.chars.join(', ')}</span>`:''}
+          </div>`).join('')}
+        </div>`:''}
       </div>
     </div>`;
 }
 
 const _icSel={type:null,chars:[]};
-function icToggleType(t){_icSel.type=_icSel.type===t?null:t;document.querySelectorAll('#ic-type-row .add-chip').forEach(b=>{b.classList.toggle('sel',b.textContent===_icSel.type);});}
-function icToggleChar(c){const idx=_icSel.chars.indexOf(c);if(idx>=0)_icSel.chars.splice(idx,1);else _icSel.chars.push(c);document.querySelectorAll('#ic-char-row .add-chip').forEach(b=>{b.classList.toggle('sel',_icSel.chars.includes(b.textContent));});}
+function icToggleType(t){_icSel.type=_icSel.type===t?null:t;}
+function icToggleChar(c){const idx=_icSel.chars.indexOf(c);if(idx>=0)_icSel.chars.splice(idx,1);else _icSel.chars.push(c);}
 function registarIntercorrencia(){
   if(!_icSel.type){showToast('Seleccione o tipo de intercorrência','warn');return;}
   const p=ST.patients[ST.idx];if(!p)return;
@@ -5222,11 +5286,12 @@ const _SYNC_WS_URL = 'wss://shiftcare.pedicode-app.workers.dev/sync/';
 const _SYNC_CODE_KEY = 'sc_sync_code';
 
 const _sync = {
-  ws:        null,
-  code:      null,
-  peers:     0,
-  status:    'off',  /* off | connecting | connected | error */
-  debounce:  null,
+  ws:          null,
+  code:        null,
+  peers:       0,
+  status:      'off',  /* off | connecting | connected | error */
+  debounce:    null,
+  pingInterval:null,
 };
 
 /* Gera código de sala aleatório: ex. A3F7 */
@@ -5299,6 +5364,13 @@ function _syncConnect(code){
       _syncUpdatePeersUI();
       /* Envia estado completo ao ligar */
       _syncSendState();
+      /* FIX #4: Keepalive ping a cada 25s — redes móveis fecham conexões idle */
+      clearInterval(_sync.pingInterval);
+      _sync.pingInterval=setInterval(()=>{
+        if(_sync.ws&&_sync.ws.readyState===WebSocket.OPEN){
+          try{_sync.ws.send(JSON.stringify({type:'ping'}));}catch{}
+        }
+      },25000);
     };
 
     ws.onmessage=(evt)=>{
@@ -5327,7 +5399,9 @@ function _syncConnect(code){
     };
 
     ws.onclose=()=>{
-      if(_sync.status==='connected'){
+      /* FIX #3: Reconecta se estava ligado OU em processo de ligar (timeout móvel) */
+      clearInterval(_sync.pingInterval);
+      if(_sync.status==='connected'||_sync.status==='connecting'){
         _sync.status='error';
         _syncUpdateBadge();
         /* Tenta reconectar após 5 segundos */
@@ -5347,6 +5421,7 @@ function _syncConnect(code){
 }
 
 function _syncDisconnectWS(){
+  clearInterval(_sync.pingInterval);
   if(_sync.ws){
     try{_sync.ws.close();}catch{}
     _sync.ws=null;
