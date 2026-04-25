@@ -1153,11 +1153,12 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
         </div>
         <!-- Accordion histórico de versões -->
         <div style="border-top:1px solid var(--b)">
-          <button onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')" style="width:100%;text-align:left;padding:11px 15px;background:none;border:none;cursor:pointer;font-size:12px;color:var(--t2);display:flex;justify-content:space-between;align-items:center">
+          <button onclick="const d=this.nextElementSibling;const open=d.style.display==='block';d.style.display=open?'none':'block';this.querySelector('.chev').style.transform=open?'':'rotate(180deg)'" style="width:100%;text-align:left;padding:11px 15px;background:none;border:none;cursor:pointer;font-size:12px;color:var(--t2);display:flex;justify-content:space-between;align-items:center">
             <span>📋 Histórico de versões</span><span class="chev" style="font-size:10px;transition:transform .2s">▼</span>
           </button>
           <div style="display:none;padding:0 15px 13px;font-size:12px;color:var(--t2);line-height:1.9" id="ver-hist">
-            <div><strong style="color:var(--t)">v3.5.0</strong> — Cuidados &amp; Intervenções reestruturados; Higiene cumulativa; Dinâmica de Turno; notas de turno editáveis/ilimitadas; registo automático em alimentação e dispositivos; About simplificado</div>
+            <div><strong style="color:var(--t)">v3.5.1</strong> — ABCDE com dropdown compacto; notas com scroll; figuras etárias simplificadas; acordeão Histórico de versões corrigido; registarCuidado actualiza notas imediatamente</div>
+            <div style="margin-top:6px"><strong style="color:var(--t)">v3.5.0</strong> — Cuidados &amp; Intervenções reestruturados; Higiene cumulativa; Dinâmica de Turno; notas de turno editáveis/ilimitadas; registo automático em alimentação e dispositivos; About simplificado</div>
             <div style="margin-top:6px"><strong style="color:var(--t)">v3.4.0</strong> — TAD no painel vitais; Registar Avaliação; Alergias visíveis; ABCDE com botões; Eliminação; Alimentação intercorrências; Sync WebSocket fixes; Figuras etárias</div>
             <div style="margin-top:6px"><strong style="color:var(--t)">v3.3.2</strong> — Backup Cloud cifrado AES-256; Sync WebSocket (Durable Objects); badge Sync</div>
             <div style="margin-top:6px"><strong style="color:var(--t)">v3.2</strong> — Calculadora de doses pediátricas; ISBAR; módulo aprendizagem</div>
@@ -1485,11 +1486,113 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 
 <script>
 'use strict';
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  S H I F T C A R E  ·  Índice do Script                    ║
+   ║  Versão gerida por APP_VERSION (procura "APP_VERSION")      ║
+   ╚══════════════════════════════════════════════════════════════╝
+
+   Para navegar: Ctrl+G / Cmd+G → número de linha,  ou
+                 Ctrl+F / Cmd+F → "§ XX" para ir à secção
+
+   § 01  CALCULADORA DE DOSES PEDIÁTRICAS
+         PEDI_DOSES, calcDose(), renderDoseCalc()
+
+   § 02  PREMIUM / LICENÇA
+         PREM_HASHES, _PREM_KEY, isPremium(), activatePremium()
+
+   § 03  CONSTANTES & UTILITÁRIOS GLOBAIS
+         APP_VERSION, SC_CUSTOM_CUIDADOS, uid(), esc(), ft()…
+
+   § 04  DADOS CLÍNICOS (arrays e constantes)
+         DEF_TASKS, VITALS_DEF, vRanges(), DEV_TYPES,
+         ABCDE_OPTS, UNIT_CHECK, NUTR_TYPES, ELIM_*…
+
+   § 05  ESTADO DA APLICAÇÃO
+         ST, mkPt(), save(), load(), trim()
+
+   § 06  BACKUP CLOUD (AES-256-GCM + Cloudflare KV)
+         exportBackup(), importBackup(), openBackupModal()
+         Cifragem: deriveKey(), encrypt(), decrypt()
+
+   § 07  NAVEGAÇÃO
+         goTo(), swTab(), openM(), closeM(), setCsec()
+
+   § 08  ADMISSÃO & GESTÃO DO DOENTE
+         openAdmission(), saveAdmission(), delPt()
+
+   § 09  ECRÃ INICIAL & SETUP
+         renderHome(), setupPanels(), continuarTurno()
+
+   § 10  DASHBOARD (cards dos doentes)
+         renderDash(), dashCard()
+
+   § 11  HISTÓRICO DE TURNOS
+         renderHist()
+
+   § 12  DETALHE DO DOENTE
+         renderDetail(), swTab()
+
+   § 13  VITAIS
+         renVitals(), registarAvaliacao(), calcPEWS(),
+         renVitalsHistory(), vSt()
+
+   § 14  CUIDADOS
+         14a  Notas do turno + ABCDE
+              renEnf(), addNoteText(), addNoteAuto(),
+              editNote(), delNote(), tglABCDE(), addABCDEToNotes()
+         14b  Cuidados & Intervenções + Higiene & Conforto
+              registarCuidado(), addIntervencao(),
+              getCustomCuidados(), addCustomCuidado(),
+              higiTgl(), registarHigiene(), addTodoDone()
+         14c  Posicionamento
+              setPositioning()
+         14d  Voz (speech-to-text)
+              tglVoice(), startVoice(), stopVoice()
+         14e  Dispositivos + Ventilação
+              renDev(), tglDevQ(), confDev(), retireDev()
+              renVentCard(), setVentMode()
+         14f  Dinâmica de Turno
+              renTodo(), addTodoC(), tglTodo(), rmTodo()
+
+   § 15  MEDICAÇÃO
+         renMedH(), renPerf(), openMedModal(), confMed(),
+         tglSusp(), medCardH(), perfCardH()
+
+   § 16  ALIMENTAÇÃO
+         renAlim(), nutrConfirm(), nutrInactivate(),
+         icToggleType(), registarIntercorrencia()
+
+   § 17  ELIMINAÇÃO
+         renElim(), registarEliminacao()
+
+   § 18  ANTECEDENTES / ISBAR
+         renISBAR(), renISBARDetail(), buildSum(), callAI()
+
+   § 19  OCR  (câmara → campo de texto)
+         startOCR(), stopOCR()
+
+   § 20  VOZ  (microfone → campo de texto)
+         startVoiceField(), stopVoiceField()
+
+   § 21  UTILITÁRIOS UI
+         showToast(), reqWakeLock(), openQR(), tglTheme(),
+         finalizeShift(), exportShift()
+
+   § 22  SINCRONIZAÇÃO WEBSOCKET
+         _syncConnect(), _syncDisconnectWS(),
+         _syncSendState(), _syncApplyState(), SyncRoom (worker)
+
+   § 23  BOOT
+         Sequência de arranque, service worker, safe-area
+
+   ══════════════════════════════════════════════════════════════ */
+
 // ── IA integrada ──────────────────────────────
 
-// ════════════════════════════════════════════════════════════
-// PEDIATRIC DOSE CALCULATOR - Common medications with ranges
-// ════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+// § 01 — CALCULADORA DE DOSES PEDIÁTRICAS
+// ══════════════════════════════════════════════════════════════
 const PEDI_DOSES = {
   'morfina': {min:0.05, max:0.2, unit:'mg/kg', maxSingle:15, freq:'4/4h', warn:'Depressão respiratória'},
   'fentanil': {min:1, max:4, unit:'mcg/kg', maxSingle:100, freq:'1/1h', warn:'Rigidez torácica'},
@@ -1560,7 +1663,7 @@ async function callAI(payload){
 }
 
 // ══════════════════════════════════════════════
-// MÓDULO: PREMIUM / FREEMIUM
+// § 02 — PREMIUM / LICENÇA
 // ══════════════════════════════════════════════
 const PREMIUM_FEATURES={
   voice: {
@@ -1595,7 +1698,10 @@ const PREMIUM_CODE_HASHES=new Set([
   '6dceca72a3a7a3b72f7ca0cde850747d8d863b1328d7bf631ef5ac9202253061', // SHIFTCARE-PREM-0005
 ]);
 
-const APP_VERSION = '3.5.0';
+// ══════════════════════════════════════════════
+// § 03 — CONSTANTES & UTILITÁRIOS GLOBAIS
+// ══════════════════════════════════════════════
+const APP_VERSION = '3.5.1';
 const SC_CUSTOM_CUIDADOS = 'sc_custom_cuidados'; /* cuidados aprendidos — global, persiste entre doentes */
 const _PREM_KEY='sc_premium_v1';
 
@@ -1762,7 +1868,7 @@ function showPermInstructions(){
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 const el=id=>document.getElementById(id);
 // ══════════════════════════════════════════════
-// MODULE: DATA
+// § 04 — DADOS CLÍNICOS  (DEF_TASKS, VITALS_DEF, DEV_TYPES, ABCDE_OPTS…)
 // ══════════════════════════════════════════════
 const VITALS_DEF=[{k:'hr',label:'FC',unit:'bpm',ph:'140'},{k:'spo2',label:'SpO₂',unit:'%',ph:'98'},{k:'rr',label:'FR',unit:'rpm',ph:'40'},{k:'temp',label:'Temp',unit:'°C',ph:'36.8'},{k:'sbp',label:'TAS',unit:'mmHg',ph:'80'},{k:'dbp',label:'TAD',unit:'mmHg',ph:'50'}];
 const DEF_TASKS=['Avaliação ABCDE completa','Controlo de sinais vitais','Administração de medicação','Balanço hídrico','Registo de escalas'];
@@ -1875,7 +1981,7 @@ function ptInfoPills(p){
 }
 
 // ══════════════════════════════════════════════
-// MODULE: STATE
+// § 05 — ESTADO DA APLICAÇÃO  (ST, mkPt, save, load, trim)
 // ══════════════════════════════════════════════
 let ST={patients:[],shiftStart:null,idx:0,screen:'s-setup',prevScreen:null,detTab:'vitais',csec:'enf',msec:'hor',isbarSec:null,ageU:'dias',ageUM:'dias',sd:[],sdm:[],qSel:[],medModalType:'hor',discIdx:null};
 let LEARN={meds:{},tasks:{},todos:{}};
@@ -2078,10 +2184,10 @@ function importBackup(event){
 
 function resetLearn(){if(!confirm('Resetar dados de aprendizagem?'))return;LEARN={meds:{},tasks:{},todos:{}};save();alert('Dados eliminados.');}
 
-// ══════════════════════════════════════════════════════════════════
-// BACKUP CLOUD CIFRADO — AES-256-GCM + PBKDF2 + Cloudflare KV
+// ══════════════════════════════════════════════
+// § 06 — BACKUP CLOUD  (AES-256-GCM + PBKDF2 + Cloudflare KV)
 // Zero-knowledge: a password nunca sai do dispositivo.
-// ══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 const BK_UID_KEY = 'sc_backup_uid';
 
 function _bkGetUserId(){
@@ -2294,7 +2400,7 @@ async function backupDelete(backupId){
 }
 
 // ══════════════════════════════════════════════
-// MODULE: NAVIGATION
+// § 07 — NAVEGAÇÃO  (showScreen, openM, closeM, goBack)
 // ══════════════════════════════════════════════
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));const e=el(id);if(e){e.classList.remove('hidden');ST.screen=id;}if(id==='s-dashboard'||id==='s-detail')resetPrivacyTimer();else{if(_privTimer)clearTimeout(_privTimer);document.getElementById('privacy-overlay')?.classList.remove('visible');}}
 function openM(id){const e=el(id);if(e)e.classList.add('open');}
@@ -2308,9 +2414,9 @@ function goBack(){
 }
 function goAbout(){ST.prevScreen=ST.screen;_updAboutPremium();showScreen('s-about');}
 
-// ══════════════════════════════════════════════════════════════════
-// MÓDULO DE INVESTIGAÇÃO CIENTÍFICA
-// ══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// § 08 — INVESTIGAÇÃO CIENTÍFICA  (PubMed / Europe PMC)
+// ══════════════════════════════════════════════
 const _RES={meshTerms:[],results:[],source:'pubmed',selectedPubtypes:new Set()};
 const PUBMED_BASE='https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
 const EUROPEPMC_BASE='https://www.ebi.ac.uk/europepmc/webservices/rest/';
@@ -2612,7 +2718,7 @@ function goHistorico(){renderHistorico();showScreen('s-historico');}
 document.querySelectorAll('.modal-ov').forEach(e=>{e.addEventListener('click',ev=>{if(ev.target===e)closeM(e.id);});});
 
 // ══════════════════════════════════════════════
-// MODULE: SETUP
+// § 09 — ECRÃ INICIAL & SETUP
 // ══════════════════════════════════════════════
 function setU(u,sc){
   const isM=sc==='m';
@@ -2723,7 +2829,7 @@ function deactivatePrivacy(){resetPrivacyTimer();}
 })();
 
 // ══════════════════════════════════════════════
-// MODULE: DASHBOARD
+// § 10 — DASHBOARD  (cards de doentes)
 // ══════════════════════════════════════════════
 function renderDash(){
   const active=ST.patients.filter(p=>p.status==='internado');
@@ -2839,7 +2945,7 @@ function openDisc(ri){ST.discIdx=ri;el('disc-name').textContent=ST.patients[ri]?
 function confDisc(type){const p=ST.patients[ST.discIdx];if(!p)return;p.status=type;p.dischargeAt=new Date().toISOString();p.dischargeNote=el('disc-note').value.trim();closeM('modal-disc');renderDash();save();}
 
 // ══════════════════════════════════════════════
-// MODULE: HISTÓRICO
+// § 11 — HISTÓRICO DE TURNOS
 // ══════════════════════════════════════════════
 function renderHistorico(){
   const disc=ST.patients.filter(p=>p.status!=='internado');
@@ -2865,7 +2971,7 @@ function renderHistorico(){
 function deleteHist(ri){if(!confirm('Eliminar definitivamente este registo?'))return;ST.patients.splice(ri,1);if(ST.idx>=ST.patients.length)ST.idx=Math.max(0,ST.patients.length-1);save();renderHistorico();}
 
 // ══════════════════════════════════════════════
-// MODULE: DETAIL
+// § 12 — DETALHE DO DOENTE  (tabs, swTab)
 // ══════════════════════════════════════════════
 function openDetail(ri){
   ST.idx=ri;const p=ST.patients[ri];if(!p)return;
@@ -2897,7 +3003,7 @@ function swTab(tab){
 }
 
 // ══════════════════════════════════════════════
-// MODULE: VITAIS
+// § 13 — VITAIS  (PEWS, trending, snapshot, registarAvaliacao)
 // ══════════════════════════════════════════════
 function renVitals(){
   const p=ST.patients[ST.idx];if(!p)return;
@@ -3118,7 +3224,7 @@ function openCam(){el('photo-input').click();}
 async function onPhoto(evt){if(!isPremium()){showPremiumModal('camera');evt.target.value='';return;}const file=evt.target.files[0];if(!file)return;const r=new FileReader();r.onload=async e=>{const b64=e.target.result.split(',')[1],mt=file.type||'image/jpeg';el('capture-img').src=e.target.result;el('capture-preview-wrap').style.display='block';const btn=el('cam-btn');if(btn){btn.textContent='⏳ A interpretar...';btn.disabled=true;}try{const res=await callAI({type:'vitals_image',b64,mt});const vals=JSON.parse((res.text||'{}').replace(/```json|```/g,'').trim());const p=ST.patients[ST.idx];if(!p)return;VITALS_DEF.forEach(v=>{if(vals[v.k]!==undefined)p.vitals[v.k]=String(vals[v.k]);});p.vitals.lastUp=new Date().toISOString();save();renVitals();alert(`✅ ${Object.keys(vals).length} valor(es) interpretado(s). Verifique!`);}catch(err){alert('Erro ao interpretar: '+err.message);}finally{el('capture-preview-wrap').style.display='none';if(btn){btn.textContent='📷 Capturar Ecrã';btn.disabled=false;}}};r.readAsDataURL(file);evt.target.value='';}
 
 // ══════════════════════════════════════════════
-// MODULE: CUIDADOS
+// § 14 — CUIDADOS  (enfermagem, ABCDE, intervenções, higiene, dispositivos, dinâmica)
 // ══════════════════════════════════════════════
 function setCsec(s){ST.csec=s;['enf','dev','todo'].forEach(k=>{const b=el('ct-'+k);if(b)b.classList.toggle('active',k===s);const sec=el('csec-'+k);if(sec)sec.style.display=k===s?'block':'none';});renCsec(s);}
 function renCsec(s){if(s==='enf')renEnf();if(s==='dev')renDev();if(s==='todo')renTodo();}
@@ -3137,26 +3243,20 @@ function renEnf(){
       <button class="rm-btn" style="font-size:11px;padding:1px 5px;color:var(--red)" onclick="delNote(${i})" title="Eliminar">✕</button>
     </span>
   </div>`;
-  const visibleNotes=p.notes.slice(0,8);
-  const extraCount=p.notes.length-8;
-  const notesBaseHTML=visibleNotes.map((n,i)=>_noteHTML(n,i)).join('');
-  const notesExtra=extraCount>0?`
-    <div id="notes-extra" style="display:none">
-      ${p.notes.slice(8).map((n,i)=>_noteHTML(n,i+8)).join('')}
-    </div>
-    <button class="btn btn-o" style="width:100%;font-size:11px;margin-top:6px" id="notes-expand-btn"
-      onclick="this.style.display='none';document.getElementById('notes-extra').style.display='block'">
-      ▼ Ver mais ${extraCount} registos
-    </button>`:'';
-  const notes=p.notes.length?(notesBaseHTML+notesExtra):'<div class="empty-st">Sem notas</div>';
-  // 2. ABCDE com botões
+  const allNotesHTML=p.notes.map((n,i)=>_noteHTML(n,i)).join('');
+  const notes=p.notes.length
+    ?`<div id="notes-scroll" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:0">${allNotesHTML}</div>`
+    :'<div class="empty-st">Sem notas</div>';
+  // 2. ABCDE com dropdowns compactos
   const abcde=ABCDE_DEF.map(a=>{
     const sel=p.abcdeSel?.[a.key]||[];
-    const opts=(ABCDE_OPTS[a.key]||[]).map(o=>`<button class="i-chip${sel.includes(o)?' sel':''}" onclick="tglABCDE('${a.key}','${o.replace(/'/g,"\\'")}');renEnf()" style="font-size:11px;padding:5px 9px">${o}</button>`).join('');
+    const opts=(ABCDE_OPTS[a.key]||[]).map(o=>`<option value="${esc(o)}"${sel.includes(o)?' selected':''}>${esc(o)}</option>`).join('');
+    const selLabel=sel.length?`<div style="font-size:10px;color:var(--p);margin-top:3px;margin-bottom:4px">${sel.join(' · ')}</div>`:'';
     return`<div class="abcde-item">
       <div class="abcde-hdr"><div class="abcde-key">${a.key}</div><div><div class="abcde-title">${a.title}</div></div></div>
-      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px">${opts}</div>
-      <textarea class="abcde-inp" rows="1" placeholder="Observações adicionais..." oninput="saveABCDE('${a.key}',this.value)" style="min-height:34px">${p.abcde?.[a.key]||''}</textarea>
+      <select multiple id="abcde-sel-${a.key}" onchange="tglABCDESel('${a.key}',this)" style="width:100%;font-size:11px;border:1.5px solid var(--b);border-radius:6px;background:var(--s);color:var(--t1);padding:2px 4px;height:64px;margin-bottom:4px">${opts}</select>
+      ${selLabel}
+      <textarea class="abcde-inp" rows="1" placeholder="Observações adicionais..." oninput="saveABCDE('${a.key}',this.value)" style="min-height:30px">${p.abcde?.[a.key]||''}</textarea>
     </div>`;
   }).join('');
   // 3. Posicionamento
@@ -3263,6 +3363,7 @@ function saveNoteEdit(i){
 }
 let _abcT={};function saveABCDE(k,v){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcde)p.abcde={};p.abcde[k]=v;clearTimeout(_abcT[k]);_abcT[k]=setTimeout(()=>save(),600);}
 function tglABCDE(k,opt){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcdeSel)p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};const arr=p.abcdeSel[k]||(p.abcdeSel[k]=[]);const i=arr.indexOf(opt);if(i>=0)arr.splice(i,1);else arr.push(opt);save();}
+function tglABCDESel(k,selectEl){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcdeSel)p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};p.abcdeSel[k]=Array.from(selectEl.selectedOptions).map(o=>o.value);save();const lbl=selectEl.nextElementSibling;if(lbl&&lbl.tagName!=='TEXTAREA'){lbl.textContent=p.abcdeSel[k].join(' · ');lbl.style.display=p.abcdeSel[k].length?'block':'none';}}
 function addABCDEToNotes(){
   const p=ST.patients[ST.idx];if(!p)return;
   if(!p.abcdeSel)p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};
@@ -3273,7 +3374,7 @@ function addABCDEToNotes(){
   /* Reset selections after registering */
   p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};save();renEnf();
 }
-function registarCuidado(txt){addNoteAuto('✓ '+txt);addTodoDone(txt);showToast(txt+' registado ✓','ok');}
+function registarCuidado(txt){addNoteAuto('✓ '+txt);addTodoDone(txt);save();renEnf();showToast(txt+' registado ✓','ok');}
 
 /* ─── Cuidados aprendidos globalmente (persiste entre doentes) ─── */
 function getCustomCuidados(){try{return JSON.parse(localStorage.getItem(SC_CUSTOM_CUIDADOS)||'[]');}catch{return[];}}
@@ -3465,15 +3566,13 @@ function renDev(){
     }
     const col=dt.id.includes('art')||dt.id==='uac'?'#DC2626':dt.id.includes('cvc')||dt.id==='picc'||dt.id==='uvc'?'#3B82F6':dt.id==='ett'||dt.id==='capno'?'#10B981':dt.id.includes('epi')||dt.id.includes('peri')||dt.id==='bis'?'#7C3AED':'#F59E0B';
     const lbl=dt.label+(dev.location?' — '+dev.location:'');
-    return`<circle cx="${cx}" cy="${cy}" r="3.5" fill="${col}" stroke="white" stroke-width="1"><title>${lbl}</title></circle>`;
+    return`<circle cx="${cx}" cy="${cy}" r="3" fill="${col}" stroke="white" stroke-width="0.9"><title>${lbl}</title></circle>`;
   }).join('');
-  /* FIX #4: figuras por grupo etário com proporções anatómicas correctas */
+  /* Figuras etárias — simples, sem olhos/boca/labels */
   const fig=cat==='neo'
-    /* Neonato: macrocefalia típica, tronco curto, membros muito curtos */
-    ?`<g stroke="#B45309" stroke-width="1.3" fill="none">
+    /* Neonato: cabeça grande (macrocefalia), tronco oval curto */
+    ?`<g stroke="#D97706" stroke-width="1.3" fill="none">
         <circle cx="50" cy="15" r="13" fill="#FDE68A" stroke="#D97706"/>
-        <circle cx="45.5" cy="14" r="1.4" fill="#92400E"/><circle cx="54.5" cy="14" r="1.4" fill="#92400E"/>
-        <path d="M46 18.5 Q50 21 54 18.5" stroke="#D97706" stroke-width="0.9"/>
         <rect x="47" y="27.5" width="6" height="3" rx="1" fill="#FDE68A" stroke="#D97706"/>
         <ellipse cx="50" cy="42" rx="13" ry="11" fill="#FDE68A" stroke="#D97706"/>
         <circle cx="50" cy="43" r="1.6" fill="none" stroke="#D97706" stroke-width="0.9"/>
@@ -3481,34 +3580,27 @@ function renDev(){
         <path d="M63 35 Q74 33 78 42" stroke-linecap="round" stroke="#94A3B8"/>
         <path d="M44 53 Q41 64 40 73" stroke-linecap="round" stroke="#94A3B8"/>
         <path d="M56 53 Q59 64 60 73" stroke-linecap="round" stroke="#94A3B8"/>
-        <text x="50" y="96" text-anchor="middle" font-size="6" fill="#0F766E" font-family="system-ui,sans-serif" font-weight="600">Neonato</text>
       </g>`
     :cat==='lac'
-    /* Lactente: cabeça grande mas <neo, barriga proeminente */
-    ?`<g stroke="#B45309" stroke-width="1.3" fill="none">
-        <circle cx="50" cy="12" r="10.5" fill="#FDE68A" stroke="#D97706"/>
-        <circle cx="45.5" cy="11" r="1.2" fill="#92400E"/><circle cx="54.5" cy="11" r="1.2" fill="#92400E"/>
-        <path d="M46.5 15.5 Q50 18 53.5 15.5" stroke="#D97706" stroke-width="0.9"/>
-        <rect x="47" y="22" width="6" height="3" rx="1" fill="#FDE68A" stroke="#D97706"/>
-        <ellipse cx="50" cy="38" rx="12" ry="13" fill="#FDE68A" stroke="#D97706"/>
-        <path d="M38 29 Q26 33 24 46" stroke-linecap="round" stroke="#94A3B8"/>
-        <path d="M62 29 Q74 33 76 46" stroke-linecap="round" stroke="#94A3B8"/>
-        <path d="M44 51 Q41 63 40 74" stroke-linecap="round" stroke="#94A3B8"/>
-        <path d="M56 51 Q59 63 60 74" stroke-linecap="round" stroke="#94A3B8"/>
-        <text x="50" y="96" text-anchor="middle" font-size="6" fill="#0F766E" font-family="system-ui,sans-serif" font-weight="600">Lactente</text>
+    /* Lactente: cabeça grande, barriga proeminente */
+    ?`<g stroke="#D97706" stroke-width="1.3" fill="none">
+        <circle cx="50" cy="13" r="11" fill="#FDE68A" stroke="#D97706"/>
+        <rect x="47" y="23.5" width="6" height="3" rx="1" fill="#FDE68A" stroke="#D97706"/>
+        <ellipse cx="50" cy="40" rx="12" ry="13" fill="#FDE68A" stroke="#D97706"/>
+        <path d="M38 31 Q26 33 24 46" stroke-linecap="round" stroke="#94A3B8"/>
+        <path d="M62 31 Q74 33 76 46" stroke-linecap="round" stroke="#94A3B8"/>
+        <path d="M44 53 Q41 64 40 74" stroke-linecap="round" stroke="#94A3B8"/>
+        <path d="M56 53 Q59 64 60 74" stroke-linecap="round" stroke="#94A3B8"/>
       </g>`
-    /* Criança: proporções mais adultas, pescoço visível */
-    :`<g stroke="#B45309" stroke-width="1.3" fill="none">
+    /* Criança: pescoço visível, tronco rectangular */
+    :`<g stroke="#D97706" stroke-width="1.3" fill="none">
         <circle cx="50" cy="9" r="8.5" fill="#FDE68A" stroke="#D97706"/>
-        <circle cx="46" cy="8" r="1.1" fill="#92400E"/><circle cx="54" cy="8" r="1.1" fill="#92400E"/>
-        <path d="M47 12.5 Q50 15 53 12.5" stroke="#D97706" stroke-width="0.9"/>
         <rect x="47.5" y="17" width="5" height="4" rx="1" fill="#FDE68A" stroke="#D97706"/>
         <rect x="40" y="21" width="20" height="25" rx="4" fill="#FDE68A" stroke="#D97706"/>
         <path d="M40 25 Q29 29 26 43" stroke-linecap="round" stroke="#94A3B8"/>
         <path d="M60 25 Q71 29 74 43" stroke-linecap="round" stroke="#94A3B8"/>
         <path d="M44 46 L41 68" stroke-linecap="round" stroke="#94A3B8"/>
         <path d="M56 46 L59 68" stroke-linecap="round" stroke="#94A3B8"/>
-        <text x="50" y="96" text-anchor="middle" font-size="6" fill="#0F766E" font-family="system-ui,sans-serif" font-weight="600">Criança</text>
       </g>`;
   const devList=p.devices.map((d,i)=>`<div class="dev-item"><span class="dev-icon">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl">${esc(d.label)}</div>${d.location?`<div class="dev-sub">${esc(d.location)}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${esc(d.gauge)}${d.side?' · '+d.side:''}</div>`:''}</div><button class="btn btn-o btn-sm" style="font-size:11px;color:var(--red);border-color:#FECACA" onclick="retireDev(${i})">Retirar</button></div>`).join('')||'<div class="empty-st">Sem dispositivos activos</div>';
   const inactList=p.devInactive.map((d,i)=>`<div class="dev-item" style="opacity:.6"><span class="dev-icon" style="opacity:.5">${d.icon||'💉'}</span><div style="flex:1"><div class="dev-lbl" style="text-decoration:line-through">${esc(d.label)}</div>${d.location?`<div class="dev-sub">${esc(d.location)}</div>`:''}${d.gauge&&d.gauge!=='N/A'?`<div class="dev-sub">${esc(d.gauge)}${d.side?' · '+d.side:''}</div>`:''}<div class="dev-removed-lbl">Retirado: ${d.removedAt?fd(d.removedAt):'—'}</div></div><button class="rm-btn" onclick="delInactiveDev(${i})" title="Eliminar">🗑</button></div>`).join('');
@@ -3625,7 +3717,7 @@ function tglTodo(i){const p=ST.patients[ST.idx];if(!p)return;p.todos[i].done=!p.
 function rmTodo(i){const p=ST.patients[ST.idx];if(!p)return;p.todos.splice(i,1);save();renTodo();}
 
 // ══════════════════════════════════════════════
-// MODULE: MEDICAÇÃO
+// § 15 — MEDICAÇÃO  (horárias, perfusões, histórico)
 // ══════════════════════════════════════════════
 function setMsec(s){ST.msec=s;['hor','perf','hist'].forEach(k=>{const b=el('mt-'+k);if(b)b.classList.toggle('active',k===s);});renMsec(s);}
 function renMsec(s){if(s==='hor')renMedH();if(s==='perf')renPerf();if(s==='hist')renMedHist();}
@@ -3882,8 +3974,7 @@ function archiveMed(i){
 function setFH(i,h){const p=ST.patients[ST.idx];if(!p)return;p.medications[i].firstHour=parseInt(h);save();renMsec(ST.msec);}
 
 // ══════════════════════════════════════════════
-// ══════════════════════════════════════════════
-// MODULE: ALIMENTAÇÃO
+// § 16 — ALIMENTAÇÃO  (prescrição, intercorrências)
 // ══════════════════════════════════════════════
 
 // Ensure nutrition data structure is correct
@@ -4164,8 +4255,7 @@ function nutrSummary(p) {
 }
 
 // ══════════════════════════════════════════════
-// ══════════════════════════════════════════════
-// MODULE: ELIMINAÇÃO
+// § 17 — ELIMINAÇÃO  (urina, fezes)
 // ══════════════════════════════════════════════
 const _elimSel={tipo:null,via:null,chars:[]};
 const ELIM_TIPOS=[
@@ -4232,7 +4322,7 @@ function registarEliminacao(){
 }
 
 // ══════════════════════════════════════════════
-// MODULE: ANTECEDENTES / ISBAR
+// § 18 — ANTECEDENTES / ISBAR  (callAI, buildSum, copyISBAR)
 // ══════════════════════════════════════════════
 function renISBAR(){ST.isbarSec?renISBARDetail(ST.isbarSec):renISBARCards();}
 function renISBARCards(){
@@ -4266,6 +4356,9 @@ function renISBARDetail(s){
 function saveAP(){const p=ST.patients[ST.idx];if(!p)return;p.antecedentes=el('ap-inp').value;save();showToast('Antecedentes guardados ✓','ok');ST.isbarSec=null;renISBAR();}
 function saveHDA(){const p=ST.patients[ST.idx];if(!p)return;p.hda=el('hda-inp').value;save();showToast('HDA guardada ✓','ok');ST.isbarSec=null;renISBAR();}
 
+// ══════════════════════════════════════════════
+// § 19 — OCR  (câmara → campo de texto)
+// ══════════════════════════════════════════════
 // ─── OCR de câmara para campo de texto ────────
 // Estado do crop
 const _crop={fieldId:null,btnId:null,img:null,startX:0,startY:0,endX:0,endY:0,dragging:false,scaleX:1,scaleY:1};
@@ -4425,6 +4518,9 @@ async function confirmCrop(){
   }
 }
 
+// ══════════════════════════════════════════════
+// § 20 — VOZ  (microfone → campo de texto)
+// ══════════════════════════════════════════════
 // ─── Voz para campo de texto ──────────────────
 function voiceToField(fieldId,btnId){
   if(!isPremium()){showPremiumModal('voice');return;}
@@ -4490,7 +4586,7 @@ async function genISBAR(all){
 function copyISBAR(){navigator.clipboard?.writeText(el('isbar-text')?.textContent||'');const b=document.querySelector('[onclick="copyISBAR()"]');if(b){b.textContent='Copiado ✓';setTimeout(()=>b.textContent='Copiar Relatório',2000);}}
 
 // ══════════════════════════════════════════════
-// CLOCK + INIT
+// § 23 — BOOT  (clock, wake-lock, safe-area, boot sequence)
 // ══════════════════════════════════════════════
 // ── Wake Lock — keeps screen on ──────────────────────────────────────────────
 let _wl=null;
@@ -4531,7 +4627,7 @@ const af=el('about-footer');if(af)af.textContent='ShiftCare v'+APP_VERSION+' © 
 
 
 // ══════════════════════════════════════════════
-// FASE 1 — Funções implementadas
+// § 21 — UTILITÁRIOS UI  (toast, QR, finalizar turno, tema)
 // ══════════════════════════════════════════════
 
 // ── Toast de feedback ──────────────────────────────────────────────────────
@@ -5390,6 +5486,9 @@ function iosDismiss(){
   localStorage.setItem(_iosKey,Date.now().toString());
 }
 
+// ══════════════════════════════════════════════
+// § 22 — SINCRONIZAÇÃO WEBSOCKET  (_syncConnect, SyncRoom)
+// ══════════════════════════════════════════════
 /* ══════════════════════════════════════════════════════════════════
    SINCRONIZAÇÃO WEBSOCKET — ShiftCare Sync
    Relay em tempo real entre dois dispositivos via Cloudflare

@@ -5,6 +5,17 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-PT/1.0.0/).
 
 ---
 
+## [3.5.1] — Abril 2026
+
+### Corrigido
+- **Acordeão "Histórico de versões"** — botão agora usa `style.display` directamente em vez de `classList.toggle('open')`, que não funcionava sem regra CSS associada; seta roda 180° ao abrir
+- **registarCuidado()** — adicionado `save(); renEnf();` para que as notas do turno actualizem visualmente de imediato ao registar colheitas, aspirações e comunicação com a família
+- **Notas do turno — scroll em vez de expandir/colapsar** — substituído o botão "Ver mais N registos" por um container com `max-height:320px; overflow-y:auto`; todas as notas visíveis sem interacção extra
+- **Figuras etárias simplificadas** — removidos olhos, boca e etiquetas de texto (Neonato/Lactente/Criança) de todos os 3 silhuetes; pontos de dispositivo reduzidos de r=3.5 → r=3; silhueta do lactente revertida para versão mais robusta sem detalhes faciais
+- **Avaliação ABCDE compacta** — substituídos chips clicáveis por `<select multiple>` (height 64px, ~4 opções visíveis) + rótulo com selecções actuais + textarea de observações; muito menos altura por componente; nova função `tglABCDESel()` sincroniza o estado
+
+---
+
 ## [3.5.0] — Abril 2026
 
 ### Adicionado
