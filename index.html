@@ -298,7 +298,9 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 .abcde-key{width:24px;height:24px;background:var(--p);color:#fff;border-radius:6px;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .abcde-title{font-weight:700;font-size:13px}
 .abcde-desc{font-size:10px;color:var(--t2);margin-top:2px;line-height:1.5}
-.abcde-inp{font-size:12px;padding:7px 9px;min-height:48px;margin-top:2px}
+.abcde-inp{font-size:12px;padding:7px 9px;min-height:36px;margin-top:2px}
+.abcde-chip{font-size:11px;padding:4px 10px;border-radius:20px;border:1.5px solid var(--b);background:var(--s);color:var(--t2);cursor:pointer;transition:background .12s,color .12s,border-color .12s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.abcde-chip.active{background:var(--p);color:#fff;border-color:var(--p)}
 /* Notes */
 .note-it{padding:6px 0;border-bottom:1px solid var(--b);display:flex;gap:7px}.note-it:last-child{border-bottom:none}
 .note-t{font-size:10px;font-weight:800;color:var(--p);white-space:nowrap;padding-top:2px;font-family:monospace}
@@ -1711,6 +1713,34 @@ function getDoseAlert(medName, doseValue, weightKg) {
 }
 
 const WORKER_URL='https://shiftcare.pedicode-app.workers.dev';
+
+/* Sanitização de input antes de enviar ao LLM — previne prompt injection */
+function _sanitizeForAI(str){
+  if(!str||typeof str!=='string')return '';
+  return str
+    .slice(0,500)
+    .replace(/ignore\s+(previous|all|above|these)\s+instructions?/gi,'[filtrado]')
+    .replace(/\bsystem\s*:/gi,'[filtrado]:')
+    .replace(/você\s+é\s+agora\b/gi,'[filtrado]')
+    .replace(/act\s+as\b/gi,'[filtrado]')
+    .replace(/pretend\s+you\s+are\b/gi,'[filtrado]')
+    .trim();
+}
+
+/* Verificação periódica de quota localStorage */
+let _storageCheckN=0;
+async function _checkStorageQuota(){
+  if(++_storageCheckN%10!==0)return; // só verifica cada 10 saves
+  if(!navigator.storage?.estimate)return;
+  try{
+    const {usage,quota}=await navigator.storage.estimate();
+    if(quota>0&&usage/quota>0.80){
+      const mb=(usage/1024/1024).toFixed(0);
+      showToast(`⚠ Armazenamento ${Math.round(usage/quota*100)}% usado (${mb} MB). Considera exportar um backup.`,'warn');
+    }
+  }catch{}
+}
+
 async function callAI(payload,timeoutMs=15000){
   const ac=new AbortController();
   const tid=setTimeout(()=>ac.abort(),timeoutMs);
@@ -1753,19 +1783,14 @@ const PREMIUM_FEATURES={
    crypto.subtle.digest('SHA-256',new TextEncoder().encode('CODIGO'))
      .then(b=>console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')))
    ── */
-const PREMIUM_CODE_HASHES=new Set([
-  '711176afb98c215b7a7146214aff5b2cab7df2a557a97f58af66309cf3646b51', // SHIFTCARE-BETA-2025
-  'd81ee275fd533e7cb59eeeaa34445ac6e3ad42307a5d559d61d1868b97f0016f', // SHIFTCARE-PREM-0001
-  '01b17d050ed8e16fd5db034404f0979e67f9e2a0e6d9a4b3188d07c897fea7d2', // SHIFTCARE-PREM-0002
-  '0da582a908694294799f2acf03f186d5769ec43b52cfddd65fabe5a2906a125e', // SHIFTCARE-PREM-0003
-  'e86346bc39f349e952dea585a46a404d950ef48ad808882621723442093e2d49',  // SHIFTCARE-PREM-0004
-  '6dceca72a3a7a3b72f7ca0cde850747d8d863b1328d7bf631ef5ac9202253061', // SHIFTCARE-PREM-0005
-]);
+/* Validação de licenças movida para o Worker (server-side via Lemon Squeezy).
+   Hashes locais removidos para evitar bypass por engenharia inversa. */
+const PREMIUM_CODE_HASHES=new Set([]);
 
 // ══════════════════════════════════════════════
 // § 03 — CONSTANTES & UTILITÁRIOS GLOBAIS
 // ══════════════════════════════════════════════
-const APP_VERSION = '3.5.2';
+const APP_VERSION = '3.5.3';
 const SC_CUSTOM_CUIDADOS = 'sc_custom_cuidados'; /* cuidados aprendidos — global, persiste entre doentes */
 const _PREM_KEY='sc_premium_v1';
 
@@ -1939,11 +1964,11 @@ const DEF_TASKS=['Avaliação ABCDE completa','Controlo de sinais vitais','Admin
 const ABCDE_DEF=[{key:'A',title:'Airway — Via Aérea',desc:'Permeabilidade, secreções, dispositivos (ETT, máscara, O₂)'},{key:'B',title:'Breathing — Respiração',desc:'FR, SpO₂, padrão respiratório, trabalho ventilatório, auscultação'},{key:'C',title:'Circulation — Circulação',desc:'FC, TAS, perfusão periférica, TRC, cor da pele, diurese'},{key:'D',title:'Disability — Neurológico',desc:'Consciência (AVPU/GCS), pupilas, tónus, convulsões, dor'},{key:'E',title:'Exposure — Exposição',desc:'Temperatura, pele, lesões, edema, drenos, feridas, cateteres'}];
 const UNIT_CHECK=['Insuflador manual presente e funcional','Aspiração funcionante (teste)','Sondas de aspiração disponíveis','Débito-metro de O₂ (≥15 L/min)','Debitómetro funcionante','Unidade organizada e limpa','Medicação de urgência acessível'];
 const ABCDE_OPTS={
-  A:['Permeável','Via comprometida','ETT oral','ETT nasal','Traqueostomia','Máscara O₂','Óculos O₂','Secreções abundantes','Via artificial em bom estado'],
-  B:['Padrão normal','Dificuldade resp.','Taquipneia','Bradipneia','Apneia','Ausculta limpa','Fervores','Sibilos','Roncos','Cianose labial','Tiragem'],
-  C:['Bem perfundido','TRC > 2s','Palidez','Cianose periférica','Pele marmoreada','Edema','Taquicardia','Bradicardia','Hipotensão','Normotenso'],
-  D:['Alerta (A)','Responde à voz (V)','Responde à dor (P)','Inconsciente (U)','Pupilas normais/isocóricas','Midríase','Miose','Anisocoria','Convulsão','Agitado','Sedado','Dor (FLACC)'],
-  E:['Normotermia','Hipertermia','Hipotermia','Pele íntegra','Lesões cutâneas','Edema generalizado','Drenos funcionantes','Ferida sem infecção','Ferida com sinais de infecção','Exantema'],
+  A:['Permeável','ETT / Entubado','Traqueostomia','O₂ por máscara / óculos','Secreções / Aspiração'],
+  B:['Padrão normal','Dificuldade resp. / Tiragem','Taquipneia','Ventilação mecânica','SpO₂ baixo / Cianose'],
+  C:['Bem perfundido','Taquicardia','Hipotensão','TRC > 2s / Má perfusão','Edema'],
+  D:['Alerta (A)','Sedado / Analgesiado','Agitado','Pupilas normais','Convulsão / GCS alterado'],
+  E:['Pele íntegra / Normotermia','Hipertermia','Hipotermia','Lesões / Feridas','Exantema / Rash'],
 };
 const TODO_ITEMS=[{cat:'Análises',items:['Sangue','Urina','Secreções','LCR','Exsudado']},{cat:'Gasimetria',items:['Capilar','Venosa','Arterial']},{cat:'Outros',items:['Balanço hídrico','Mudar drenos','Aspirar secreções','Pesar doente','ECG','Rx Tórax']}];
 const DEV_TYPES=[
@@ -2109,6 +2134,8 @@ function save(){
   }
   /* Propaga alterações para colegas na sala de sync (debounce 1.5s) */
   if(typeof _syncOnSave==='function')_syncOnSave();
+  /* Verifica quota periodicamente (cada 10 saves) */
+  _checkStorageQuota();
 }
 function loadData(){try{
   // Try v22 first, fall back to v21
@@ -3450,15 +3477,13 @@ function renEnf(){
   const notes=p.notes.length
     ?`<div id="notes-scroll" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:0">${allNotesHTML}</div>`
     :'<div class="empty-st">Sem notas</div>';
-  // 2. ABCDE com dropdowns compactos
+  // 2. ABCDE com chips compactos (4-5 opções por letra)
   const abcde=ABCDE_DEF.map(a=>{
     const sel=p.abcdeSel?.[a.key]||[];
-    const opts=(ABCDE_OPTS[a.key]||[]).map(o=>`<option value="${esc(o)}"${sel.includes(o)?' selected':''}>${esc(o)}</option>`).join('');
-    const selLabel=sel.length?`<div style="font-size:10px;color:var(--p);margin-top:3px;margin-bottom:4px">${sel.join(' · ')}</div>`:'';
+    const chips=(ABCDE_OPTS[a.key]||[]).map(o=>`<button class="abcde-chip${sel.includes(o)?' active':''}" data-abcde="${a.key}" data-opt="${esc(o)}" onclick="tglABCDEChip('${a.key}',this)">${esc(o)}</button>`).join('');
     return`<div class="abcde-item">
       <div class="abcde-hdr"><div class="abcde-key">${a.key}</div><div><div class="abcde-title">${a.title}</div></div></div>
-      <select multiple id="abcde-sel-${a.key}" onchange="tglABCDESel('${a.key}',this)" style="width:100%;font-size:11px;border:1.5px solid var(--b);border-radius:6px;background:var(--s);color:var(--t1);padding:2px 4px;height:64px;margin-bottom:4px">${opts}</select>
-      ${selLabel}
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${chips}</div>
       <textarea class="abcde-inp" rows="1" placeholder="Observações adicionais..." oninput="saveABCDE('${a.key}',this.value)" style="min-height:30px">${p.abcde?.[a.key]||''}</textarea>
     </div>`;
   }).join('');
@@ -3565,8 +3590,7 @@ function saveNoteEdit(i){
   p.notes[i].text=txt;save();renEnf();showToast('Nota actualizada ✓','ok');
 }
 let _abcT={};function saveABCDE(k,v){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcde)p.abcde={};p.abcde[k]=v;clearTimeout(_abcT[k]);_abcT[k]=setTimeout(()=>save(),600);}
-function tglABCDE(k,opt){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcdeSel)p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};const arr=p.abcdeSel[k]||(p.abcdeSel[k]=[]);const i=arr.indexOf(opt);if(i>=0)arr.splice(i,1);else arr.push(opt);save();}
-function tglABCDESel(k,selectEl){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcdeSel)p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};p.abcdeSel[k]=Array.from(selectEl.selectedOptions).map(o=>o.value);save();const lbl=selectEl.nextElementSibling;if(lbl&&lbl.tagName!=='TEXTAREA'){lbl.textContent=p.abcdeSel[k].join(' · ');lbl.style.display=p.abcdeSel[k].length?'block':'none';}}
+function tglABCDEChip(k,btn){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcdeSel)p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};const opt=btn.dataset.opt;const arr=p.abcdeSel[k]||(p.abcdeSel[k]=[]);const i=arr.indexOf(opt);if(i>=0)arr.splice(i,1);else arr.push(opt);btn.classList.toggle('active',arr.includes(opt));save();}
 function addABCDEToNotes(){
   const p=ST.patients[ST.idx];if(!p)return;
   if(!p.abcdeSel)p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};
@@ -4762,12 +4786,12 @@ function buildSum(p){
   const devs=(p.devices||[]).map(d=>d.label+(d.location?' '+d.location:'')+(d.gauge?' '+d.gauge:'')).join(',')||'sem dispositivos';
   const meds=(p.medications||[]).map(m=>`${esc(m.name)} ${m.dose}${m.unit}${m.freq==='Contínua'?' contínuo':' '+m.freq}`).join(';')||'n/r';
   const nutr=nutrSummary(p);
-  const alrg=p.allergies||'sem alergias conhecidas';
+  const alrg=_sanitizeForAI(p.allergies)||'sem alergias conhecidas';
   return`Cama:${esc(p.bed)}|Idade:${ageLabel(p)}${p.weightKg?'|Peso:'+p.weightKg+'kg':''}${p.gestWeeks?'|IG:'+p.gestWeeks+'s':''} ${ca?'|IC:'+ca:''}
 Alergias:${alrg}
-DX:${p.diagMain||'n/e'}|Sec:${p.diagSec.join(',')||'nenhum'}
-AP:${p.antecedentes||'n/r'}
-HDA:${p.hda||'n/r'}
+DX:${_sanitizeForAI(p.diagMain)||'n/e'}|Sec:${p.diagSec.map(_sanitizeForAI).join(',')||'nenhum'}
+AP:${_sanitizeForAI(p.antecedentes)||'n/r'}
+HDA:${_sanitizeForAI(p.hda)||'n/r'}
 Vitais:${vStr}
 Dispositivos:${devs}
 Medicação:${meds}
