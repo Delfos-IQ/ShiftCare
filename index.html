@@ -480,11 +480,23 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
 @media(orientation:landscape){
   #landscape-overlay{display:flex}
 }
-#privacy-overlay{position:fixed;inset:0;z-index:9990;background:rgba(15,23,42,0.82);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .35s}
+#privacy-overlay{position:fixed;inset:0;z-index:9990;background:rgba(15,23,42,0.88);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;opacity:0;pointer-events:none;transition:opacity .35s}
 #privacy-overlay.visible{opacity:1;pointer-events:all}
-.priv-icon{font-size:48px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.priv-icon{font-size:44px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));margin-bottom:2px}
 .priv-msg{color:#fff;font-size:17px;font-weight:700;letter-spacing:-.2px}
 .priv-sub{color:rgba(255,255,255,.6);font-size:13px}
+#priv-tap{display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;padding:28px}
+#priv-pin{display:none;flex-direction:column;align-items:center;gap:0}
+#pin-setup-overlay{position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+#pin-pad,#pin-setup-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:258px;margin-top:14px}
+.pin-key{height:64px;border-radius:14px;background:rgba(255,255,255,.13);border:1.5px solid rgba(255,255,255,.16);font-size:24px;font-weight:500;color:#fff;cursor:pointer;transition:background .1s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.pin-key:active{background:rgba(255,255,255,.32)}
+.pin-dots-row{display:flex;justify-content:center;gap:16px;margin:18px 0 6px}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.45);transition:all .15s}
+.pin-dot.filled{background:#fff;border-color:#fff;transform:scale(1.15)}
+.pin-err-msg{font-size:13px;color:#FCA5A5;min-height:20px;text-align:center;margin-bottom:2px}
+@keyframes pinShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.pin-shake{animation:pinShake .38s ease-in-out}
 /* Field action buttons (OCR + Voice) */
 .field-actions{display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap}
 .btn-field-act{display:flex;align-items:center;gap:5px;padding:7px 12px;font-size:12px;font-weight:700;border:1.5px solid var(--b);border-radius:20px;background:var(--s);color:var(--t1);cursor:pointer;transition:all .15s;white-space:nowrap}
@@ -718,10 +730,46 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
   <div class="lo-sub">O ShiftCare foi desenhado para usar em modo vertical (portrait)</div>
 </div>
 
-<div id="privacy-overlay" onclick="deactivatePrivacy()" role="button" aria-label="Ecrã bloqueado — toque para desbloquear">
-  <div class="priv-icon">🔒</div>
-  <div class="priv-msg">Ecrã bloqueado</div>
-  <div class="priv-sub">Toque para desbloquear</div>
+<div id="privacy-overlay" role="dialog" aria-modal="true" aria-label="Ecrã bloqueado">
+  <!-- Modo sem PIN: tap para desbloquear -->
+  <div id="priv-tap" onclick="deactivatePrivacy()">
+    <div class="priv-icon">🔒</div>
+    <div class="priv-msg">Ecrã bloqueado</div>
+    <div class="priv-sub">Toque para desbloquear</div>
+  </div>
+  <!-- Modo PIN: numpad 4 dígitos -->
+  <div id="priv-pin">
+    <div class="priv-icon">🔐</div>
+    <div class="priv-msg" style="margin-bottom:2px">ShiftCare</div>
+    <div class="priv-sub">Introduza o PIN</div>
+    <div class="pin-dots-row" id="pin-dots-row">
+      <span class="pin-dot" id="pd0"></span><span class="pin-dot" id="pd1"></span><span class="pin-dot" id="pd2"></span><span class="pin-dot" id="pd3"></span>
+    </div>
+    <div class="pin-err-msg" id="pin-err"></div>
+    <div id="pin-pad">
+      <button class="pin-key" onclick="pinKey('1')">1</button><button class="pin-key" onclick="pinKey('2')">2</button><button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button><button class="pin-key" onclick="pinKey('5')">5</button><button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button><button class="pin-key" onclick="pinKey('8')">8</button><button class="pin-key" onclick="pinKey('9')">9</button>
+      <button class="pin-key" onclick="pinKey('del')" style="font-size:20px">⌫</button><button class="pin-key" onclick="pinKey('0')">0</button><button class="pin-key" style="opacity:.15;pointer-events:none"></button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN setup overlay (definir / alterar PIN) -->
+<div id="pin-setup-overlay" role="dialog" aria-modal="true" aria-label="Configurar PIN">
+  <div class="priv-icon">🔐</div>
+  <div class="priv-msg" id="pin-setup-title">Definir PIN</div>
+  <div class="priv-sub" id="pin-setup-sub">Introduza um PIN de 4 dígitos</div>
+  <div class="pin-dots-row" id="pin-setup-dots-row">
+    <span class="pin-dot" id="psd0"></span><span class="pin-dot" id="psd1"></span><span class="pin-dot" id="psd2"></span><span class="pin-dot" id="psd3"></span>
+  </div>
+  <div class="pin-err-msg" id="pin-setup-err"></div>
+  <div id="pin-setup-pad">
+    <button class="pin-key" onclick="pinSetupKey('1')">1</button><button class="pin-key" onclick="pinSetupKey('2')">2</button><button class="pin-key" onclick="pinSetupKey('3')">3</button>
+    <button class="pin-key" onclick="pinSetupKey('4')">4</button><button class="pin-key" onclick="pinSetupKey('5')">5</button><button class="pin-key" onclick="pinSetupKey('6')">6</button>
+    <button class="pin-key" onclick="pinSetupKey('7')">7</button><button class="pin-key" onclick="pinSetupKey('8')">8</button><button class="pin-key" onclick="pinSetupKey('9')">9</button>
+    <button class="pin-key" onclick="pinSetupKey('del')" style="font-size:20px">⌫</button><button class="pin-key" onclick="pinSetupKey('0')">0</button><button class="pin-key" onclick="closePINSetup()" style="font-size:17px;opacity:.65">✕</button>
+  </div>
 </div>
 
 <!-- ═══ PWA INSTALL BANNER (Android/Chrome) ═══ -->
@@ -1157,7 +1205,8 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
             <span>📋 Histórico de versões</span><span class="chev" style="font-size:10px;transition:transform .2s">▼</span>
           </button>
           <div style="display:none;padding:0 15px 13px;font-size:12px;color:var(--t2);line-height:1.9" id="ver-hist">
-            <div><strong style="color:var(--t)">v3.5.1</strong> — ABCDE com dropdown compacto; notas com scroll; figuras etárias simplificadas; acordeão Histórico de versões corrigido; registarCuidado actualiza notas imediatamente</div>
+            <div><strong style="color:var(--t)">v3.5.2</strong> — PIN de 4 dígitos (SHA-256, bloqueio automático 5 min, gestão no About); timeout 15 s na IA; limpeza de código</div>
+            <div style="margin-top:6px"><strong style="color:var(--t)">v3.5.1</strong> — ABCDE com dropdown compacto; notas com scroll; figuras etárias simplificadas; acordeão Histórico de versões corrigido; registarCuidado actualiza notas imediatamente</div>
             <div style="margin-top:6px"><strong style="color:var(--t)">v3.5.0</strong> — Cuidados &amp; Intervenções reestruturados; Higiene cumulativa; Dinâmica de Turno; notas de turno editáveis/ilimitadas; registo automático em alimentação e dispositivos; About simplificado</div>
             <div style="margin-top:6px"><strong style="color:var(--t)">v3.4.0</strong> — TAD no painel vitais; Registar Avaliação; Alergias visíveis; ABCDE com botões; Eliminação; Alimentação intercorrências; Sync WebSocket fixes; Figuras etárias</div>
             <div style="margin-top:6px"><strong style="color:var(--t)">v3.3.2</strong> — Backup Cloud cifrado AES-256; Sync WebSocket (Durable Objects); badge Sync</div>
@@ -1190,6 +1239,12 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
           <button id="prem-status-btn" style="font-size:11px;padding:6px 12px;border-radius:20px;border:1.5px solid var(--b2);background:var(--s);color:var(--t);cursor:pointer;white-space:nowrap" onclick="premStatusAction()"></button>
         </div>
+      </div>
+
+      <!-- Segurança — PIN -->
+      <div style="margin-bottom:11px;border-radius:var(--rads);border:1.5px solid var(--b2);background:var(--s3);padding:13px 14px">
+        <div style="font-size:12px;font-weight:700;color:var(--t);margin-bottom:10px">🔐 Segurança</div>
+        <div id="about-pin-content"></div>
       </div>
 
       <!-- Câmara/Mic (colapsável) -->
@@ -1656,10 +1711,19 @@ function getDoseAlert(medName, doseValue, weightKg) {
 }
 
 const WORKER_URL='https://shiftcare.pedicode-app.workers.dev';
-async function callAI(payload){
-  const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-  if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.error||'Erro IA: '+r.status);}
-  return r.json();
+async function callAI(payload,timeoutMs=15000){
+  const ac=new AbortController();
+  const tid=setTimeout(()=>ac.abort(),timeoutMs);
+  try{
+    const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:ac.signal});
+    clearTimeout(tid);
+    if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.error||'Erro IA: '+r.status);}
+    return r.json();
+  }catch(e){
+    clearTimeout(tid);
+    if(e.name==='AbortError')throw new Error('Tempo limite excedido ('+timeoutMs/1000+'s). Verifique a ligação.');
+    throw e;
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -1701,7 +1765,7 @@ const PREMIUM_CODE_HASHES=new Set([
 // ══════════════════════════════════════════════
 // § 03 — CONSTANTES & UTILITÁRIOS GLOBAIS
 // ══════════════════════════════════════════════
-const APP_VERSION = '3.5.1';
+const APP_VERSION = '3.5.2';
 const SC_CUSTOM_CUIDADOS = 'sc_custom_cuidados'; /* cuidados aprendidos — global, persiste entre doentes */
 const _PREM_KEY='sc_premium_v1';
 
@@ -2412,7 +2476,7 @@ function goBack(){
   else if(ST.screen==='s-research'){showScreen(ST.prevScreen||'s-dashboard');}
   else{showScreen('s-setup');}
 }
-function goAbout(){ST.prevScreen=ST.screen;_updAboutPremium();showScreen('s-about');}
+function goAbout(){ST.prevScreen=ST.screen;_updAboutPremium();renAboutPIN();showScreen('s-about');}
 
 // ══════════════════════════════════════════════
 // § 08 — INVESTIGAÇÃO CIENTÍFICA  (PubMed / Europe PMC)
@@ -2480,7 +2544,6 @@ function _togglePubtype(btn){
   }
 }
 
-function _ageSelectChange(){}// placeholder for future logic
 
 async function _meshFromAI(){
   const kw=(document.getElementById('res-keywords')?.value||'').trim();
@@ -2805,21 +2868,46 @@ function premStatusAction(){
   else showPremiumModal('voice');
 }
 
-// ─── Privacy lock ─────────────────────────────
-const PRIVACY_MS=2*60*1000; // 2 minutes
+// ══════════════════════════════════════════════
+// § 24 — PIN LOCK  (privacidade + auto-lock 5 min)
+// ══════════════════════════════════════════════
+const PIN_KEY='sc_pin_v1';
+const PRIVACY_MS=5*60*1000; // 5 minutos
 let _privTimer=null;
+let _pinBuf='';
+
+/* ─── Helpers ─── */
+function isPINSet(){return!!localStorage.getItem(PIN_KEY);}
+
+/* ─── Privacy timer ─── */
 function resetPrivacyTimer(){
   if(_privTimer)clearTimeout(_privTimer);
-  document.getElementById('privacy-overlay')?.classList.remove('visible');
+  const ov=el('privacy-overlay');
+  if(ov)ov.classList.remove('visible');
   if(ST.screen==='s-dashboard'||ST.screen==='s-detail'){
     _privTimer=setTimeout(activatePrivacy,PRIVACY_MS);
   }
 }
+
 function activatePrivacy(){
-  const ov=document.getElementById('privacy-overlay');
-  if(ov)ov.classList.add('visible');
+  const ov=el('privacy-overlay');if(!ov)return;
+  if(isPINSet()){
+    el('priv-tap').style.display='none';
+    el('priv-pin').style.display='flex';
+    _pinBuf='';_pinRenderDots('pin-dots-row','pd');
+    el('pin-err').textContent='';
+  } else {
+    el('priv-tap').style.display='flex';
+    el('priv-pin').style.display='none';
+  }
+  ov.classList.add('visible');
 }
-function deactivatePrivacy(){resetPrivacyTimer();}
+
+function deactivatePrivacy(){
+  if(isPINSet())return; // sem PIN não se fecha com tap
+  resetPrivacyTimer();
+}
+
 (function(){
   ['click','touchstart','keydown','scroll'].forEach(ev=>{
     document.addEventListener(ev,function(){
@@ -2827,6 +2915,121 @@ function deactivatePrivacy(){resetPrivacyTimer();}
     },{passive:true});
   });
 })();
+
+/* ─── Numpad de desbloqueio ─── */
+function _pinRenderDots(rowId,pfx){
+  for(let i=0;i<4;i++){const d=el(pfx+i);if(d)d.classList.toggle('filled',i<_pinBuf.length);}
+}
+
+function pinKey(v){
+  if(v==='del'){_pinBuf=_pinBuf.slice(0,-1);_pinRenderDots('pin-dots-row','pd');return;}
+  if(_pinBuf.length>=4)return;
+  _pinBuf+=v;_pinRenderDots('pin-dots-row','pd');
+  if(_pinBuf.length===4)setTimeout(_pinCheckUnlock,180);
+}
+
+async function _pinCheckUnlock(){
+  const hash=await _hashStr(_pinBuf);
+  if(hash===localStorage.getItem(PIN_KEY)){
+    el('privacy-overlay').classList.remove('visible');
+    _pinBuf='';resetPrivacyTimer();
+  } else {
+    const row=el('pin-dots-row');
+    if(row){row.classList.add('pin-shake');setTimeout(()=>row.classList.remove('pin-shake'),400);}
+    el('pin-err').textContent='PIN incorrecto';
+    setTimeout(()=>{_pinBuf='';_pinRenderDots('pin-dots-row','pd');},420);
+  }
+}
+
+/* ─── Setup / Alteração de PIN (overlay separado) ─── */
+let _psMod=null; // 'set'|'change-old'|'change-new'|'confirm'
+let _psBuf='';
+let _psNew='';
+let _psOrigin=null; // modo antes de 'confirm' para fallback em mismatch
+
+function openPINSetup(mode){
+  _psMod=(mode==='change')?'change-old':'set';
+  _psOrigin=null;
+  _psBuf='';_psNew='';
+  el('pin-setup-overlay').style.display='flex';
+  _psUpdateUI();
+}
+
+function closePINSetup(){
+  el('pin-setup-overlay').style.display='none';
+  _psMod=null;_psBuf='';_psNew='';
+}
+
+function pinSetupKey(v){
+  if(v==='del'){_psBuf=_psBuf.slice(0,-1);_psUpdateUI();return;}
+  if(_psBuf.length>=4)return;
+  _psBuf+=v;_psUpdateUI();
+  if(_psBuf.length===4)setTimeout(_psNext,200);
+}
+
+function _psUpdateUI(){
+  const titles={
+    'set':'Definir PIN','change-old':'PIN actual',
+    'change-new':'Novo PIN','confirm':'Confirmar PIN'
+  };
+  const subs={
+    'set':'Introduza um PIN de 4 dígitos',
+    'change-old':'Introduza o PIN actual para continuar',
+    'change-new':'Introduza o novo PIN de 4 dígitos',
+    'confirm':'Repita o PIN para confirmar'
+  };
+  el('pin-setup-title').textContent=titles[_psMod]||'';
+  el('pin-setup-sub').textContent=subs[_psMod]||'';
+  el('pin-setup-err').textContent='';
+  for(let i=0;i<4;i++){const d=el('psd'+i);if(d)d.classList.toggle('filled',i<_psBuf.length);}
+}
+
+async function _psNext(){
+  if(_psMod==='set'||_psMod==='change-new'){
+    _psOrigin=_psMod;
+    _psNew=_psBuf;_psBuf='';_psMod='confirm';_psUpdateUI();
+  } else if(_psMod==='confirm'){
+    if(_psBuf===_psNew){
+      const hash=await _hashStr(_psBuf);
+      localStorage.setItem(PIN_KEY,hash);
+      closePINSetup();renAboutPIN();
+      showToast('PIN activado ✓','ok');
+    } else {
+      _psShake('PINs não coincidem — tente de novo');
+      setTimeout(()=>{_psBuf='';_psNew='';_psMod=_psOrigin||'set';_psUpdateUI();},650);
+    }
+  } else if(_psMod==='change-old'){
+    const hash=await _hashStr(_psBuf);
+    if(hash===localStorage.getItem(PIN_KEY)){
+      _psBuf='';_psMod='change-new';_psUpdateUI();
+    } else {
+      _psShake('PIN incorrecto');
+      setTimeout(()=>{_psBuf='';_psUpdateUI();},500);
+    }
+  }
+}
+
+function _psShake(msg){
+  const row=el('pin-setup-dots-row');
+  if(row){row.classList.add('pin-shake');setTimeout(()=>row.classList.remove('pin-shake'),400);}
+  el('pin-setup-err').textContent=msg;
+}
+
+function removePIN(){
+  if(!confirm('Remover PIN de acesso? A app ficará sem protecção por código.'))return;
+  localStorage.removeItem(PIN_KEY);
+  renAboutPIN();showToast('PIN removido','ok');
+}
+
+/* ─── Secção About ─── */
+function renAboutPIN(){
+  const c=el('about-pin-content');if(!c)return;
+  if(isPINSet()){
+    c.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px"><span style="font-size:12px;color:var(--p);font-weight:700">🔐 PIN activo</span><span style="font-size:11px;color:var(--t3)">Bloqueio após 5 min</span></div><div style="display:flex;gap:7px"><button class="btn btn-o" style="flex:1;font-size:11px" onclick="openPINSetup('change')">Alterar PIN</button><button class="btn" style="flex:1;font-size:11px;color:var(--red);border-color:#FECACA" onclick="removePIN()">Remover PIN</button></div>`;
+  } else {
+    c.innerHTML=`<p style="font-size:12px;color:var(--t2);line-height:1.7;margin-bottom:10px">Protege o acesso com um PIN de 4 dígitos. Bloqueia automaticamente após 5 min de inactividade.</p><button class="btn btn-p" style="width:100%;font-size:12px" onclick="openPINSetup('set')">🔒 Activar PIN de 4 dígitos</button>`;
+  }
+}
 
 // ══════════════════════════════════════════════
 // § 10 — DASHBOARD  (cards de doentes)
@@ -5364,6 +5567,8 @@ if(ST.patients.filter(p=>p.status==='internado').length&&ST.shiftStart){
   renderSetup();
   showScreen('s-setup');
 }
+// Bloquear ao arranque se PIN configurado
+if(isPINSet())activatePrivacy();
 
 /* ── Auto-activação premium via URL (redirect do Lemon Squeezy) ──
    LS redireciona para: https://...ShiftCare/?activate={license_key}

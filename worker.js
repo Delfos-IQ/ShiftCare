@@ -57,11 +57,30 @@ export class SyncRoom {
     const [client, server] = Object.values(pair);
     this.state.acceptWebSocket(server, ['shiftcare']);
 
-    // Notifica os outros clientes da nova ligação
-    const count = this.state.getWebSockets('shiftcare').length;
+    // Notifica os clientes existentes da nova ligação
+    const sockets = this.state.getWebSockets('shiftcare');
+    const count   = sockets.length;
     if (count > 1) {
       this._broadcast(server, JSON.stringify({ type: 'peer_joined', peers: count }));
     }
+
+    // FIX #1: Envia snapshot ao novo cliente se existir (eles precisam do estado actual)
+    try {
+      const snapshot = await this.state.storage.get('snapshot');
+      if (snapshot) {
+        server.send(snapshot);
+      }
+    } catch { /* sem snapshot ainda */ }
+
+    // FIX #2: Agenda limpeza automática correctamente via Alarm API
+    try {
+      const alarm = await this.state.storage.getAlarm();
+      if (!alarm) {
+        await this.state.storage.setAlarm(Date.now() + 13 * 60 * 60 * 1000); // 13h
+      }
+    } catch { /* Alarm API pode não estar disponível em todos os planos */ }
+
+    await this.state.storage.put('lastActivity', Date.now());
 
     return new Response(null, { status: 101, webSocket: client });
   }
