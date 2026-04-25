@@ -8,7 +8,7 @@ compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
 # ── Durable Objects (sincronização WebSocket entre dispositivos) ──
-# Requer Workers Paid plan (5 USD/mês) ou Workers Free com Durable Objects beta
+# Funciona no plano Workers Free (com Durable Objects activados no dashboard)
 [durable_objects]
 bindings = [
   { name = "SYNC_ROOM", class_name = "SyncRoom" }
@@ -19,14 +19,21 @@ bindings = [
 tag     = "v1"
 new_classes = ["SyncRoom"]
 
-# ── KV Namespace (backup cloud cifrado) ──
-# Criar com: wrangler kv:namespace create BACKUP_KV
-# Depois substituir os IDs gerados abaixo.
-[[kv_namespaces]]
-binding    = "BACKUP_KV"
-id         = "PLACEHOLDER_KV_ID"          # substituir pelo ID gerado
-preview_id = "PLACEHOLDER_KV_PREVIEW_ID" # substituir pelo preview ID
+# ── KV Namespace (backup cloud cifrado) — OPCIONAL ──
+# Se não usas backup cloud, deixa esta secção comentada.
+# Para activar: corre os dois comandos abaixo e substitui os IDs gerados.
+#
+#   wrangler kv:namespace create BACKUP_KV
+#   wrangler kv:namespace create BACKUP_KV --preview
+#
+# Depois descomenta e preenche:
+#
+# [[kv_namespaces]]
+# binding    = "BACKUP_KV"
+# id         = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# preview_id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
-# ── Variáveis de ambiente (definir em Cloudflare Dashboard → Workers → Settings → Variables) ──
-# GROQ_API_KEY   = "gsk_..."
-# LS_API_KEY     = "..."  (Lemon Squeezy API key)
+# ── Variáveis de ambiente ──
+# Definir em: Cloudflare Dashboard → Workers → shiftcare → Settings → Variables
+# GROQ_API_KEY   = "gsk_..."   (obrigatório para IA)
+# LS_API_KEY     = "..."       (opcional — validação de licenças Lemon Squeezy)

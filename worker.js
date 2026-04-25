@@ -154,8 +154,6 @@ export default {
       }
       const id   = env.SYNC_ROOM.idFromName(roomCode);
       const room = env.SYNC_ROOM.get(id);
-      // Agenda limpeza automática 13h após criação
-      await room.fetch(new Request(request.url + '/__alarm', { method: 'POST' })).catch(() => {});
       return room.fetch(request);
     }
 
