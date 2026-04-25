@@ -3,6 +3,8 @@
 // Env vars required: GROQ_API_KEY, LS_API_KEY
 // Durable Objects: SYNC_ROOM (see wrangler.toml)
 
+import { DurableObject } from 'cloudflare:workers';
+
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -36,12 +38,11 @@ Missão: processar e sintetizar informação clínica de forma rigorosa, estrutu
 // Mensagens são retransmitidas a todos os outros clientes na sala.
 // A sala expira automaticamente 12h após a última actividade.
 // ══════════════════════════════════════════════════════════════════════════
-export class SyncRoom {
-  constructor(state, env) {
-    this.state = state;
-    this.env   = env;
-    // Cloudflare gere o ciclo de vida dos WebSockets via hibernação
-    this.state.setWebSocketAutoResponse(
+export class SyncRoom extends DurableObject {
+  constructor(ctx, env) {
+    super(ctx, env);
+    // Resposta automática a pings — sem código extra no handler
+    this.ctx.setWebSocketAutoResponse(
       new WebSocketRequestResponsePair('ping', 'pong')
     );
   }
@@ -55,32 +56,30 @@ export class SyncRoom {
     // Aceitar WebSocket com hibernação (Cloudflare Hibernatable WebSocket API)
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
-    this.state.acceptWebSocket(server, ['shiftcare']);
+    this.ctx.acceptWebSocket(server, ['shiftcare']);
 
     // Notifica os clientes existentes da nova ligação
-    const sockets = this.state.getWebSockets('shiftcare');
+    const sockets = this.ctx.getWebSockets('shiftcare');
     const count   = sockets.length;
     if (count > 1) {
       this._broadcast(server, JSON.stringify({ type: 'peer_joined', peers: count }));
     }
 
-    // FIX #1: Envia snapshot ao novo cliente se existir (eles precisam do estado actual)
+    // Envia snapshot ao novo cliente (para receber estado actual da sala)
     try {
-      const snapshot = await this.state.storage.get('snapshot');
-      if (snapshot) {
-        server.send(snapshot);
-      }
+      const snapshot = await this.ctx.storage.get('snapshot');
+      if (snapshot) server.send(snapshot);
     } catch { /* sem snapshot ainda */ }
 
-    // FIX #2: Agenda limpeza automática correctamente via Alarm API
+    // Agenda limpeza automática via Alarm API
     try {
-      const alarm = await this.state.storage.getAlarm();
+      const alarm = await this.ctx.storage.getAlarm();
       if (!alarm) {
-        await this.state.storage.setAlarm(Date.now() + 13 * 60 * 60 * 1000); // 13h
+        await this.ctx.storage.setAlarm(Date.now() + 13 * 60 * 60 * 1000); // 13h
       }
-    } catch { /* Alarm API pode não estar disponível em todos os planos */ }
+    } catch { /* Alarm API opcional */ }
 
-    await this.state.storage.put('lastActivity', Date.now());
+    await this.ctx.storage.put('lastActivity', Date.now());
 
     return new Response(null, { status: 101, webSocket: client });
   }
@@ -89,22 +88,19 @@ export class SyncRoom {
   async webSocketMessage(ws, msg) {
     try {
       const data = JSON.parse(msg);
-      // Actualiza timestamp de actividade
-      await this.state.storage.put('lastActivity', Date.now());
-
+      await this.ctx.storage.put('lastActivity', Date.now());
       // Relay para todos os outros clientes na sala
       this._broadcast(ws, msg);
-
-      // Se for um estado completo, guarda como snapshot (para novos clientes)
+      // Guarda estado completo como snapshot para novos clientes
       if (data.type === 'state') {
-        await this.state.storage.put('snapshot', msg);
+        await this.ctx.storage.put('snapshot', msg);
       }
     } catch { /* mensagem malformada — ignora */ }
   }
 
   async webSocketClose(ws) {
     ws.close();
-    const remaining = this.state.getWebSockets('shiftcare').length;
+    const remaining = this.ctx.getWebSockets('shiftcare').length;
     if (remaining > 0) {
       this._broadcast(ws, JSON.stringify({ type: 'peer_left', peers: remaining }));
     }
@@ -116,7 +112,7 @@ export class SyncRoom {
 
   // Retransmite msg a todos os clientes excepto o remetente
   _broadcast(sender, msg) {
-    for (const ws of this.state.getWebSockets('shiftcare')) {
+    for (const ws of this.ctx.getWebSockets('shiftcare')) {
       if (ws !== sender) {
         try { ws.send(msg); } catch { /* cliente já fechado */ }
       }
@@ -125,13 +121,12 @@ export class SyncRoom {
 
   // Limpeza periódica — chamada pelo Alarm
   async alarm() {
-    const lastActivity = await this.state.storage.get('lastActivity') || 0;
+    const lastActivity = await this.ctx.storage.get('lastActivity') || 0;
     if (Date.now() - lastActivity > 12 * 3600 * 1000) {
-      // Fecha todos os WebSockets e limpa o storage
-      for (const ws of this.state.getWebSockets('shiftcare')) {
+      for (const ws of this.ctx.getWebSockets('shiftcare')) {
         try { ws.close(1001, 'Sala expirada'); } catch {}
       }
-      await this.state.storage.deleteAll();
+      await this.ctx.storage.deleteAll();
     }
   }
 }

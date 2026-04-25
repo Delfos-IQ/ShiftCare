@@ -17,7 +17,7 @@ bindings = [
 # Migração inicial — obrigatório na primeira vez que se adiciona um DO
 [[migrations]]
 tag     = "v1"
-new_classes = ["SyncRoom"]
+new_sqlite_classes = ["SyncRoom"]
 
 # ── KV Namespace (backup cloud cifrado) — OPCIONAL ──
 # Se não usas backup cloud, deixa esta secção comentada.
