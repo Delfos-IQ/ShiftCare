@@ -5,6 +5,19 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-PT/1.0.0/).
 
 ---
 
+## [3.5.0] — Abril 2026
+
+### Adicionado
+- **About simplificado** — versão injetada automaticamente via `APP_VERSION`; accordion "Histórico de versões" colapsável; câmara/mic em secção colapsável; cards de finalidade e privacidade condensados; removido card redundante de IA
+- **Notas do Turno — 50 registos + scroll** — máximo aumentado de 8 → 50; últimas 8 visíveis por defeito com botão "Ver mais N registos" para expandir; cada nota tem ✏ editar inline e ✕ eliminar com confirmação
+- **Cuidados & Intervenções (nova secção)** — substituiu "Cuidados & Higiene"; grupos temáticos com chips de acção rápida: Aspiração de Secreções (Orofaringe, Nasofaringe, TET, Traqueostomia), Colheitas/Amostras (Sangue, Urina, Secreções, Fezes, LCR, Exsudado, Liq. Pleural), Posicionamento integrado, Comunicação com a família; campo livre com **aprendizagem global** (persiste em `sc_custom_cuidados` localStorage entre doentes) + botão ✕ para remover sugestão aprendida
+- **Higiene & Conforto (nova secção)** — seleção cumulativa: Tipo (Higiene parcial, Higiene completa) + Local/Modo (No leito, No chuveiro, Cuidados à boca); botão "Registar Higiene" cria nota combinada (ex. "Higiene parcial · No leito")
+- **Dinâmica de Turno** — renomeado "To-Do do Turno" → "Dinâmica de Turno"; DEF_TASKS simplificado para 5 lembretes: ABCDE, Sinais vitais, Medicação, Balanço hídrico, Escalas; intervenções registadas (cuidados, higiene, intercorrências, alimentação) migram automaticamente como itens concluídos
+- **Registo duplo universal** — todas as ações com relevância clínica registam simultaneamente nas Notas do Turno E na Dinâmica de Turno: dispositivos adicionados/retirados, alimentação iniciada, intercorrências alimentares, cuidados & higiene
+
+### Corrigido
+- `addTodoDone()` previne duplicados no mesmo minuto para eventos repetidos
+
 ## [3.4.0] — Abril 2026
 
 ### Adicionado

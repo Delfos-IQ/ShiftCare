@@ -797,7 +797,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
           <div>
             <div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Shift<em style="color:var(--p);font-style:normal">Care</em></div>
-            <div style="font-size:11px;color:var(--t2)">Gestão de Turno · v3.4.0</div>
+            <div style="font-size:11px;color:var(--t2)" id="hdr-version">Gestão de Turno · v3.5.0</div>
           </div>
         </div>
         <div id="wl-status-home" style="display:flex;justify-content:center;margin-bottom:8px"></div>
@@ -1133,6 +1133,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
   </div>
   <div class="scroll-y">
     <div class="wrap">
+      <!-- Identidade + versão -->
       <div class="about-card">
         <div style="display:flex;align-items:center;gap:13px;padding:15px">
           <div style="width:48px;height:48px;background:var(--p);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -1144,52 +1145,41 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           </div>
         </div>
         <div style="padding:0 15px 15px">
-          <div class="about-row"><span>Versão</span><span class="about-val">3.3.2</span></div>
-          <div class="about-row"><span>Software</span><span class="about-val">ShiftCare v3.4.0</span></div>
-          <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · Offline-first · Single-file</span></div>
-          <div class="about-row"><span>IA</span><span class="about-val">Integrada · Activa</span></div>
-          <div class="about-row"><span>Idioma</span><span class="about-val">Português (PT)</span></div>
+          <div class="about-row"><span>Versão</span><span class="about-val" id="about-version"></span></div>
+          <div class="about-row"><span>Plataforma</span><span class="about-val">HTML · PWA · Offline-first</span></div>
           <div class="about-row"><span>Ecrã activo</span><span class="about-val" id="wakelock-status">—</span></div>
           <div class="about-row"><span>Compilação</span><span class="about-val" id="build-date"></span></div>
           <div class="about-row"><span>Licença</span><span class="about-val" id="about-prem-status">—</span></div>
         </div>
-      </div>
-      <div class="about-card">
-        <div class="about-body">
-          <div style="font-weight:700;font-size:13px;margin-bottom:12px">Módulo de Inteligência Artificial</div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--gbg);border:1px solid var(--gborder);border-radius:var(--rads)">
-            <span style="font-size:20px">🤖</span>
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--grn)">IA integrada e activa</div>
-              <div style="font-size:11px;color:var(--t2);margin-top:2px">Motor de IA integrado · Activo · Não requer configuração</div>
-            </div>
+        <!-- Accordion histórico de versões -->
+        <div style="border-top:1px solid var(--b)">
+          <button onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')" style="width:100%;text-align:left;padding:11px 15px;background:none;border:none;cursor:pointer;font-size:12px;color:var(--t2);display:flex;justify-content:space-between;align-items:center">
+            <span>📋 Histórico de versões</span><span class="chev" style="font-size:10px;transition:transform .2s">▼</span>
+          </button>
+          <div style="display:none;padding:0 15px 13px;font-size:12px;color:var(--t2);line-height:1.9" id="ver-hist">
+            <div><strong style="color:var(--t)">v3.5.0</strong> — Cuidados &amp; Intervenções reestruturados; Higiene cumulativa; Dinâmica de Turno; notas de turno editáveis/ilimitadas; registo automático em alimentação e dispositivos; About simplificado</div>
+            <div style="margin-top:6px"><strong style="color:var(--t)">v3.4.0</strong> — TAD no painel vitais; Registar Avaliação; Alergias visíveis; ABCDE com botões; Eliminação; Alimentação intercorrências; Sync WebSocket fixes; Figuras etárias</div>
+            <div style="margin-top:6px"><strong style="color:var(--t)">v3.3.2</strong> — Backup Cloud cifrado AES-256; Sync WebSocket (Durable Objects); badge Sync</div>
+            <div style="margin-top:6px"><strong style="color:var(--t)">v3.2</strong> — Calculadora de doses pediátricas; ISBAR; módulo aprendizagem</div>
+            <div style="margin-top:6px"><strong style="color:var(--t)">v3.0</strong> — Lançamento com vitais, medicação, alimentação, dispositivos, notas de turno</div>
           </div>
         </div>
       </div>
-      <div class="about-card">
-        <div class="about-body" style="font-size:13px;color:var(--t2);line-height:1.8">
-          <strong style="color:var(--t)">Privacidade</strong><br>Dados do doente nunca saem do dispositivo. O módulo de aprendizagem armazena apenas padrões anónimos (nomes de fármacos, procedimentos).
+
+      <!-- Finalidade + Privacidade (condensado) -->
+      <div class="about-card" style="border-left:3px solid var(--p);border-radius:0 var(--rad) var(--rad) 0">
+        <div class="about-body">
+          <div style="font-size:12px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px">Finalidade &amp; Privacidade</div>
+          <p style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:8px">O ShiftCare serve como <strong style="color:var(--t)">registo temporário de intervenções de enfermagem</strong> durante o turno, até ao registo oficial no processo clínico. Todos os dados clínicos ficam <strong style="color:var(--t)">apenas no dispositivo</strong> — nenhum dado do doente é transmitido.</p>
+          <p style="font-size:11px;color:var(--t3);line-height:1.7">Não substitui registos oficiais, critérios clínicos nem o raciocínio do enfermeiro. A utilização é da responsabilidade do profissional.</p>
         </div>
       </div>
-      <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:8px" onclick="resetLearn()">Resetar Módulo de Aprendizagem</button>
+
+      <!-- Ações -->
       <button class="btn btn-p" style="width:100%;font-size:12px;margin-bottom:8px" onclick="exportBackup()">💾 Exportar Backup Local</button>
       <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:8px" onclick="document.getElementById('backup-import-input').click()">📥 Importar Backup Local</button>
       <button class="btn" style="width:100%;font-size:13px;font-weight:700;margin-bottom:11px;background:linear-gradient(135deg,var(--pdk),var(--p));color:#fff;border-color:var(--pd);padding:13px" onclick="openBackupModal()">☁️ Backup Cloud Cifrado</button>
-      <!-- Permissões câmara e microfone -->
-      <div style="margin-bottom:11px;border-radius:var(--rads);padding:12px 14px;border:1.5px solid var(--b2);background:var(--s3)">
-        <div style="font-size:12px;font-weight:700;color:var(--t);margin-bottom:10px">🎤 📷 Câmara e Microfone</div>
-        <div style="display:flex;gap:8px;margin-bottom:10px">
-          <div id="perm-mic-badge" style="flex:1;text-align:center;padding:8px;border-radius:var(--rads);background:var(--s);border:1px solid var(--b2);font-size:12px">🎤 —</div>
-          <div id="perm-cam-badge" style="flex:1;text-align:center;padding:8px;border-radius:var(--rads);background:var(--s);border:1px solid var(--b2);font-size:12px">📷 —</div>
-        </div>
-        <button id="req-perm-btn" class="btn btn-p" style="width:100%;font-size:12px;margin-bottom:8px" onclick="requestPermissions()">Pedir permissão ao sistema</button>
-        <button class="btn btn-o" style="width:100%;font-size:12px" onclick="showPermInstructions()">📋 Ver instruções passo a passo</button>
-        <!-- Painel de instruções (oculto por defeito) -->
-        <div id="perm-instructions" style="display:none;margin-top:12px;border-top:1px solid var(--b2);padding-top:12px">
-          <div id="perm-instructions-content"></div>
-          <button id="perm-try-again-btn" class="btn btn-p" style="width:100%;font-size:12px;margin-top:10px" onclick="requestPermissions()">↩ Tentar de novo</button>
-        </div>
-      </div>
+
       <!-- Premium status -->
       <div id="prem-status-card" style="margin-bottom:11px;border-radius:var(--rads);padding:12px 14px;border:1.5px solid var(--b2);background:var(--s3)">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
@@ -1200,31 +1190,30 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
           <button id="prem-status-btn" style="font-size:11px;padding:6px 12px;border-radius:20px;border:1.5px solid var(--b2);background:var(--s);color:var(--t);cursor:pointer;white-space:nowrap" onclick="premStatusAction()"></button>
         </div>
       </div>
+
+      <!-- Câmara/Mic (colapsável) -->
+      <div style="margin-bottom:11px;border-radius:var(--rads);border:1.5px solid var(--b2);background:var(--s3);overflow:hidden">
+        <button onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.classList.contains('open')?'block':'none'" style="width:100%;text-align:left;padding:12px 14px;background:none;border:none;cursor:pointer;font-size:12px;font-weight:700;color:var(--t);display:flex;justify-content:space-between;align-items:center">
+          <span>🎤 📷 Câmara e Microfone</span><span style="font-size:10px;color:var(--t3)">▼</span>
+        </button>
+        <div style="display:none;padding:0 14px 14px">
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <div id="perm-mic-badge" style="flex:1;text-align:center;padding:8px;border-radius:var(--rads);background:var(--s);border:1px solid var(--b2);font-size:12px">🎤 —</div>
+            <div id="perm-cam-badge" style="flex:1;text-align:center;padding:8px;border-radius:var(--rads);background:var(--s);border:1px solid var(--b2);font-size:12px">📷 —</div>
+          </div>
+          <button id="req-perm-btn" class="btn btn-p" style="width:100%;font-size:12px;margin-bottom:8px" onclick="requestPermissions()">Pedir permissão ao sistema</button>
+          <button class="btn btn-o" style="width:100%;font-size:12px" onclick="showPermInstructions()">📋 Ver instruções</button>
+          <div id="perm-instructions" style="display:none;margin-top:12px;border-top:1px solid var(--b2);padding-top:12px">
+            <div id="perm-instructions-content"></div>
+            <button id="perm-try-again-btn" class="btn btn-p" style="width:100%;font-size:12px;margin-top:10px" onclick="requestPermissions()">↩ Tentar de novo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aprendizagem -->
+      <button class="btn btn-o" style="width:100%;font-size:12px;margin-bottom:8px" onclick="resetLearn()">Resetar Módulo de Aprendizagem</button>
       <input type="file" id="backup-import-input" accept=".json" style="display:none" onchange="importBackup(event)">
-      <!-- Finalidade -->
-      <div class="about-card" style="border-left:3px solid var(--p);border-radius:0 var(--rad) var(--rad) 0">
-        <div class="about-body">
-          <div style="font-size:12px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Finalidade</div>
-          <p style="font-size:13px;color:var(--t2);line-height:1.8">O ShiftCare serve como <strong style="color:var(--t)">registo temporário de intervenções e cuidados de enfermagem</strong> realizados durante o turno, até ao seu definitivo registo oficial no processo clínico do doente.</p>
-        </div>
-      </div>
-
-      <!-- Disclaimer -->
-      <div class="about-card" style="border-left:3px solid var(--org);border-radius:0 var(--rad) var(--rad) 0">
-        <div class="about-body">
-          <div style="font-size:12px;font-weight:700;color:var(--org);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">⚠ Aviso Importante</div>
-          <p style="font-size:12px;color:var(--t2);line-height:1.9;margin-bottom:10px">O <strong style="color:var(--t)">ShiftCare</strong> é uma aplicação de apoio ao registo de turnos de enfermagem. O seu uso pressupõe <strong style="color:var(--t)">juízo clínico e pensamento crítico</strong> por parte do profissional de saúde.</p>
-          <ul style="font-size:12px;color:var(--t2);line-height:2;padding-left:1.2rem;margin-bottom:10px">
-            <li>Não substitui os registos oficiais no processo clínico do doente.</li>
-            <li>Não substitui critérios de decisão clínica ou de enfermagem.</li>
-            <li>Não substitui o raciocínio e a responsabilidade do enfermeiro.</li>
-            <li>Não deve ser utilizada como única fonte de informação clínica.</li>
-          </ul>
-          <p style="font-size:11px;color:var(--t3);line-height:1.7;border-top:1px solid var(--b);padding-top:9px">O autor da aplicação não assume qualquer responsabilidade por decisões clínicas tomadas com base no seu uso, nem por eventuais erros, omissões ou falhas técnicas. A utilização é da exclusiva responsabilidade do profissional de saúde.</p>
-        </div>
-      </div>
-
-            <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0">ShiftCare v3.4.0 © 2026 · Todos os direitos reservados</div>
+      <div style="text-align:center;font-size:11px;color:var(--t3);padding:6px 0" id="about-footer"></div>
     </div>
   </div>
 </div>
@@ -1606,6 +1595,8 @@ const PREMIUM_CODE_HASHES=new Set([
   '6dceca72a3a7a3b72f7ca0cde850747d8d863b1328d7bf631ef5ac9202253061', // SHIFTCARE-PREM-0005
 ]);
 
+const APP_VERSION = '3.5.0';
+const SC_CUSTOM_CUIDADOS = 'sc_custom_cuidados'; /* cuidados aprendidos — global, persiste entre doentes */
 const _PREM_KEY='sc_premium_v1';
 
 function isPremium(){
@@ -1774,7 +1765,7 @@ const el=id=>document.getElementById(id);
 // MODULE: DATA
 // ══════════════════════════════════════════════
 const VITALS_DEF=[{k:'hr',label:'FC',unit:'bpm',ph:'140'},{k:'spo2',label:'SpO₂',unit:'%',ph:'98'},{k:'rr',label:'FR',unit:'rpm',ph:'40'},{k:'temp',label:'Temp',unit:'°C',ph:'36.8'},{k:'sbp',label:'TAS',unit:'mmHg',ph:'80'},{k:'dbp',label:'TAD',unit:'mmHg',ph:'50'}];
-const DEF_TASKS=['Avaliação ABCDE completa','Controlo de sinais vitais','Administração de medicação','Balanço hídrico','Higiene e conforto','Estado da unidade','Comunicação à família'];
+const DEF_TASKS=['Avaliação ABCDE completa','Controlo de sinais vitais','Administração de medicação','Balanço hídrico','Registo de escalas'];
 const ABCDE_DEF=[{key:'A',title:'Airway — Via Aérea',desc:'Permeabilidade, secreções, dispositivos (ETT, máscara, O₂)'},{key:'B',title:'Breathing — Respiração',desc:'FR, SpO₂, padrão respiratório, trabalho ventilatório, auscultação'},{key:'C',title:'Circulation — Circulação',desc:'FC, TAS, perfusão periférica, TRC, cor da pele, diurese'},{key:'D',title:'Disability — Neurológico',desc:'Consciência (AVPU/GCS), pupilas, tónus, convulsões, dor'},{key:'E',title:'Exposure — Exposição',desc:'Temperatura, pele, lesões, edema, drenos, feridas, cateteres'}];
 const UNIT_CHECK=['Insuflador manual presente e funcional','Aspiração funcionante (teste)','Sondas de aspiração disponíveis','Débito-metro de O₂ (≥15 L/min)','Debitómetro funcionante','Unidade organizada e limpa','Medicação de urgência acessível'];
 const ABCDE_OPTS={
@@ -3137,8 +3128,27 @@ function renEnf(){
   const p=ST.patients[ST.idx];if(!p)return;
   if(!p.abcdeSel)p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};
   const chkSvg='<svg class="chk-svg" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L3.8 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  // 1. Notas do turno
-  const notes=p.notes.length?p.notes.slice(0,8).map(n=>`<div class="note-it"><span class="note-t">${ft(n.timestamp)}</span><span class="note-txt">${esc(n.text)}</span></div>`).join(''):'<div class="empty-st">Sem notas</div>';
+  // 1. Notas do turno — últimas 8 visíveis, expandir para 50; editar e eliminar
+  const _noteHTML=(n,i)=>`<div class="note-it" id="note-row-${i}">
+    <span class="note-t">${ft(n.timestamp)}</span>
+    <span class="note-txt" id="note-txt-${i}">${esc(n.text)}</span>
+    <span style="display:flex;gap:4px;flex-shrink:0;margin-left:4px">
+      <button class="rm-btn" style="font-size:11px;padding:1px 5px;color:var(--t2)" onclick="editNote(${i})" title="Editar">✏</button>
+      <button class="rm-btn" style="font-size:11px;padding:1px 5px;color:var(--red)" onclick="delNote(${i})" title="Eliminar">✕</button>
+    </span>
+  </div>`;
+  const visibleNotes=p.notes.slice(0,8);
+  const extraCount=p.notes.length-8;
+  const notesBaseHTML=visibleNotes.map((n,i)=>_noteHTML(n,i)).join('');
+  const notesExtra=extraCount>0?`
+    <div id="notes-extra" style="display:none">
+      ${p.notes.slice(8).map((n,i)=>_noteHTML(n,i+8)).join('')}
+    </div>
+    <button class="btn btn-o" style="width:100%;font-size:11px;margin-top:6px" id="notes-expand-btn"
+      onclick="this.style.display='none';document.getElementById('notes-extra').style.display='block'">
+      ▼ Ver mais ${extraCount} registos
+    </button>`:'';
+  const notes=p.notes.length?(notesBaseHTML+notesExtra):'<div class="empty-st">Sem notas</div>';
   // 2. ABCDE com botões
   const abcde=ABCDE_DEF.map(a=>{
     const sel=p.abcdeSel?.[a.key]||[];
@@ -3149,12 +3159,21 @@ function renEnf(){
       <textarea class="abcde-inp" rows="1" placeholder="Observações adicionais..." oninput="saveABCDE('${a.key}',this.value)" style="min-height:34px">${p.abcde?.[a.key]||''}</textarea>
     </div>`;
   }).join('');
-  // 3. Lista de cuidados
-  const tasks=p.tasks.map(t=>`<div class="task-it"><div class="task-chk ${t.done?'done':''}" onclick="tglTask('${t.id}')">${t.done?chkSvg:''}</div><div style="flex:1"><div class="task-lbl ${t.done?'done':''}">${esc(t.text)}</div>${t.done&&t.doneAt?`<div class="task-time">✓ ${ft(t.doneAt)}</div>`:''}</div></div>`).join('');
-  // 4. Posicionamento
+  // 3. Posicionamento
   const pos=p.positioning||'';
   const posOpts=['Lateral Dto','Lateral Esq','Dorsal','Ventral','Semi-Fowler'];
   const posButtons=posOpts.map(o=>`<button class="pos-btn${pos===o?' active':''}" onclick="setPositioning('${o}')">${o}</button>`).join('');
+  // 4. Cuidados & Intervenções — cuidados aprendidos
+  const learnedArr=getCustomCuidados();
+  const learnedChips=learnedArr.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px">
+    ${learnedArr.map((c,i)=>`<span style="display:inline-flex;align-items:center;gap:3px">
+      <button class="i-chip" onclick="registarCuidado('${c.replace(/'/g,"\\'")}')" style="font-size:11px;padding:5px 10px">✓ ${esc(c)}</button>
+      <button class="rm-btn" onclick="delCustomCuidado(${i})" style="font-size:10px;padding:1px 4px;color:var(--t3)" title="Remover sugestão">✕</button>
+    </span>`).join('')}
+  </div>`:'';
+  // 5. Higiene
+  const higiH=_higiSel.tipo.length||_higiSel.local.length?`<div style="margin-bottom:9px;font-size:12px;color:var(--p)">→ ${[..._higiSel.tipo,..._higiSel.local].join(' · ')}</div>`:'';
+
   el('csec-enf').innerHTML=`
     <div class="sub-card">
       <div class="sub-card-hdr">Notas do Turno
@@ -3177,22 +3196,71 @@ function renEnf(){
       ${abcde}
     </div>
     <div class="sub-card">
-      <div class="sub-card-hdr">Cuidados & Higiene</div>
-      ${tasks}
-      <div style="padding:10px 13px;border-top:1px solid var(--b);display:flex;flex-wrap:wrap;gap:6px">
-        ${['Higiene parcial','Higiene completa','Higiene no leito','Higiene no chuveiro','Cuidados à boca','Cuidados ao cateter','Aspiração de secreções'].map(c=>`<button class="i-chip" onclick="registarCuidado('${c}')" style="font-size:11px;padding:5px 10px">✓ ${c}</button>`).join('')}
+      <div class="sub-card-hdr">Cuidados &amp; Intervenções</div>
+      <div style="padding:11px 13px">
+        <div class="sect-lbl">🫁 Aspiração de Secreções</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px">
+          ${['Orofaringe','Nasofaringe','TET','Traqueostomia'].map(l=>`<button class="i-chip" onclick="registarCuidado('Aspiração ${l}')" style="font-size:11px;padding:5px 10px">✓ ${l}</button>`).join('')}
+        </div>
+        <div class="sect-lbl">🧪 Colheitas / Amostras</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px">
+          ${['Sangue','Urina','Secreções','Fezes','LCR','Exsudado','Liq. Pleural'].map(l=>`<button class="i-chip" onclick="registarCuidado('Colheita: ${l}')" style="font-size:11px;padding:5px 10px">✓ ${l}</button>`).join('')}
+        </div>
+        <div class="sect-lbl">🔄 Posicionamento</div>
+        <div class="pos-wrap" style="margin-bottom:${pos?'4px':'11px'}">${posButtons}</div>
+        ${pos?`<div class="pos-current" style="margin-bottom:9px">Posição actual: <strong>${pos}</strong></div>`:''}
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px">
+          <button class="i-chip" onclick="registarCuidado('Comunicação com a família')" style="font-size:11px;padding:5px 10px">👨‍👩‍👧 Comunicação com a família</button>
+        </div>
+        ${learnedChips.length?`<div class="sect-lbl">Aprendidos</div>${learnedChips}`:''}
+        <div class="task-add"><input id="interv-inp" type="text" placeholder="Adicionar intervenção..."><button class="btn btn-o btn-sm" onclick="addIntervencao()">+</button></div>
       </div>
-      <div class="task-add"><input id="new-task-inp" type="text" placeholder="Adicionar cuidado..."><button class="btn btn-o btn-sm" onclick="addCustomTask()">+</button></div>
     </div>
-    <div class="sub-card"><div class="sub-card-hdr">Posicionamento</div>
-      <div class="pos-wrap">${posButtons}</div>
-      ${pos?`<div class="pos-current">Posição actual: <strong>${pos}</strong></div>`:''}
+    <div class="sub-card">
+      <div class="sub-card-hdr">Higiene &amp; Conforto</div>
+      <div style="padding:11px 13px">
+        <div class="sect-lbl">Tipo</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px">
+          ${['Higiene parcial','Higiene completa'].map(t=>`<button class="add-chip${_higiSel.tipo.includes(t)?' sel':''}" onclick="higiTgl('${t}')">${t}</button>`).join('')}
+        </div>
+        <div class="sect-lbl">Local / Modo</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px">
+          ${['No leito','No chuveiro','Cuidados à boca'].map(c=>`<button class="add-chip${_higiSel.local.includes(c)?' sel':''}" onclick="higiTgl2('${c}')">${c}</button>`).join('')}
+        </div>
+        ${higiH}
+        <button class="btn btn-p" style="width:100%;font-weight:700${!(_higiSel.tipo.length||_higiSel.local.length)?' opacity:.5;pointer-events:none':''}" onclick="registarHigiene()">✅ Registar Higiene</button>
+      </div>
     </div>`;
 }
 function focusNoteInp(){const e=el('note-inp-enf');if(e){e.focus();e.scrollIntoView({behavior:'smooth'});}}
 function addNoteEnf(){const inp=el('note-inp-enf');if(!inp||!inp.value.trim())return;addNoteText(inp.value.trim());inp.value='';showToast('Nota registada ✓','ok');renEnf();}
-function addNoteText(txt){const p=ST.patients[ST.idx];if(!p)return;p.notes.unshift({id:uid(),text:txt,timestamp:new Date().toISOString()});save();}
+function addNoteText(txt){const p=ST.patients[ST.idx];if(!p)return;if(!p.notes)p.notes=[];p.notes.unshift({id:uid(),text:txt,timestamp:new Date().toISOString()});if(p.notes.length>50)p.notes=p.notes.slice(0,50);save();}
 function addNoteAuto(txt){addNoteText(txt);}
+function delNote(i){
+  const p=ST.patients[ST.idx];if(!p)return;
+  if(!confirm('Eliminar esta nota?'))return;
+  p.notes.splice(i,1);save();renEnf();
+}
+function editNote(i){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const row=el('note-row-'+i);const txtEl=el('note-txt-'+i);if(!row||!txtEl)return;
+  /* Torna o texto num campo editável inline */
+  const cur=p.notes[i].text;
+  row.innerHTML=`
+    <input type="text" value="${cur.replace(/"/g,'&quot;')}" id="note-edit-${i}"
+      style="flex:1;font-size:12px;padding:3px 6px;border-radius:5px;border:1px solid var(--p);background:var(--s);color:var(--t)">
+    <span style="display:flex;gap:4px;flex-shrink:0;margin-left:4px">
+      <button class="btn btn-p btn-sm" style="font-size:11px;padding:2px 8px" onclick="saveNoteEdit(${i})">✓</button>
+      <button class="btn btn-o btn-sm" style="font-size:11px;padding:2px 8px" onclick="renEnf()">✕</button>
+    </span>`;
+  const inp=el('note-edit-'+i);if(inp){inp.focus();inp.select();}
+}
+function saveNoteEdit(i){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const inp=el('note-edit-'+i);if(!inp)return;
+  const txt=inp.value.trim();if(!txt){showToast('A nota não pode estar vazia','warn');return;}
+  p.notes[i].text=txt;save();renEnf();showToast('Nota actualizada ✓','ok');
+}
 let _abcT={};function saveABCDE(k,v){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcde)p.abcde={};p.abcde[k]=v;clearTimeout(_abcT[k]);_abcT[k]=setTimeout(()=>save(),600);}
 function tglABCDE(k,opt){const p=ST.patients[ST.idx];if(!p)return;if(!p.abcdeSel)p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};const arr=p.abcdeSel[k]||(p.abcdeSel[k]=[]);const i=arr.indexOf(opt);if(i>=0)arr.splice(i,1);else arr.push(opt);save();}
 function addABCDEToNotes(){
@@ -3205,7 +3273,44 @@ function addABCDEToNotes(){
   /* Reset selections after registering */
   p.abcdeSel={A:[],B:[],C:[],D:[],E:[]};save();renEnf();
 }
-function registarCuidado(txt){addNoteAuto('✓ '+txt);showToast(txt+' registado ✓','ok');}
+function registarCuidado(txt){addNoteAuto('✓ '+txt);addTodoDone(txt);showToast(txt+' registado ✓','ok');}
+
+/* ─── Cuidados aprendidos globalmente (persiste entre doentes) ─── */
+function getCustomCuidados(){try{return JSON.parse(localStorage.getItem(SC_CUSTOM_CUIDADOS)||'[]');}catch{return[];}}
+function addCustomCuidado(txt){if(!txt)return;const arr=getCustomCuidados();if(!arr.includes(txt)){arr.unshift(txt);if(arr.length>30)arr.splice(30);localStorage.setItem(SC_CUSTOM_CUIDADOS,JSON.stringify(arr));}}
+function delCustomCuidado(i){const arr=getCustomCuidados();arr.splice(i,1);localStorage.setItem(SC_CUSTOM_CUIDADOS,JSON.stringify(arr));renEnf();}
+function addIntervencao(){
+  const inp=el('interv-inp');if(!inp||!inp.value.trim())return;
+  const txt=inp.value.trim();
+  addCustomCuidado(txt);
+  registarCuidado(txt);
+  inp.value='';save();renEnf();
+}
+
+/* ─── Higiene & Conforto cumulativa ─── */
+const _higiSel={tipo:[],local:[]};
+function higiTgl(v){const i=_higiSel.tipo.indexOf(v);if(i>=0)_higiSel.tipo.splice(i,1);else _higiSel.tipo.push(v);renEnf();}
+function higiTgl2(v){const i=_higiSel.local.indexOf(v);if(i>=0)_higiSel.local.splice(i,1);else _higiSel.local.push(v);renEnf();}
+function registarHigiene(){
+  if(!_higiSel.tipo.length&&!_higiSel.local.length){showToast('Seleccione pelo menos uma opção','warn');return;}
+  const parts=[..._higiSel.tipo,..._higiSel.local];
+  const txt=parts.join(' · ');
+  addNoteAuto('🧼 Higiene: '+txt);
+  addTodoDone('Higiene: '+txt);
+  _higiSel.tipo=[];_higiSel.local=[];
+  save();showToast('Higiene registada ✓','ok');renEnf();
+}
+
+/* ─── Dinâmica de Turno: adiciona item como concluído ─── */
+function addTodoDone(txt){
+  const p=ST.patients[ST.idx];if(!p)return;
+  if(!p.todos)p.todos=[];
+  /* Não duplica se já existe e foi marcado há menos de 1 minuto */
+  const recent=p.todos.find(t=>t.text===txt&&t.done&&t.doneAt&&(Date.now()-new Date(t.doneAt).getTime())<60000);
+  if(recent)return;
+  p.todos.push({id:uid(),text:txt,done:true,doneAt:new Date().toISOString(),scheduledAt:null,auto:true});
+  save();
+}
 function tglUC(i){
   const p=ST.patients[ST.idx];if(!p)return;
   if(!p.unitCheck)p.unitCheck={};
@@ -3486,8 +3591,8 @@ function renVentCard(p){
   }
   return`<div class="sub-card"><div class="sub-card-hdr">🫁 Suporte Ventilatório</div><div class="vent-modes">${modeButtons}</div>${paramsHTML}</div>`;
 }
-function tglDevQ(typeId){const p=ST.patients[ST.idx];if(!p)return;const idx=p.devices.findIndex(d=>d.typeId===typeId);if(idx>=0){retireDev(idx);}else{const dt=DEV_TYPES.find(d=>d.id===typeId);if(!dt)return;if(!p.devices)p.devices=[];p.devices.push({id:uid(),typeId,label:dt.label,icon:dt.icon,location:'',gauge:'',side:''});save();renDev();}}
-function retireDev(i){const p=ST.patients[ST.idx];if(!p)return;if(!p.devInactive)p.devInactive=[];const d={...p.devices[i],removedAt:new Date().toISOString()};p.devInactive.unshift(d);p.devices.splice(i,1);save();renDev();}
+function tglDevQ(typeId){const p=ST.patients[ST.idx];if(!p)return;const idx=p.devices.findIndex(d=>d.typeId===typeId);if(idx>=0){retireDev(idx);}else{const dt=DEV_TYPES.find(d=>d.id===typeId);if(!dt)return;if(!p.devices)p.devices=[];p.devices.push({id:uid(),typeId,label:dt.label,icon:dt.icon,location:'',gauge:'',side:''});addNoteAuto('📍 Dispositivo: '+dt.label+' adicionado');save();renDev();}}
+function retireDev(i){const p=ST.patients[ST.idx];if(!p)return;if(!p.devInactive)p.devInactive=[];const d={...p.devices[i],removedAt:new Date().toISOString()};addNoteAuto('🔴 Dispositivo retirado: '+d.label+(d.location?' — '+d.location:''));p.devInactive.unshift(d);p.devices.splice(i,1);save();renDev();}
 function delInactiveDev(i){const p=ST.patients[ST.idx];if(!p||!p.devInactive)return;if(!confirm('Eliminar este registo?'))return;p.devInactive.splice(i,1);save();renDev();}
 function onDevTypeChange(){const typeId=el('dev-type')?.value;const dt=DEV_TYPES.find(d=>d.id===typeId);const locWrap=el('dev-location-wrap'),locSel=el('dev-location');if(!locWrap||!locSel)return;if(dt&&dt.locs&&dt.locs.length){locSel.innerHTML=dt.locs.map(l=>`<option>${l}</option>`).join('');locWrap.style.display='block';}else locWrap.style.display='none';}
 function openDevModal(){
@@ -3495,7 +3600,7 @@ function openDevModal(){
   el('dev-side').value='';
   onDevTypeChange();openM('modal-dev');
 }
-function confDev(){const p=ST.patients[ST.idx];if(!p)return;const typeId=el('dev-type').value;const gauge=el('dev-gauge').value;const side=el('dev-side').value.trim();const locWrap=el('dev-location-wrap');const location=locWrap&&locWrap.style.display!=='none'?(el('dev-location')?.value||''):'';const dt=DEV_TYPES.find(d=>d.id===typeId);if(!dt)return;if(!p.devices)p.devices=[];p.devices.push({id:uid(),typeId,label:dt.label,icon:dt.icon,location,gauge,side});save();showToast('Dispositivo adicionado ✓','ok');closeM('modal-dev');renDev();}
+function confDev(){const p=ST.patients[ST.idx];if(!p)return;const typeId=el('dev-type').value;const gauge=el('dev-gauge').value;const side=el('dev-side').value.trim();const locWrap=el('dev-location-wrap');const location=locWrap&&locWrap.style.display!=='none'?(el('dev-location')?.value||''):'';const dt=DEV_TYPES.find(d=>d.id===typeId);if(!dt)return;if(!p.devices)p.devices=[];p.devices.push({id:uid(),typeId,label:dt.label,icon:dt.icon,location,gauge,side});addNoteAuto('📍 Dispositivo: '+dt.label+(location?' — '+location:'')+(gauge&&gauge!=='N/A'?' ('+gauge+')':''));save();showToast('Dispositivo adicionado ✓','ok');closeM('modal-dev');renDev();}
 
 // ─── To-Do ────────────────────────────────────
 function renTodo(){
@@ -3511,7 +3616,7 @@ function renTodo(){
   // Verificação da unidade/posto
   const uc=UNIT_CHECK.map((item,i)=>{const done=p.unitCheck?.[i]||false;return`<div class="task-it"><div class="task-chk ${done?'done':''}" onclick="tglUC(${i})">${done?chkSvg:''}</div><div class="task-lbl ${done?'done':''}">${item}</div></div>`;}).join('');
   el('csec-todo').innerHTML=`
-    <div class="sub-card"><div class="sub-card-hdr">To-Do do Turno</div>${listH}<div class="task-add"><input id="todo-inp" type="text" placeholder="Adicionar tarefa..."><button class="btn btn-o btn-sm" onclick="addTodoC()">+</button></div></div>
+    <div class="sub-card"><div class="sub-card-hdr">Dinâmica de Turno</div>${listH}<div class="task-add"><input id="todo-inp" type="text" placeholder="Adicionar tarefa..."><button class="btn btn-o btn-sm" onclick="addTodoC()">+</button></div></div>
     <div class="sub-card"><div class="sub-card-hdr">Verificação da Unidade/Posto</div>${uc}</div>`;
 }
 function addTodoQ(text){const p=ST.patients[ST.idx];if(!p)return;if(!p.todos)p.todos=[];if(p.todos.find(t=>t.text===text&&!t.done))return;p.todos.push({id:uid(),text,done:false,doneAt:null,scheduledAt:null});save();renTodo();}
@@ -3959,6 +4064,7 @@ function registarIntercorrencia(){
   if(n.intercorrencias.length>20)n.intercorrencias=n.intercorrencias.slice(0,20);
   const txt='⚠ Intercorrência alimentar: '+rec.type+(rec.chars.length?' · '+rec.chars.join(', '):'');
   addNoteAuto(txt);
+  addTodoDone('Intercorrência: '+rec.type);
   _icSel.type=null;_icSel.chars=[];
   save();showToast('Intercorrência registada ✓','ok');renAlim();
 }
@@ -4025,6 +4131,15 @@ function nutrConfirm() {
     volume: s.volume, notes: s.notes,
     startAt: new Date().toISOString(),
   });
+  /* Registo automático nas notas de turno */
+  const _ntLabel=nutrTypeLabel(s.type);
+  const _ntParts=[_ntLabel];
+  if(s.modeVia)_ntParts.push(s.modeVia);
+  if(s.modeFreq)_ntParts.push(s.modeFreq);
+  if(s.volume)_ntParts.push(s.volume+' mL');
+  if(s.additives&&s.additives.length)_ntParts.push(s.additives.join(', '));
+  addNoteAuto('🍼 Alimentação iniciada: '+_ntParts.join(' · '));
+  addTodoDone('Alimentação: '+_ntParts[0]);
   // Reset staging
   n.staging = { type:'', additives:[], modeFreq:'', modeVia:'', volume:'', notes:'' };
   save(); showToast('Alimentação adicionada ✓','ok'); renAlim();
@@ -4410,6 +4525,9 @@ document.addEventListener('click',e=>{if(!e.target.closest('#modal-med')){const 
 document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const id=document.activeElement?.id;if(id==='f-diag2')addSD('f-diag2','f-dtags','sd');if(id==='m-diag2')addSD('m-diag2','m-dtags','sdm');if(id==='note-inp-enf')addNoteEnf();if(id==='todo-inp')addTodoC();});
 
 const bd=el('build-date');if(bd)bd.textContent=new Date().toLocaleDateString('pt-PT',{year:'numeric',month:'long',day:'numeric'});
+/* Injeta versão automática em todos os pontos do About */
+['about-version','hdr-version'].forEach(id=>{const e=el(id);if(e&&id==='about-version')e.textContent='v'+APP_VERSION;if(e&&id==='hdr-version')e.textContent='Gestão de Turno · v'+APP_VERSION;});
+const af=el('about-footer');if(af)af.textContent='ShiftCare v'+APP_VERSION+' © 2026 · Todos os direitos reservados';
 
 
 // ══════════════════════════════════════════════
