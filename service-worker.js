@@ -1,7 +1,7 @@
-/* ShiftCare Service Worker v3.5.3
+/* ShiftCare Service Worker v3.5.5
    Cache-first para assets, network-first para API */
 
-const CACHE_NAME   = 'shiftcare-v3.5.4';
+const CACHE_NAME   = 'shiftcare-v3.5.5';
 const API_ORIGINS  = ['shiftcare.pedicode-app.workers.dev', 'api.groq.com'];
 
 /* Assets to precache on install */
