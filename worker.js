@@ -7,6 +7,7 @@ import { DurableObject } from 'cloudflare:workers';
 
 const ALLOWED_ORIGINS = [
   'https://pedicode-app.github.io',
+  'https://delfos-iq.github.io',
   'http://localhost',
   'http://127.0.0.1',
 ];
