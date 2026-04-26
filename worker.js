@@ -30,8 +30,8 @@ const MODELS = {
   isbar:        'llama-3.3-70b-versatile',
   vitals_image: 'meta-llama/llama-4-scout-17b-16e-instruct',
   ocr:          'meta-llama/llama-4-scout-17b-16e-instruct',
-  mesh:         'llama-3.1-8b-instant',
-  default:      'llama-3.1-8b-instant',
+  mesh:         'llama-3.3-70b-versatile',
+  default:      'llama-3.3-70b-versatile',
 };
 
 /* Prefixo de contexto clínico injectado em TODOS os pedidos isbar.
