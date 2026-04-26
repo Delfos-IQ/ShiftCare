@@ -5,11 +5,24 @@
 
 import { DurableObject } from 'cloudflare:workers';
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
+const ALLOWED_ORIGINS = [
+  'https://pedicode-app.github.io',
+  'http://localhost',
+  'http://127.0.0.1',
+];
+
+function corsHeaders(origin) {
+  const allowed = ALLOWED_ORIGINS.some(o => origin && origin.startsWith(o));
+  return {
+    'Access-Control-Allow-Origin': allowed ? origin : 'null',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Vary': 'Origin',
+  };
+}
+
+/* Compat: mantém CORS como objecto para os poucos sítios que ainda usam a constante directamente */
+const CORS = corsHeaders('https://pedicode-app.github.io');
 
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
@@ -132,11 +145,27 @@ export class SyncRoom extends DurableObject {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
+// RATE LIMITING — in-memory, resets per Worker isolate (~few minutes)
+// Limita pedidos IA a 30/min por IP para prevenir abuso da GROQ_API_KEY
+// ══════════════════════════════════════════════════════════════════════════
+const _rl = new Map();
+function _checkRL(ip) {
+  const now = Date.now();
+  const w   = _rl.get(ip) || { n: 0, t: now + 60000 };
+  if (now > w.t) { w.n = 0; w.t = now + 60000; }
+  w.n++;
+  _rl.set(ip, w);
+  return w.n <= 30;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
 // WORKER PRINCIPAL
 // ══════════════════════════════════════════════════════════════════════════
 export default {
   async fetch(request, env) {
-    const url = new URL(request.url);
+    const url    = new URL(request.url);
+    const origin = request.headers.get('Origin') || '';
+    const ch     = corsHeaders(origin);
 
     // ── /sync/{roomCode} → WebSocket relay (Durable Object) ──
     if (url.pathname.startsWith('/sync/')) {
@@ -152,8 +181,11 @@ export default {
       return room.fetch(request);
     }
 
-    if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
-    if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
+    if (request.method === 'OPTIONS') return new Response(null, { headers: ch });
+    if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405, ch);
+
+    // Rate limiting — aplicado a pedidos IA (não a backup/sync)
+    const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
 
     let body;
     try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400); }
@@ -176,7 +208,7 @@ export default {
       if (!data || typeof data !== 'string') return json({ error: 'Dados em falta.' }, 400);
       if (data.length > BACKUP_MAX_BYTES) return json({ error: 'Backup demasiado grande (máx. 4 MB).' }, 413);
 
-      const backupId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      const backupId = crypto.randomUUID();
       const metaKey  = `meta:${userId}`;
       const dataKey  = `bk:${userId}:${backupId}`;
 
@@ -351,6 +383,11 @@ Regras:
 
     if (!groqMessages || !Array.isArray(groqMessages)) return json({ error: 'Missing messages' }, 400);
 
+    // Rate limit para pedidos que consomem GROQ_API_KEY
+    if (!_checkRL(clientIP)) {
+      return json({ error: 'Demasiados pedidos. Aguarda 1 minuto.' }, 429, ch);
+    }
+
     const model  = MODELS[type] || MODELS.default;
     const maxTok = type === 'vitals_image' ? 200
                  : type === 'ocr'          ? 1500
@@ -385,9 +422,9 @@ Regras:
   },
 };
 
-function json(data, status = 200) {
+function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json', ...CORS },
+    headers: { 'Content-Type': 'application/json', ...CORS, ...extraHeaders },
   });
 }

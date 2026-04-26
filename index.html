@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://shiftcare.pedicode-app.workers.dev wss://shiftcare.pedicode-app.workers.dev https://api.groq.com; media-src 'self' blob:; worker-src 'self'; object-src 'none'; base-uri 'self';">
 
 <!-- PWA: identidade e manifest -->
 <meta name="application-name" content="ShiftCare">
@@ -1790,7 +1791,7 @@ const PREMIUM_CODE_HASHES=new Set([]);
 // ══════════════════════════════════════════════
 // § 03 — CONSTANTES & UTILITÁRIOS GLOBAIS
 // ══════════════════════════════════════════════
-const APP_VERSION = '3.5.3';
+const APP_VERSION = '3.5.4';
 const SC_CUSTOM_CUIDADOS = 'sc_custom_cuidados'; /* cuidados aprendidos — global, persiste entre doentes */
 const _PREM_KEY='sc_premium_v1';
 
@@ -2852,7 +2853,7 @@ function addPt(sc){
 function rmSetupPt(i){ST.patients.splice(i,1);if(ST.idx>=ST.patients.length)ST.idx=Math.max(0,ST.patients.length-1);renderSetup();save();}
 function renderSetup(){
   const pts=ST.patients.filter(p=>p.status==='internado');
-  el('pt-list').innerHTML=pts.map((p,pi)=>{const ri=ST.patients.indexOf(p);return`<div class="pt-item"><div class="pti"><div class="pti-name">${esc(p.name)}</div><div class="pti-sub">Cama ${esc(p.bed)} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}${p.diagMain?' · '+p.diagMain:''}</div></div><button class="rm-btn" onclick="rmSetupPt(${ri})">×</button></div>`;}).join('');
+  el('pt-list').innerHTML=pts.map((p,pi)=>{const ri=ST.patients.indexOf(p);return`<div class="pt-item"><div class="pti"><div class="pti-name">${esc(p.name)}</div><div class="pti-sub">Cama ${esc(p.bed)} · ${ageLabel(p)}${p.weightKg?' · '+p.weightKg+'kg':''}${p.diagMain?' · '+esc(p.diagMain):''}</div></div><button class="rm-btn" onclick="rmSetupPt(${ri})">×</button></div>`;}).join('');
   el('start-area').style.display=pts.length?'block':'none';
   // Show "Continuar Turno" button if there's a saved shift with active patients
   const btnCont=el('btn-continuar');
@@ -2948,7 +2949,15 @@ function _pinRenderDots(rowId,pfx){
   for(let i=0;i<4;i++){const d=el(pfx+i);if(d)d.classList.toggle('filled',i<_pinBuf.length);}
 }
 
+/* Lockout exponencial: 5 tentativas → 1 min, 6 → 2 min, 7 → 4 min, 8+ → 8 min */
+let _pinAttempts=0;
+let _pinLockUntil=0;
+
 function pinKey(v){
+  if(Date.now()<_pinLockUntil){
+    const secs=Math.ceil((_pinLockUntil-Date.now())/1000);
+    el('pin-err').textContent=`Bloqueado ${secs}s`;return;
+  }
   if(v==='del'){_pinBuf=_pinBuf.slice(0,-1);_pinRenderDots('pin-dots-row','pd');return;}
   if(_pinBuf.length>=4)return;
   _pinBuf+=v;_pinRenderDots('pin-dots-row','pd');
@@ -2958,12 +2967,20 @@ function pinKey(v){
 async function _pinCheckUnlock(){
   const hash=await _hashStr(_pinBuf);
   if(hash===localStorage.getItem(PIN_KEY)){
+    _pinAttempts=0;_pinLockUntil=0;
     el('privacy-overlay').classList.remove('visible');
     _pinBuf='';resetPrivacyTimer();
   } else {
+    _pinAttempts++;
+    if(_pinAttempts>=5){
+      const mins=Math.pow(2,Math.min(_pinAttempts-5,3));
+      _pinLockUntil=Date.now()+mins*60*1000;
+      el('pin-err').textContent=`PIN incorrecto — bloqueado ${mins} min`;
+    } else {
+      el('pin-err').textContent=`PIN incorrecto (${5-_pinAttempts} tentativas restantes)`;
+    }
     const row=el('pin-dots-row');
     if(row){row.classList.add('pin-shake');setTimeout(()=>row.classList.remove('pin-shake'),400);}
-    el('pin-err').textContent='PIN incorrecto';
     setTimeout(()=>{_pinBuf='';_pinRenderDots('pin-dots-row','pd');},420);
   }
 }
@@ -4004,7 +4021,7 @@ function openMedModal(type){
   if(el('med-start'))el('med-start').value=now.toISOString().slice(0,16);
   openM('modal-med');
 }
-function onMedName(v){const sugg=medSugg(v);const ac=el('med-autocomplete');if(!ac)return;ac.innerHTML=sugg.map(s=>`<div class="ac-item" onclick="selMed('${s}')">${s}</div>`).join('');}
+function onMedName(v){const sugg=medSugg(v);const ac=el('med-autocomplete');if(!ac)return;ac.innerHTML='';sugg.forEach(s=>{const d=document.createElement('div');d.className='ac-item';d.textContent=s;d.addEventListener('click',()=>selMed(s));ac.appendChild(d);});}
 function selMed(n){if(el('med-name'))el('med-name').value=n;el('med-autocomplete').innerHTML='';}
 
 // ════════════════════════════════════════════════════════════
@@ -4555,8 +4572,8 @@ function renISBAR(){ST.isbarSec?renISBARDetail(ST.isbarSec):renISBARCards();}
 function renISBARCards(){
   const p=ST.patients[ST.idx];if(!p)return;
   el('tab-isbar').innerHTML=`
-    <div class="isbar-card" onclick="openISBARSec('ap')"><div class="isbar-card-icon">🏥</div><div><div class="isbar-card-title">Antecedentes Pessoais</div><div class="isbar-card-sub">${p.antecedentes?p.antecedentes.slice(0,60)+'...':'Sem antecedentes registados'}</div></div><div class="isbar-arr">›</div></div>
-    <div class="isbar-card" onclick="openISBARSec('hda')"><div class="isbar-card-icon">📋</div><div><div class="isbar-card-title">História da Doença Actual</div><div class="isbar-card-sub">${p.hda?p.hda.slice(0,60)+'...':'Sem HDA registada'}</div></div><div class="isbar-arr">›</div></div>
+    <div class="isbar-card" onclick="openISBARSec('ap')"><div class="isbar-card-icon">🏥</div><div><div class="isbar-card-title">Antecedentes Pessoais</div><div class="isbar-card-sub">${p.antecedentes?esc(p.antecedentes.slice(0,60))+'...':'Sem antecedentes registados'}</div></div><div class="isbar-arr">›</div></div>
+    <div class="isbar-card" onclick="openISBARSec('hda')"><div class="isbar-card-icon">📋</div><div><div class="isbar-card-title">História da Doença Actual</div><div class="isbar-card-sub">${p.hda?esc(p.hda.slice(0,60))+'...':'Sem HDA registada'}</div></div><div class="isbar-arr">›</div></div>
     <div class="isbar-divider"></div>
     <div class="isbar-card isbar-card-ai" onclick="openISBARSec('isbar')"><div class="isbar-card-icon">🤖</div><div><div class="isbar-card-title">Relatório ISBAR</div><div class="isbar-card-sub">Gerar com IA · Requer ligação à internet</div></div><div class="isbar-arr">›</div></div>`;
 }
@@ -5455,7 +5472,7 @@ function exportShiftPDF(){
       </div>
       <div style="padding:10px 14px">
         <div style="margin-bottom:6px">${pewsBadge}</div>
-        ${p.diagMain?`<div style="font-size:12px;color:#374151;margin-bottom:6px"><strong>DX:</strong> ${p.diagMain}${p.diagSec&&p.diagSec.length?' + '+p.diagSec.join(', '):''}</div>`:''}
+        ${p.diagMain?`<div style="font-size:12px;color:#374151;margin-bottom:6px"><strong>DX:</strong> ${esc(p.diagMain)}${p.diagSec&&p.diagSec.length?' + '+p.diagSec.map(esc).join(', '):''}</div>`:''}
         ${p.allergies?`<div style="font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:4px;padding:3px 8px;margin-bottom:6px;color:#dc2626">⚠ Alergia: ${p.allergies}</div>`:''}
         ${alertBanner}
         <div style="margin-bottom:10px">
