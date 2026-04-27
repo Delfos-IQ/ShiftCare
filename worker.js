@@ -168,6 +168,12 @@ export default {
     const origin = request.headers.get('Origin') || '';
     const ch     = corsHeaders(origin);
 
+    // json() local — usa sempre o CORS correto para este pedido (não o estático)
+    const json = (data, status = 200, extra = {}) => new Response(
+      JSON.stringify(data),
+      { status, headers: { 'Content-Type': 'application/json', ...ch, ...extra } }
+    );
+
     // ── /sync/{roomCode} → WebSocket relay (Durable Object) ──
     if (url.pathname.startsWith('/sync/')) {
       const roomCode = url.pathname.split('/')[2]?.toUpperCase().trim();
