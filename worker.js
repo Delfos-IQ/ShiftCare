@@ -152,7 +152,11 @@ export class SyncRoom extends DurableObject {
 const _rl = new Map();
 function _checkRL(ip) {
   const now = Date.now();
-  const w   = _rl.get(ip) || { n: 0, t: now + 60000 };
+  // Prune expired entries periodically to avoid unbounded map growth
+  if (_rl.size > 500) {
+    for (const [k, v] of _rl) { if (now > v.t) _rl.delete(k); }
+  }
+  const w = _rl.get(ip) || { n: 0, t: now + 60000 };
   if (now > w.t) { w.n = 0; w.t = now + 60000; }
   w.n++;
   _rl.set(ip, w);

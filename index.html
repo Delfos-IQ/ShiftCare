@@ -1792,7 +1792,7 @@ const PREMIUM_CODE_HASHES=new Set([]);
 // ══════════════════════════════════════════════
 // § 03 — CONSTANTES & UTILITÁRIOS GLOBAIS
 // ══════════════════════════════════════════════
-const APP_VERSION = '3.5.5';
+const APP_VERSION = '3.5.6';
 const SC_CUSTOM_CUIDADOS = 'sc_custom_cuidados'; /* cuidados aprendidos — global, persiste entre doentes */
 const _PREM_KEY='sc_premium_v1';
 
@@ -2152,7 +2152,7 @@ function medSugg(q){if(!q)return[];q=q.toLowerCase();const learned=Object.entrie
 
 function exportBackup(){
   const data={
-    version:'3.3.2',
+    version:APP_VERSION,
     timestamp:new Date().toISOString(),
     patients:ST.patients,
     shiftStart:ST.shiftStart,
@@ -2286,10 +2286,7 @@ const BK_UID_KEY = 'sc_backup_uid';
 function _bkGetUserId(){
   let uid = localStorage.getItem(BK_UID_KEY);
   if(!uid || !/^[a-f0-9\-]{36}$/.test(uid)){
-    // Gera UUID v4
-    uid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{
-      const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);
-    });
+    uid = crypto.randomUUID();
     localStorage.setItem(BK_UID_KEY, uid);
   }
   return uid;
@@ -3190,7 +3187,12 @@ function navN(){const a=ST.patients.filter(p=>p.status==='internado');if(!a.leng
 function navP(){const a=ST.patients.filter(p=>p.status==='internado');if(!a.length)return;_ci=(_ci-1+a.length)%a.length;const t=el('cards-track');if(t&&t.children[_ci])t.children[_ci].scrollIntoView({behavior:'smooth',inline:'center'});}
 function openAddModal(){ST.sdm=[];['m-name','m-bed','m-age','m-wt','m-alrg','m-diag','m-ig-w','m-ig-d','m-dnasc'].forEach(id=>{const e=el(id);if(e)e.value='';});el('m-dtags').innerHTML='';openM('modal-addpt');}
 function openDisc(ri){ST.discIdx=ri;el('disc-name').textContent=ST.patients[ri]?.name||'';el('disc-note').value='';openM('modal-disc');}
-function confDisc(type){const p=ST.patients[ST.discIdx];if(!p)return;p.status=type;p.dischargeAt=new Date().toISOString();p.dischargeNote=el('disc-note').value.trim();closeM('modal-disc');renderDash();save();}
+function confDisc(type){const p=ST.patients[ST.discIdx];if(!p)return;p.status=type;p.dischargeAt=new Date().toISOString();p.dischargeNote=el('disc-note').value.trim();closeM('modal-disc');renderDash();save();
+  /* Notifica colegas em sync sobre a alta/transferência */
+  if(_sync.ws&&_sync.ws.readyState===WebSocket.OPEN){
+    try{_sync.ws.send(JSON.stringify({type:'discharge',id:p.id,name:p.name,bed:p.bed,status:type,ts:Date.now()}));}catch(e){}
+  }
+}
 
 // ══════════════════════════════════════════════
 // § 11 — HISTÓRICO DE TURNOS
@@ -5862,6 +5864,18 @@ function _syncConnect(code){
         }
         if(msg.type==='state'&&msg.payload){
           _syncApplyState(msg.payload, msg.ts||0);
+        }
+        if(msg.type==='discharge'&&msg.id){
+          /* Colega deu alta/transferência — actualiza status localmente */
+          const pt=ST.patients.find(p=>p.id===msg.id||(p.name===msg.name&&p.bed===msg.bed));
+          if(pt&&pt.status==='internado'){
+            pt.status=msg.status||'alta';
+            pt.dischargeAt=pt.dischargeAt||new Date(msg.ts||Date.now()).toISOString();
+            try{localStorage.setItem('sc_v23',JSON.stringify({p:ST.patients,ss:ST.shiftStart}));}catch{}
+            if(ST.screen==='s-dashboard')renderDash();
+            const label=msg.status==='transferido'?'Transferido':'Alta';
+            showToast(`🔔 ${msg.name||'Doente'} (Cama ${msg.bed||'?'}) — ${label} registada pelo colega`,'ok');
+          }
         }
         if(msg.type==='delta'&&msg.path!==undefined){
           _syncApplyDelta(msg.path, msg.value, msg.ts||0);

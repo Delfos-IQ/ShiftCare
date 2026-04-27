@@ -1,7 +1,7 @@
-/* ShiftCare Service Worker v3.5.5
+/* ShiftCare Service Worker v3.5.6
    Cache-first para assets, network-first para API */
 
-const CACHE_NAME   = 'shiftcare-v3.5.5';
+const CACHE_NAME   = 'shiftcare-v3.5.6';
 const API_ORIGINS  = ['shiftcare.pedicode-app.workers.dev', 'api.groq.com'];
 
 /* Assets to precache on install */
@@ -48,8 +48,8 @@ self.addEventListener('fetch', event => {
   // ① API calls → network-first, no cache
   if (API_ORIGINS.some(o => url.hostname.includes(o))) {
     event.respondWith(
-      fetch(event.request).catch(() =>
-        new Response(JSON.stringify({ error: 'offline' }), {
+      fetch(event.request).catch(err =>
+        new Response(JSON.stringify({ error: 'sem ligação — verifica a tua rede', detail: err.message }), {
           status: 503,
           headers: { 'Content-Type': 'application/json' }
         })
