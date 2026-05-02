@@ -1,4 +1,4 @@
-// ShiftCare v3.3.2 — Cloudflare Worker
+// ShiftCare v3.5.7 — Cloudflare Worker
 // Deploy: wrangler deploy
 // Env vars required: GROQ_API_KEY, LS_API_KEY
 // Durable Objects: SYNC_ROOM (see wrangler.toml)
@@ -252,7 +252,7 @@ export default {
       if (!env.BACKUP_KV) return json({ error: 'Backup não configurado no servidor.' }, 503);
       const { userId, backupId } = body;
       if (!userId || !/^[a-f0-9\-]{36}$/.test(userId)) return json({ error: 'userId inválido.' }, 400);
-      if (!backupId) return json({ error: 'backupId em falta.' }, 400);
+      if (!backupId || !/^[a-f0-9\-]{36}$/.test(backupId)) return json({ error: 'backupId inválido.' }, 400);
       const data = await env.BACKUP_KV.get(`bk:${userId}:${backupId}`);
       if (!data) return json({ error: 'Backup não encontrado.' }, 404);
       return json({ data });
@@ -262,7 +262,7 @@ export default {
       if (!env.BACKUP_KV) return json({ error: 'Backup não configurado no servidor.' }, 503);
       const { userId, backupId } = body;
       if (!userId || !/^[a-f0-9\-]{36}$/.test(userId)) return json({ error: 'userId inválido.' }, 400);
-      if (!backupId) return json({ error: 'backupId em falta.' }, 400);
+      if (!backupId || !/^[a-f0-9\-]{36}$/.test(backupId)) return json({ error: 'backupId inválido.' }, 400);
 
       await env.BACKUP_KV.delete(`bk:${userId}:${backupId}`).catch(() => {});
       const metaKey = `meta:${userId}`;
@@ -432,10 +432,3 @@ Regras:
     }
   },
 };
-
-function json(data, status = 200, extraHeaders = {}) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json', ...CORS, ...extraHeaders },
-  });
-}

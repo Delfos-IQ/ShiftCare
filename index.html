@@ -1209,7 +1209,9 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
             <span>📋 Histórico de versões</span><span class="chev" style="font-size:10px;transition:transform .2s">▼</span>
           </button>
           <div style="display:none;padding:0 15px 13px;font-size:12px;color:var(--t2);line-height:1.9" id="ver-hist">
-            <div><strong style="color:var(--t)">v3.5.2</strong> — PIN de 4 dígitos (SHA-256, bloqueio automático 5 min, gestão no About); timeout 15 s na IA; limpeza de código</div>
+            <div><strong style="color:var(--t)">v3.5.7</strong> — Auditoria de segurança: PIN reforçado PBKDF2+salt, XSS corrigido, uid() crypto.randomUUID(), validação backupId, service worker actualizado</div>
+            <div style="margin-top:6px"><strong style="color:var(--t)">v3.5.6</strong> — Notificação de alta via sync em tempo real; fix CORS worker; fix MeSH offline; CSP actualizado; fix modelo Groq deprecado</div>
+            <div style="margin-top:6px"><strong style="color:var(--t)">v3.5.2</strong> — PIN de 4 dígitos (bloqueio automático 5 min, gestão no About); timeout 15 s na IA; limpeza de código</div>
             <div style="margin-top:6px"><strong style="color:var(--t)">v3.5.1</strong> — ABCDE com dropdown compacto; notas com scroll; figuras etárias simplificadas; acordeão Histórico de versões corrigido; registarCuidado actualiza notas imediatamente</div>
             <div style="margin-top:6px"><strong style="color:var(--t)">v3.5.0</strong> — Cuidados &amp; Intervenções reestruturados; Higiene cumulativa; Dinâmica de Turno; notas de turno editáveis/ilimitadas; registo automático em alimentação e dispositivos; About simplificado</div>
             <div style="margin-top:6px"><strong style="color:var(--t)">v3.4.0</strong> — TAD no painel vitais; Registar Avaliação; Alergias visíveis; ABCDE com botões; Eliminação; Alimentação intercorrências; Sync WebSocket fixes; Figuras etárias</div>
@@ -1792,7 +1794,7 @@ const PREMIUM_CODE_HASHES=new Set([]);
 // ══════════════════════════════════════════════
 // § 03 — CONSTANTES & UTILITÁRIOS GLOBAIS
 // ══════════════════════════════════════════════
-const APP_VERSION = '3.5.6';
+const APP_VERSION = '3.5.7';
 const SC_CUSTOM_CUIDADOS = 'sc_custom_cuidados'; /* cuidados aprendidos — global, persiste entre doentes */
 const _PREM_KEY='sc_premium_v1';
 
@@ -2077,7 +2079,7 @@ function ptInfoPills(p){
 let ST={patients:[],shiftStart:null,idx:0,screen:'s-setup',prevScreen:null,detTab:'vitais',csec:'enf',msec:'hor',isbarSec:null,ageU:'dias',ageUM:'dias',sd:[],sdm:[],qSel:[],medModalType:'hor',discIdx:null};
 let LEARN={meds:{},tasks:{},todos:{}};
 
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const uid=()=>crypto.randomUUID();
 const ft=d=>(d?new Date(d):new Date()).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
 const fd=d=>(d?new Date(d):new Date()).toLocaleDateString('pt-PT',{day:'2-digit',month:'2-digit',year:'numeric'});
 const fdt=d=>fd(d)+' '+ft(d);
@@ -2115,20 +2117,19 @@ function _trimData(){
 }
 function save(){
   try{
-    const payload={p:ST.patients,ss:ST.shiftStart};
-    const str=JSON.stringify(payload);
+    const str=JSON.stringify({p:ST.patients,ss:ST.shiftStart});
     /* Aviso preventivo acima dos 4 MB (limite típico ~5 MB) */
     if(str.length>4*1024*1024){
       _trimData();
       showToast('⚠ Histórico antigo podado para libertar espaço.','');
     }
-    localStorage.setItem('sc_v23',JSON.stringify({p:ST.patients,ss:ST.shiftStart}));
+    localStorage.setItem('sc_v23',str);
     localStorage.setItem('sc_learn',JSON.stringify(LEARN));
   }catch(e){
     /* Última tentativa: poda e retry */
     _trimData();
     try{
-      localStorage.setItem('sc_v23',JSON.stringify({p:ST.patients,ss:ST.shiftStart}));
+      localStorage.setItem('sc_v23',JSON.stringify({p:ST.patients,ss:ST.shiftStart}));/* retry pós-poda */
       showToast('⚠ Dados antigos removidos para libertar espaço.','');
     }catch(e2){
       showToast('🚨 Armazenamento cheio! Faz um backup (Menu → Exportar) e limpa o histórico.','error');
@@ -2140,12 +2141,16 @@ function save(){
   _checkStorageQuota();
 }
 function loadData(){try{
-  // Try v22 first, fall back to v21
+  // Try v23 first, fall back to older versions
   const raw=localStorage.getItem('sc_v23')||localStorage.getItem('sc_v22')||localStorage.getItem('sc_v21')||'{}';
   const d=JSON.parse(raw);
   if(d.p)ST.patients=d.p;if(d.ss)ST.shiftStart=d.ss;
   const l=JSON.parse(localStorage.getItem('sc_learn')||'{}');if(l.meds)LEARN=l;
-}catch(e){}}
+}catch(e){}
+/* Migração PIN v1→v2: sc_pin_v1 usava SHA-256 sem salt (inseguro).
+   Remove silenciosamente — o utilizador verá que não há PIN activo e pode redefinir. */
+if(localStorage.getItem('sc_pin_v1')){localStorage.removeItem('sc_pin_v1');}
+}
 function learnMed(n){if(!n)return;LEARN.meds[n.toLowerCase()]=(LEARN.meds[n.toLowerCase()]||0)+1;save();}
 function learnTask(t){LEARN.tasks[t]=(LEARN.tasks[t]||0)+1;save();}
 function medSugg(q){if(!q)return[];q=q.toLowerCase();const learned=Object.entries(LEARN.meds||{}).filter(([k])=>k.includes(q)).sort(([,a],[,b])=>b-a).slice(0,4).map(([k])=>COMMON_MEDS.find(m=>m.toLowerCase()===k)||k);const stat=COMMON_MEDS.filter(m=>m.toLowerCase().includes(q)).slice(0,5);return[...new Set([...learned,...stat])].slice(0,6);}
@@ -2772,7 +2777,7 @@ function _togAbs(i){
 
 function _escHtml(s){
   if(!s)return'';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 function _exportResearch(){
@@ -2788,7 +2793,7 @@ function _updAboutPremium(){
   if(!el2)return;
   if(isPremium()){
     const masked=localStorage.getItem(_PREM_KEY+'_masked')||'••••';
-    el2.innerHTML=`<span style="color:var(--grn);font-weight:700">✅ Premium activo</span> <span style="color:var(--t3);font-size:10px;font-family:monospace">${masked}</span>`;
+    el2.innerHTML=`<span style="color:var(--grn);font-weight:700">✅ Premium activo</span> <span style="color:var(--t3);font-size:10px;font-family:monospace">${esc(masked)}</span>`;
   } else {
     el2.innerHTML=`<span style="color:var(--t2)">Gratuita</span> <span onclick="showPremiumModal('voice')" style="color:var(--pm);cursor:pointer;font-size:11px;text-decoration:underline">Activar ›</span>`;
     // show recovery note below
@@ -2816,7 +2821,7 @@ function setU(u,sc){
   ['dias','meses','anos'].forEach(k=>{const b=el(pfx+k);if(b)b.classList.toggle('active',k===u);});
 }
 function addSD(inpId,tagId,arrKey){const inp=el(inpId),v=inp.value.trim();if(!v)return;ST[arrKey].push(v);inp.value='';renderTags(tagId,arrKey);}
-function renderTags(tagId,arrKey){const e=el(tagId);if(!e)return;e.innerHTML=ST[arrKey].map((d,i)=>`<span class="dtag">${d}<button onclick="rmTag('${arrKey}',${i},'${tagId}')">×</button></span>`).join('');}
+function renderTags(tagId,arrKey){const e=el(tagId);if(!e)return;e.innerHTML=ST[arrKey].map((d,i)=>`<span class="dtag">${esc(d)}<button onclick="rmTag('${arrKey}',${i},'${tagId}')">×</button></span>`).join('');}
 function rmTag(arrKey,i,tagId){ST[arrKey].splice(i,1);renderTags(tagId,arrKey);}
 
 function addPt(sc){
@@ -2897,13 +2902,48 @@ function premStatusAction(){
 // ══════════════════════════════════════════════
 // § 24 — PIN LOCK  (privacidade + auto-lock 5 min)
 // ══════════════════════════════════════════════
-const PIN_KEY='sc_pin_v1';
+/* PIN v2: PBKDF2-SHA256 com salt aleatório (100k iterações)
+   Chave anterior sc_pin_v1 usava SHA-256 sem salt — inseguro para 4 dígitos.
+   Ao arrancar, migra silenciosamente: remove v1, pede novo PIN se necessário. */
+const PIN_KEY='sc_pin_v2';
 const PRIVACY_MS=5*60*1000; // 5 minutos
 let _privTimer=null;
 let _pinBuf='';
 
+/* ─── PBKDF2 helpers ─── */
+async function _pinDerive(pin,saltBytes){
+  const enc=new TextEncoder();
+  const km=await crypto.subtle.importKey('raw',enc.encode(pin),'PBKDF2',false,['deriveKey']);
+  const key=await crypto.subtle.deriveKey(
+    {name:'PBKDF2',salt:saltBytes,iterations:100000,hash:'SHA-256'},
+    km,{name:'HMAC',hash:'SHA-256',length:256},true,['sign']
+  );
+  const raw=await crypto.subtle.exportKey('raw',key);
+  return btoa(String.fromCharCode(...new Uint8Array(raw)));
+}
+async function _pinStore(pin){
+  const salt=crypto.getRandomValues(new Uint8Array(16));
+  const saltB64=btoa(String.fromCharCode(...salt));
+  const h=await _pinDerive(pin,salt);
+  localStorage.setItem(PIN_KEY,JSON.stringify({s:saltB64,h}));
+}
+async function _pinVerify(pin){
+  const stored=localStorage.getItem(PIN_KEY);
+  if(!stored)return false;
+  try{
+    const {s,h}=JSON.parse(stored);
+    if(!s||!h)return false;
+    const salt=Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+    return(await _pinDerive(pin,salt))===h;
+  }catch{return false;}
+}
+
 /* ─── Helpers ─── */
-function isPINSet(){return!!localStorage.getItem(PIN_KEY);}
+function isPINSet(){
+  const stored=localStorage.getItem(PIN_KEY);
+  if(!stored)return false;
+  try{const {s,h}=JSON.parse(stored);return!!(s&&h);}catch{return false;}
+}
 
 /* ─── Privacy timer ─── */
 function resetPrivacyTimer(){
@@ -2963,8 +3003,8 @@ function pinKey(v){
 }
 
 async function _pinCheckUnlock(){
-  const hash=await _hashStr(_pinBuf);
-  if(hash===localStorage.getItem(PIN_KEY)){
+  const ok=await _pinVerify(_pinBuf);
+  if(ok){
     _pinAttempts=0;_pinLockUntil=0;
     el('privacy-overlay').classList.remove('visible');
     _pinBuf='';resetPrivacyTimer();
@@ -3032,8 +3072,7 @@ async function _psNext(){
     _psNew=_psBuf;_psBuf='';_psMod='confirm';_psUpdateUI();
   } else if(_psMod==='confirm'){
     if(_psBuf===_psNew){
-      const hash=await _hashStr(_psBuf);
-      localStorage.setItem(PIN_KEY,hash);
+      await _pinStore(_psBuf);
       closePINSetup();renAboutPIN();
       showToast('PIN activado ✓','ok');
     } else {
@@ -3041,8 +3080,8 @@ async function _psNext(){
       setTimeout(()=>{_psBuf='';_psNew='';_psMod=_psOrigin||'set';_psUpdateUI();},650);
     }
   } else if(_psMod==='change-old'){
-    const hash=await _hashStr(_psBuf);
-    if(hash===localStorage.getItem(PIN_KEY)){
+    const ok=await _pinVerify(_psBuf);
+    if(ok){
       _psBuf='';_psMod='change-new';_psUpdateUI();
     } else {
       _psShake('PIN incorrecto');
