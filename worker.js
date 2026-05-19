@@ -32,6 +32,7 @@ const MODELS = {
   vitals_image: 'meta-llama/llama-4-scout-17b-16e-instruct',
   ocr:          'meta-llama/llama-4-scout-17b-16e-instruct',
   mesh:         'llama-3.3-70b-versatile',
+  cipe:         'llama-3.3-70b-versatile',
   default:      'llama-3.3-70b-versatile',
 };
 
@@ -340,8 +341,8 @@ Regras:
 
     let groqMessages = messages;
 
-    // ── isbar: injecta prefixo de contexto clínico no system prompt ──
-    if (type === 'isbar' && Array.isArray(messages)) {
+    // ── isbar / cipe: injecta prefixo de contexto clínico no system prompt ──
+    if ((type === 'isbar' || type === 'cipe') && Array.isArray(messages)) {
       groqMessages = messages.map(msg => {
         if (msg.role === 'system' && typeof msg.content === 'string') {
           return { ...msg, content: CLINICAL_SYSTEM_PREFIX + msg.content };
@@ -402,6 +403,7 @@ Regras:
     const model  = MODELS[type] || MODELS.default;
     const maxTok = type === 'vitals_image' ? 200
                  : type === 'ocr'          ? 1500
+                 : type === 'cipe'         ? 2500
                  : 1200;
 
     try {

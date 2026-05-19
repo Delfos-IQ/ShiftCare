@@ -1040,6 +1040,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
     <div class="tab-item" onclick="swTab('alimentacao')">Alimentação</div>
     <div class="tab-item" onclick="swTab('eliminacao')">Eliminação</div>
     <div class="tab-item" onclick="swTab('isbar')">Antec./ISBAR</div>
+    <div class="tab-item" onclick="swTab('cipe')">Assist. CIPE</div>
   </div>
   <div class="tab-body">
     <!-- VITAIS -->
@@ -1082,6 +1083,8 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
     <div id="tab-eliminacao" class="tab-pane"></div>
     <!-- ANTEC/ISBAR -->
     <div id="tab-isbar" class="tab-pane"></div>
+    <!-- ASSIST. CIPE -->
+    <div id="tab-cipe" class="tab-pane"></div>
   </div>
 </div>
 
@@ -3289,6 +3292,7 @@ function swTab(tab){
   if(tab==='alimentacao')renAlim();
   if(tab==='eliminacao')renElim();
   if(tab==='isbar')renISBAR();
+  if(tab==='cipe')renCIPE();
 }
 
 // ══════════════════════════════════════════════
@@ -6056,6 +6060,421 @@ function _syncUpdatePeersUI(){
     pEl.textContent='A aguardar ligação...';
     pEl.style.color='var(--t2)';
   }
+}
+
+// ══════════════════════════════════════════════
+// § 24 — ASSISTENTE CIPE (UCIN / UCIP)
+// ══════════════════════════════════════════════
+
+const _CIPE_UCIN = `=== PROTOCOLO CIPE — UCIN (Unidade de Cuidados Intensivos Neonatais) ===
+
+BLOCO A — ADMISSÃO UNIVERSAL (ativar em TODOS os RN, independentemente do diagnóstico):
+
+A1 Termorregulação | Focos: Termorregulação | Diagnósticos: Hipotermia presente; Hipertermia presente; Termorregulação comprometida | Intervenções: Monitorizar T cutânea contínua + axilar 3-6h; incubadora servo-controlada (alvo axilar 36,5-37,5°C); touca+envelope polietileno no prematuro; humidade 70-80% (<32sem); evitar aberturas desnecessárias da incubadora; aquecer material que contacta o RN
+
+A2 Dor Neonatal | Focos: Dor; Stresse neonatal | Diagnósticos: Dor presente; Stresse neonatal presente; Risco de dor procedural | Intervenções: Avaliar com NIPS (pré-termo/termo)/CRIES (pós-op)/NFCS (procedimentos); glucose 24% 0,5-2mL + sucção não nutritiva 2min antes procedimentos; contenção facilitada (swaddling, canguru); analgesia sistémica (paracetamol IV, morfina, fentanil) em dor moderada-intensa; minimizar procedimentos dolorosos; gerir ambiente (luz/ruído)
+
+A3 Respiração e Via Aérea | Focos: Respiração; Apneia; Via aérea artificial | Diagnósticos: Respiração comprometida; Apneia presente; Via aérea artificial presente | Intervenções: Monitorizar SpO2 (91-95% prematuro; 95-99% termo), FR e padrão respiratório; gerir CPAP nasal (prongs, pressão 4-8cmH2O, fixação); vigiar TET em VMI (profundidade, fixação, expansão torácica); aspirar suavemente; registar apneias; cafeína se apneia da prematuridade
+
+A4 Nutrição | Focos: Nutrição; Aleitamento materno; Deglutição | Diagnósticos: Nutrição comprometida; Aleitamento materno comprometido; Deglutição comprometida (<34-36sem) | Intervenções: NE precoce (<24h de vida, colostro 1ª escolha mesmo no prematuro extremo); nutrição trófica 0,5-1mL/kg/h; verificar posição SNG (medição + pH <4); monitorizar tolerância (resíduo, distensão, vómito, fezes); NP até NE suficiente; apoiar amamentação/extração de leite
+
+A5 Glicemia e Hidratação | Focos: Glicemia; Hidratação; Volume de líquidos | Diagnósticos: Hipoglicemia (<45mg/dL); Hiperglicemia (>150mg/dL); Hidratação comprometida | Intervenções: Glicemia capilar (alvo >45mg/dL; >50mg/dL após 48h); VIG 4-8mg/kg/min; fluidoterapia IV adaptada a peso+IG+perdas insensíveis; pesagem diária (máx 10-15% perda peso nascimento)
+
+A6 Integridade da Pele | Focos: Integridade da pele; Úlcera por pressão neonatal | Diagnósticos: Risco de lesão da pele elevado; Integridade da pele comprometida; Úlcera por pressão neonatal | Intervenções: Adesivos não agressivos (silicone, hidrocolóide); inspecionar pele em cada cuidado (nasal CPAP/prongs, lábios/comissuras TET, occipital, glúteos); barreira cutânea (vaselina, emoliente) em prematuro extremo; posicionar em ninho; cuidar coto umbilical; rodar posição de sensores/eléctrodos 4-6h
+
+A7 Vínculo Parental | Focos: Vínculo parental; Papel parental; Processo familiar | Diagnósticos: Vínculo parental comprometido; Papel parental comprometido; Ansiedade parental presente | Intervenções: Acolher pais na admissão (apresentar UCIN, equipamentos, alarmes, normas); promover canguru logo que clinicamente estável; envolver em todos os cuidados (fraldas, posicionamento, alimentação, higiene); ensinar cuidados específicos (T, sinais de alarme); apoiar aleitamento materno; encaminhar psicólogo/assistente social se ansiedade grave
+
+A8 Risco de Infeção | Focos: Risco de infeção; Sépsis neonatal | Diagnósticos: Risco de infeção elevado (imunidade imatura); Sépsis neonatal risco de | Intervenções: Higiene das mãos rigorosa (profissionais, pais, visitas); leite materno exclusivo; técnica asséptica em procedimentos invasivos (CVU, CVC, entubação); vigiar sinais subtis de sépsis (intolerância alimentar, apneias, letargia, T instável, palidez); limitar visitas com sintomas infecciosos
+
+A9 Eliminação | Focos: Eliminação urinária; Eliminação intestinal | Diagnósticos: Eliminação urinária comprometida (oligúria neonatal); Eliminação intestinal comprometida | Intervenções: Monitorizar diurese (pesagem fraldas 1g=1mL, alvo >1mL/kg/h após 48h de vida); vigiar 1ª micção (<24-48h) e 1º mecônio (<24-48h); registar características fezes (meconiais, transição, amarelas); gerir ostomia se presente
+
+BLOCO B — FOCOS ESPECÍFICOS POR DIAGNÓSTICO (complementar o Bloco A):
+
+B1 PREMATURIDADE | Focos: Termorregulação; Nutrição; Respiração; Dor neonatal; Desenvolvimento neurológico | Diagnósticos: Termorregulação comprometida; Nutrição comprometida (sucção/deglutição imatura); Respiração comprometida (surfactante deficiente); Risco de HIC; Desenvolvimento neurológico comprometido | Intervenções: Incubadora servo-controlada + humidade 70-80% (<32sem); NP precoce (primeiras horas) + NE mínima; suporte resp escalonado O2→HFNC→CPAP→VMI; cafeína IV/oral; surfactante (INSURE/LISA); cuidados de desenvolvimento (ninho, ciclo luz/escuridão, silêncio, toque suave); canguru; rastreios (ROP, ECO cerebral, audiologia, ECO cardíaca)
+
+B2 SDR — Síndrome de Dificuldade Respiratória | Focos: Ventilação; Troca de gases; Via aérea artificial | Diagnósticos: Ventilação comprometida (deficiência surfactante); Troca de gases comprometida; Risco de displasia broncopulmonar | Intervenções: CPAP nasal precoce (5-7cmH2O, FiO2 mínima eficaz); assistir administração surfactante exógeno (INSURE/LISA); em VMI: estratégia protetora pulmonar (VC 4-6mL/kg, PEEP adequada, FiO2 mínima); procúbito em VMI; gasometria seriada
+
+B3 SÉPSIS NEONATAL | Focos: Risco de infeção; Sépsis neonatal; Perfusão dos tecidos | Diagnósticos: Sépsis neonatal presente (precoce <72h / tardia >72h); Perfusão dos tecidos comprometida; Risco de meningite neonatal | Intervenções: Reconhecer sinais inespecíficos (letargia, apneias, intolerância alimentar, T instável, palidez, icterícia precoce, choro fraco); workup completo (hemograma, hemoculturas mín 1mL, PCR/PCT, gasometria, LCR se condição permite); antibioterapia empírica <1h (ampicilina+gentamicina precoce; vancomicina+genta/cefotaxima se tardia); suporte hemodinâmico (NaCl 0,9% bólus 10mL/kg); monitorização contínua FC/FR/SpO2/TA
+
+B4 EHI / HIPOTERMIA TERAPÊUTICA | Focos: Estado de consciência; Convulsão; Termorregulação terapêutica; Perfusão cerebral | Diagnósticos: Estado de consciência comprometido; Convulsão neonatal presente; Hipotermia terapêutica gestão; Risco de disfunção multiorgânica | Intervenções: Hipotermia terapêutica em <6h de vida se critérios (EHI moderada/grave, IG ≥36sem); T alvo 33-34°C durante 72h; gerir sistema arrefecimento (T core contínua rectal/esofágica); aEEG contínuo; tratar convulsões (fenobarbital 20mg/kg IV 1ª linha); evitar hiperoxia/hipocapnia/hipoglicemia/hipotensão; adiar NE durante hipotermia (manter NP); reaquecimento gradual 0,5°C/h após 72h; vigiar MODS (renal, cardíaca, hepática, hematológica)
+
+B5 ICTERÍCIA NEONATAL | Focos: Icterícia; Risco de kernicterus | Diagnósticos: Icterícia neonatal presente; Risco de kernicterus | Intervenções: Monitorizar BTC e bilirrubina sérica conforme protocolo e hora de vida; avaliar fatores de risco (prematuridade, isoimunização Coombs+, policitemia, G6PD, cefalohematoma); fototerapia conforme curva (hora de vida + bilirrubina + fatores de risco); olhos protegidos, exposição máxima da pele, distância correta; monitorizar T+hidratação+diurese (perdas insensíveis aumentadas); alimentação frequente; preparar exsanguinotransfusão se hiperbilirrubinemia grave
+
+B6 ALTERAÇÕES METABÓLICAS | Focos: Glicemia; Electrólitos; Equilíbrio ácido-base | Diagnósticos: Hipoglicemia neonatal; Hiperglicemia neonatal (prematuro em PN); Hiponatremia/Hipernatremia; Hipocalcemia neonatal | Intervenções: Glicemia 1h/3h/6h de vida depois conforme protocolo; hipoglicemia <45: alimentação precoce; <25 ou sintomática: glucose 10% IV 2mL/kg; VIG 4-8mg/kg/min; ionograma seriado (Na+, K+, Ca2+ ionizado, Mg2+); corrigir distúrbios conforme prescrição; evitar correção rápida de hipernatremia (edema cerebral)
+
+B7 CARDIOPATIA CONGÉNITA / CAP | Focos: Débito cardíaco; Perfusão dos tecidos; Canal arterial | Diagnósticos: Débito cardíaco comprometido (cardiopatia ducto-dependente); CAP hemodinamicamente significativo; Saturação O2 comprometida | Intervenções: Monitorizar SpO2 MMSS e MMII (diferencial >3% → suspeitar CAP/coarctação aorta); vigiar sinais baixo débito (palidez, má perfusão, oligúria, acidose); PGE1 IV se ducto-dependente (ter AMBU disponível, risco apneia); indometacina/ibuprofeno IV se CAP; restrição hídrica se sobrecarga pulmonar; preparar ecocardiograma
+
+B8 MALFORMAÇÕES / PÓS-OP CIRÚRGICO | Focos: Ferida cirúrgica; Drenagem; Dor pós-operatória; Nutrição pós-operatória | Diagnósticos: Dor pós-operatória presente; Risco de infeção da ferida cirúrgica; Nutrição comprometida pós-op | Intervenções: Avaliar dor (NIPS/CRIES) + analgesia (morfina IV, paracetamol IV) + medidas não farmacológicas; vigiar ferida/ostomias (aspeto, exsudado, hemorragia, sinais infeção); gerir drenagens (débito horário, características, permeabilidade); NE trófica precoce se autorizado por cirurgia; NP total até NE suficiente; cuidados pele periostomate; gerir silo em gastrosquise; sonda Replogle em atrésia esofágica`;
+
+const _CIPE_UCIP = `=== PROTOCOLO CIPE — UCIP (Unidade de Cuidados Intensivos Pediátricos Médico-Cirúrgica) ===
+
+BLOCO A — ADMISSÃO UNIVERSAL (ativar em TODOS os doentes, independentemente do diagnóstico):
+
+A1 Dor | Focos: Dor | Diagnósticos: Dor aguda presente; Dor crónica presente; Risco de dor | Intervenções: Avaliar com escala adaptada à idade (FLACC 0-3a; FPS-R 3-7a; NRS/EVA >7a; COMFORT-B sedado/VMI); monitorizar SV associados (FC, FR, TA, expressão facial); analgésico conforme prescrição; medidas não farmacológicas (posicionamento de conforto, distração, calor localizado); reavaliar 30-60min após analgesia; comunicar ao médico se score ≥4 FLACC/NRS persistente após analgesia; documentar tipo, localização, intensidade, resposta
+
+A2 Respiração e Via Aérea | Focos: Respiração; Limpeza das vias aéreas | Diagnósticos: Respiração comprometida; Limpeza das vias aéreas comprometida; Padrão respiratório ineficaz | Intervenções: Monitorizar FR, SpO2, padrão respiratório e sinais de dificuldade respiratória (adejo nasal, tiragem, cianose); cabeceira 30-45°; aspirar secreções orofaríngeas/endotraqueais conforme necessidade; O2 conforme prescrição (alvo SpO2 92-98%); gerir VNI/HFNC/VMI; registar parâmetros respiratórios em cada turno; alertar médico: SpO2 <90%, FR >60 (lactente) ou >40 (criança), tiragem grave ou apneia
+
+A3 Termorregulação | Focos: Termorregulação | Diagnósticos: Hipertermia presente; Hipotermia presente; Termorregulação comprometida | Intervenções: Monitorizar T axilar/retal/central 4h e em contexto febril; antipirético (paracetamol/ibuprofeno) se T >38,5°C; medidas físicas se hipertermia (despir, ambiente fresco, compressa morna); gerir ambiente térmico se hipotermia; hemoculturas central+periférica antes antibiótico se febre de novo; comunicar T >39,5°C ou hipotermia <36°C; febre em imunodeprimido: emergência (antibiótico <1h)
+
+A4 Estado de Consciência e Sedação | Focos: Estado de consciência; Sedação; Agitação | Diagnósticos: Estado de consciência comprometido; Sedação excessiva; Sedação insuficiente/agitação; Risco de delirium | Intervenções: Avaliar GCS pediátrica e pupilas; COMFORT-B (alvo 11-22) ou RASS pediátrico (alvo -1 a 0); CAPD se delirium suspeito; sedoanalgesia conforme prescrição (titular para alvo); vigiar abstinência em desmame (Sophia Observation Withdrawal Symptoms); janelas de sedação diárias; comunicar alterações súbitas do estado de consciência
+
+A5 Nutrição | Focos: Nutrição; Risco de aspiração | Diagnósticos: Nutrição comprometida; Risco de aspiração; Ingestão nutricional comprometida | Intervenções: Avaliar estado nutricional na admissão (peso, estatura, percentil, índice nutricional); NE precoce (<24-48h); verificar SNG (confirmação radiológica na inserção, pH + auscultação); monitorizar tolerância (resíduo >50% do volume da toma: pausar e reavaliar; distensão abdominal; fezes); NP se indicada (via dedicada, técnica asséptica); registar ingestão/output nutricional diariamente
+
+A6 Hidratação e Volume de Líquidos | Focos: Hidratação; Volume de líquidos | Diagnósticos: Hidratação comprometida (déficit); Excesso de volume de líquidos; Risco de desequilíbrio electrolítico | Intervenções: Balanço hídrico rigoroso horário e acumulado 24h; monitorizar diurese (mL/kg/h); administrar fluidoterapia prescrita à velocidade correta (bomba); controlar todas as drenagens (SNG, torácica, abdominal); vigiar sobrecarga hídrica (edema, ganho ponderal, crepitações, pioria respiratória); analítica (ionograma, função renal) conforme prescrição
+
+A7 Eliminação Urinária | Focos: Eliminação urinária; Cateter urinário | Diagnósticos: Eliminação urinária comprometida; Oligúria presente; Retenção urinária | Intervenções: Monitorizar diurese horária (alvo >1mL/kg/h lactente; >0,5mL/kg/h criança; alertar se <0,5mL/kg/h em 2h consecutivas); vigiar características urina (cor, aspeto, hematúria); algaliação com técnica asséptica + fixação segura + saco abaixo bexiga; avaliar necessidade manter cateter diariamente (remover o mais precoce possível)
+
+A8 Eliminação Intestinal | Focos: Eliminação intestinal; Obstipação; Diarreia | Diagnósticos: Obstipação presente/risco; Diarreia presente | Intervenções: Monitorizar trânsito (frequência, Bristol); vigiar distensão, ruídos intestinais, vómitos; laxante/enema conforme prescrição se obstipação; em diarreia: avaliar desidratação, coproculturas se indicado; precauções de contacto em suspeita de infeção intestinal
+
+A9 Integridade da Pele | Focos: Integridade da pele; Úlcera por pressão | Diagnósticos: Risco de úlcera por pressão; Úlcera por pressão presente; Integridade da pele comprometida | Intervenções: Avaliar risco (Braden Q pediátrica) na admissão e em cada turno; inspecionar pele em cada turno (proeminências ósseas, zonas de dispositivos); reposicionar 2-4h conforme tolerância hemodinâmica; colóide/proteção nas zonas de risco (occipital, sacro, calcanhar, orelhas); barreira cutânea em incontinência; documentar lesões (localização, estadio, dimensões)
+
+A10 Risco de Infeção e Acessos Vasculares | Focos: Risco de infeção; Cateter venoso; Infeção associada aos cuidados | Diagnósticos: Risco de infeção elevado (CVC, cateter urinário, VMI, imunodepressão); ICSAC | Intervenções: Higiene das mãos (5 momentos OMS) em todos os procedimentos; técnica asséptica em acessos vasculares, pensos e aspirações; vigiar CVC diariamente (sinais inflamatórios, penso, data colocação); penso CVC (CHX 2% + película transparente, substituição cada 7 dias ou SOS); avaliar necessidade manter CVC/cateter arterial/algália diariamente; lavar acessos com NaCl 0,9% antes e após uso
+
+A11 Processo Familiar e Ansiedade | Focos: Ansiedade; Processo familiar; Papel parental | Diagnósticos: Ansiedade dos pais/cuidadores; Processo familiar comprometido; Papel parental comprometido | Intervenções: Acolher família na admissão (apresentar unidade, equipa, normas de visita, contactos); explicar estado clínico em linguagem acessível; promover presença parental e participação nos cuidados; identificar necessidades emocionais/sociais/espirituais; encaminhar assistente social/psicólogo se necessário
+
+A12 Comunicação | Focos: Comunicação | Diagnósticos: Comunicação comprometida (intubado, sedado, pré-verbal, barreira linguística) | Intervenções: Meios alternativos adaptados à idade (imagens, gestos, quadros de comunicação); explicar procedimentos mesmo se aparentemente sedado; envolver pais como mediadores; documentar estratégias comunicativas eficazes; terapeuta da fala se dificuldades persistentes
+
+A13 Sono e Repouso | Focos: Sono; Repouso | Diagnósticos: Sono comprometido; Privação de sono risco | Intervenções: Minimizar ruído e luz durante período noturno; agrupar cuidados (período de sono protegido); promover ciclo circadiano; objetos familiares (música suave, objeto de transição); ajustar sedação noturna se desconfortável; suspender monitorização não essencial durante o sono
+
+A14 Segurança e Prevenção de Quedas | Focos: Queda; Segurança | Diagnósticos: Risco de queda elevado | Intervenções: Avaliar risco (Humpty Dumpty) na admissão; grades elevadas >6 meses ou em crianças agitadas; supervisão contínua + alertar pais; verificar fixação de todos os dispositivos (tubos, cateteres, drenos); contenção suave não restritiva se agitação grave e risco de extubação acidental (última opção, monitorizada e documentada)
+
+BLOCO B — FOCOS ESPECÍFICOS POR DIAGNÓSTICO (complementar o Bloco A):
+
+B1 INSUFICIÊNCIA RESPIRATÓRIA / VMI | Focos: Ventilação; Via aérea artificial; Limpeza das vias aéreas; Desmame ventilatório | Diagnósticos: Ventilação comprometida; Via aérea artificial presente (TET/traqueostomia); Limpeza das vias aéreas comprometida; Desmame ventilatório dificultado | Intervenções: Monitorizar parâmetros ventilatórios (FiO2, PEEP, pressão plateau/pico, VC, FR, compliance); vigiar TET (profundidade, fixação, verificar cada turno lábio/nariz); pressão cuff 20-30cmH2O; aspirar secreções endotraqueais (técnica fechada preferencial); higiene oral CHX 0,12% cada 8h (bundle PAV); cabeceira 30-45°; assistir prova desmame (SBT) quando critérios cumpridos; preparar extubação programada (HFNC/VNI pós-extubação)
+
+B2 SÉPSIS E CHOQUE | Focos: Perfusão dos tecidos; Choque; Função cardiovascular; Volume de líquidos | Diagnósticos: Perfusão dos tecidos comprometida; Choque presente (séptico/distributivo/hipovolémico); Volume de líquidos déficit | Intervenções: Monitorizar SV contínuos + perfusão periférica (TRC, T extremidades); bólus cristalóide (NaCl/RL 10-20mL/kg em 5-10min, reavaliar após cada bólus); hemoculturas central+periférica ANTES de antibiótico; antibioterapia empírica de largo espectro <1h; aminas vasoativas (norepinefrina 1ª linha) via CVC dedicado; diurese horária + lactato seriado (clearance >10% em 2h); controlar glicemia (80-180mg/dL); vigiar MODS
+
+B3 CARDIOPATIA / PÓS-OP CARDÍACO | Focos: Débito cardíaco; Arritmia; Função ventricular; Drenagem torácica | Diagnósticos: Débito cardíaco comprometido; Arritmia presente; Risco de tamponamento cardíaco; Dor pós-operatória presente; Perfusão dos tecidos comprometida | Intervenções: Monitorização cardíaca contínua (ECG, análise de ritmo); TA invasiva + PVC se CVC; drogas vasoativas/inotrópicas em seringas dedicadas sem interrupção; vigiar drenagem torácica horária (alarmar se >3-5mL/kg/h); vigiar tamponamento (hipotensão, turgescência jugular, sons abafados, pulso paradoxal); ECG 12 derivações seriado; antiarrítmicos conforme prescrição; material de cardioversão/desfibrilhação acessível e testado
+
+B4 NEUROLÓGICO — Convulsões, Encefalite, Meningite | Focos: Convulsão; Estado de consciência; Pressão intracraniana; Proteção das vias aéreas | Diagnósticos: Convulsão presente/risco; Estado de consciência comprometido; Risco de aspiração; Hipertensão intracraniana risco | Intervenções: Monitorizar neurologicamente (GCS pediátrica, pupilas tamanho/simetria/fotorreação) 1h em fase aguda; registar cada episódio (início, duração, tipo focal/generalizado, pós-ictal); anticonvulsivante (BDZ 1ª linha → fenitoína/levetiracetam 2ª → anestesia 3ª); manter VA permeável; cabeceira 30°; vigiar Tríade de Cushing (bradicardia + HTA + alt padrão respiratório = herniação iminente); controlar T (<37,5°C); EEG contínuo se prescrito; ambiente calmo
+
+B5 PÓS-OP GERAL — Abdominal, Torácico | Focos: Dor pós-operatória; Ferida cirúrgica; Drenagem; Náusea; Mobilização | Diagnósticos: Dor pós-operatória presente; Risco de infeção da ferida cirúrgica; Náusea/vómito; Mobilização comprometida; Risco de hemorragia pós-op | Intervenções: Avaliar dor (escala adaptada à idade); analgesia multimodal; vigiar ferida em cada turno (sinais inflamatórios, deiscência, exsudado quantidade/aspeto/cheiro); penso cirúrgico asséptico; gerir drenagens (débito horário, permeabilidade, características); antieméticos + semi-fowl se náusea; NE precoce se autorizado por cirurgia; vigiar complicações (hemorragia: taquicardia+hipotensão+palidez; fístula: conteúdo fecaloide/biliar; síndrome compartimental); mobilização progressiva conforme tolerância
+
+B6 METABÓLICO / ENDÓCRINO — CAD, Diselectrolitemias | Focos: Glicemia; Equilíbrio ácido-base; Volume de líquidos; Electrólitos | Diagnósticos: Glicemia comprometida; Acidose metabólica; Desequilíbrio electrolítico; Volume de líquidos déficit | Intervenções: Glicemia conforme frequência prescrita (horária em CAD); insulina IV em CAD (titular conforme protocolo, registar débito horário); fluidoterapia reidratação lenta e controlada em CAD (evitar edema cerebral — NUNCA corrigir déficit rapidamente); ionograma seriado (K+, Na+, Cl-, fósforo); vigiar estado neurológico em CAD (cefaleia, agitação, alt consciência = edema cerebral = urgência); gasometria seriada (alvo pH >7,30; bicarb >15mEq/L); balanço hídrico cumulativo rigoroso
+
+B7 LRA / TRRC | Focos: Eliminação urinária; Volume de líquidos; Diálise; Equilíbrio electrolítico | Diagnósticos: Eliminação urinária comprometida (oligúria/anúria); Excesso de volume de líquidos; Risco de hipercalemia; Gestão do circuito de diálise | Intervenções: Diurese horária rigorosa (alertar se <0,5mL/kg/h em 2h); balanço hídrico cumulativo (sobrecarga >10% peso = comunicar médico); gerir TRRC (cebagem, anticoagulação heparina/citrato, pressões do circuito, balanço horário); vigiar cateter hemodiálise (sinais infeção, permeabilidade, posição); K+ sérico + ECG (hipercalemia: ondas T apiculadas, QRS alargado = emergência); restringir fluidos conforme prescrição; creatinina/ureia/fósforo/pH seriados
+
+B8 HEMATO-ONCOLÓGICO | Focos: Risco de infeção (neutropenia); Hemorragia; Mucosa oral; Fadiga; Imagem corporal | Diagnósticos: Risco de infeção elevado (neutropenia grave); Hemorragia risco (trombocitopenia grave); Mucosa oral comprometida (mucosite); Fadiga presente; Imagem corporal comprometida | Intervenções: Isolamento protetor (precauções aéreas/contacto conforme protocolo); higiene das mãos rigorosa de todos; febre neutropénica (T >38°C + neutrófilos <500/µL): hemoculturas + antibiótico empírico <1h (EMERGÊNCIA); CVC/PICC/port asséptico estrito; higiene oral intensiva (CHX 0,12%, antifúngico tópico); avaliar mucosite (NCI-CTCAE); administrar hemoderivados com verificação dupla obrigatória; vigiar hemorragia ativa (petéquias, equimoses, epistaxis, hematúria); vigiar síndrome de lise tumoral (hipercalemia, hiperfosfatemia, hipocalcemia, hiperuricemia, LRA)`;
+
+function renCIPE(){
+  const pane=el('tab-cipe');
+  if(!pane)return;
+  const p=ST.patients[ST.idx];
+  const unit=p&&p._cipeUnit?p._cipeUnit:'ucin';
+  pane.innerHTML=`
+<div class="subtab-bar" style="margin-bottom:12px">
+  <button class="subtab-btn${unit==='ucin'?' active':''}" id="cipe-sub-ucin" onclick="_setCipeUnit('ucin')">UCIN</button>
+  <button class="subtab-btn${unit==='ucip'?' active':''}" id="cipe-sub-ucip" onclick="_setCipeUnit('ucip')">UCIP</button>
+</div>
+<div class="subtab-bar" style="margin-bottom:14px">
+  <button class="subtab-btn active" id="cipe-sec-adm-btn" onclick="_setCipeSec('adm')">📋 Admissão</button>
+  <button class="subtab-btn" id="cipe-sec-cons-btn" onclick="_setCipeSec('cons')">💬 Consulta</button>
+</div>
+<div id="cipe-adm"></div>
+<div id="cipe-cons" style="display:none"></div>`;
+  _renderCipeAdm(unit);
+  _renderCipeCons(unit);
+}
+
+function _setCipeUnit(u){
+  const p=ST.patients[ST.idx];
+  if(p)p._cipeUnit=u;
+  ['ucin','ucip'].forEach(x=>{
+    const b=el('cipe-sub-'+x);
+    if(b)b.classList.toggle('active',x===u);
+  });
+  const isCons=el('cipe-cons')&&el('cipe-cons').style.display!=='none';
+  _renderCipeAdm(u);
+  _renderCipeCons(u);
+  if(isCons)_setCipeSec('cons');
+}
+
+function _setCipeSec(sec){
+  ['adm','cons'].forEach(s=>{
+    const d=el('cipe-'+s);const b=el('cipe-sec-'+s+'-btn');
+    if(d)d.style.display=s===sec?'':'none';
+    if(b)b.classList.toggle('active',s===sec);
+  });
+}
+
+function _cipeToggle(id,fn){
+  const d=el(id);if(!d)return;
+  d.innerHTML=fn();
+}
+
+function _renderCipeAdm(unit){
+  const c=el('cipe-adm');if(!c)return;
+  if(unit==='ucin'){
+    c.innerHTML=`
+<div style="font-size:11px;color:var(--t2);margin-bottom:10px">Preenche os dados do RN e o agente IA sugere os focos, diagnósticos e intervenções CIPE a abrir na admissão.</div>
+
+<div class="form-grp" style="margin-bottom:10px">
+  <label class="form-lbl">Diagnóstico / Motivo de admissão</label>
+  <select id="cipe-diag-ucin" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px">
+    <option value="">— Selecionar grupo diagnóstico —</option>
+    <option value="B1">B1 · Prematuridade</option>
+    <option value="B2">B2 · Síndrome de Dificuldade Respiratória (SDR)</option>
+    <option value="B3">B3 · Sépsis Neonatal</option>
+    <option value="B4">B4 · EHI / Hipotermia Terapêutica</option>
+    <option value="B5">B5 · Icterícia Neonatal / Hiperbilirrubinemia</option>
+    <option value="B6">B6 · Alterações Metabólicas</option>
+    <option value="B7">B7 · Cardiopatia Congénita / Canal Arterial</option>
+    <option value="B8">B8 · Malformações Congénitas / Pós-op Cirúrgico</option>
+    <option value="outro">Outro (descrever abaixo)</option>
+  </select>
+  <input id="cipe-diag-ucin-outro" type="text" placeholder="Descreve o motivo de admissão..." style="display:none;width:100%;margin-top:6px;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;box-sizing:border-box">
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+  <div class="form-grp">
+    <label class="form-lbl">Idade gestacional</label>
+    <select id="cipe-ig" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px">
+      <option value="">—</option>
+      <option value="<28">Extremo (&lt;28 sem)</option>
+      <option value="28-31">MBP (28-31 sem)</option>
+      <option value="32-35">BP (32-35 sem)</option>
+      <option value="36-37">Tardio (36-37 sem)</option>
+      <option value=">=38">Termo (≥38 sem)</option>
+    </select>
+  </div>
+  <div class="form-grp">
+    <label class="form-lbl">Idade pós-natal</label>
+    <select id="cipe-idade-pn" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px">
+      <option value="">—</option>
+      <option value="<6h">Primeiras 6h</option>
+      <option value="6-24h">6-24h de vida</option>
+      <option value="1-3d">1-3 dias</option>
+      <option value=">3d">Mais de 3 dias</option>
+    </select>
+  </div>
+</div>
+
+<div class="form-grp" style="margin-bottom:10px">
+  <label class="form-lbl">Peso (g)</label>
+  <input id="cipe-peso-ucin" type="number" placeholder="ex: 1250" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;box-sizing:border-box">
+</div>
+
+<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em">Dispositivos / Situações clínicas</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px" id="cipe-devs-ucin">
+  ${['Incubadora','VMI / TET','CPAP / HFNC','CVC / PICC','Cateter umbilical (CUV/CAU)','SNG / SOG','Algaliação','Ostomia','Hipotermia terapêutica','Fototerapia','Prostaglandina E1','NP total'].map(d=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;padding:5px 6px;background:var(--s2);border-radius:var(--rads);border:1px solid var(--b)"><input type="checkbox" value="${d}" style="accent-color:var(--p)"> ${d}</label>`).join('')}
+</div>
+
+<div class="form-grp" style="margin-bottom:14px">
+  <label class="form-lbl">Notas adicionais (opcional)</label>
+  <textarea id="cipe-notas-ucin" rows="2" placeholder="ex: mãe GBS+, corticóides antenatais completos, cirurgia planeada..." style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+</div>
+
+<button class="btn btn-p" style="width:100%;font-size:14px;font-weight:700" onclick="_callCIPEAdm('ucin')">🤖 Gerar Plano CIPE para Admissão</button>
+<div id="cipe-adm-result" style="margin-top:14px"></div>`;
+
+    el('cipe-diag-ucin').addEventListener('change',function(){
+      const o=el('cipe-diag-ucin-outro');
+      if(o)o.style.display=this.value==='outro'?'block':'none';
+    });
+  } else {
+    c.innerHTML=`
+<div style="font-size:11px;color:var(--t2);margin-bottom:10px">Preenche os dados do doente e o agente IA sugere os focos, diagnósticos e intervenções CIPE a abrir na admissão.</div>
+
+<div class="form-grp" style="margin-bottom:10px">
+  <label class="form-lbl">Diagnóstico / Motivo de admissão</label>
+  <select id="cipe-diag-ucip" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px">
+    <option value="">— Selecionar grupo diagnóstico —</option>
+    <option value="B1">B1 · Insuficiência Respiratória / VMI</option>
+    <option value="B2">B2 · Sépsis e Choque</option>
+    <option value="B3">B3 · Cardiopatia / Pós-op Cardíaco</option>
+    <option value="B4">B4 · Patologia Neurológica (Convulsões, Encefalite, Meningite)</option>
+    <option value="B5">B5 · Pós-op Geral (Abdominal, Torácico)</option>
+    <option value="B6">B6 · Patologia Metabólica / Endócrina (CAD)</option>
+    <option value="B7">B7 · Lesão Renal Aguda / TRRC</option>
+    <option value="B8">B8 · Hemato-oncológico</option>
+    <option value="outro">Outro (descrever abaixo)</option>
+  </select>
+  <input id="cipe-diag-ucip-outro" type="text" placeholder="Descreve o motivo de admissão..." style="display:none;width:100%;margin-top:6px;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;box-sizing:border-box">
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+  <div class="form-grp">
+    <label class="form-lbl">Grupo etário</label>
+    <select id="cipe-idade-ucip" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px">
+      <option value="">—</option>
+      <option value="neonato">Neonato (&lt;28 dias)</option>
+      <option value="lactente">Lactente (1-12 meses)</option>
+      <option value="pre-escolar">Pré-escolar (1-5 anos)</option>
+      <option value="escolar">Escolar (5-12 anos)</option>
+      <option value="adolescente">Adolescente (&gt;12 anos)</option>
+    </select>
+  </div>
+  <div class="form-grp">
+    <label class="form-lbl">Peso (kg)</label>
+    <input id="cipe-peso-ucip" type="number" step="0.1" placeholder="ex: 12.5" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;box-sizing:border-box">
+  </div>
+</div>
+
+<div class="form-grp" style="margin-bottom:10px">
+  <label class="form-lbl">Estado de consciência na admissão</label>
+  <select id="cipe-consciencia" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px">
+    <option value="">—</option>
+    <option value="consciente">Consciente / colaborante</option>
+    <option value="somnolento">Somnolento / confuso</option>
+    <option value="sedado-ligeiro">Sedação ligeira (espontâneo a estímulos)</option>
+    <option value="sedado-profundo">Sedação profunda / VMI</option>
+    <option value="coma">Coma / GCS ≤ 8</option>
+  </select>
+</div>
+
+<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em">Dispositivos / Situações clínicas</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px">
+  ${['VMI / TET','Traqueostomia','VNI / HFNC','CVC','Cateter arterial','SNG / SOG','Algaliação','Drenagem torácica','Drenagem abdominal','Ostomia','NP total','TRRC / Diálise'].map(d=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;padding:5px 6px;background:var(--s2);border-radius:var(--rads);border:1px solid var(--b)"><input type="checkbox" value="${d}" style="accent-color:var(--p)"> ${d}</label>`).join('')}
+</div>
+
+<div class="form-grp" style="margin-bottom:14px">
+  <label class="form-lbl">Notas adicionais (opcional)</label>
+  <textarea id="cipe-notas-ucip" rows="2" placeholder="ex: imunodeprimido, pós-op dia 1, antibioterapia em curso, alergias..." style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+</div>
+
+<button class="btn btn-p" style="width:100%;font-size:14px;font-weight:700" onclick="_callCIPEAdm('ucip')">🤖 Gerar Plano CIPE para Admissão</button>
+<div id="cipe-adm-result" style="margin-top:14px"></div>`;
+
+    el('cipe-diag-ucip').addEventListener('change',function(){
+      const o=el('cipe-diag-ucip-outro');
+      if(o)o.style.display=this.value==='outro'?'block':'none';
+    });
+  }
+}
+
+function _renderCipeCons(unit){
+  const c=el('cipe-cons');if(!c)return;
+  c.innerHTML=`
+<div style="font-size:11px;color:var(--t2);margin-bottom:10px">Descreve a situação clínica, dúvida ou problema de enfermagem. O assistente IA sugere focos, diagnósticos e intervenções CIPE adequadas.</div>
+<textarea id="cipe-cons-txt" rows="4" placeholder="Ex: doente com SpO2 a cair, a aumentar suporte de O2, secreções abundantes, intolerância à alimentação..." style="width:100%;padding:10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;resize:vertical;box-sizing:border-box;margin-bottom:10px"></textarea>
+<button class="btn btn-p" style="width:100%;font-size:14px;font-weight:700" onclick="_callCIPECons('${unit}')">🤖 Consultar Assistente CIPE</button>
+<div id="cipe-cons-result" style="margin-top:14px"></div>`;
+}
+
+async function _callCIPEAdm(unit){
+  const btn=document.querySelector('[onclick="_callCIPEAdm(\''+unit+'\')"]');
+  const resultDiv=el('cipe-adm-result');
+  if(!resultDiv)return;
+
+  // Recolher dados do formulário
+  let diagVal='',diagTxt='',notas='',dispositivos=[],extraInfo='';
+  if(unit==='ucin'){
+    diagVal=el('cipe-diag-ucin')?.value||'';
+    const outroEl=el('cipe-diag-ucin-outro');
+    diagTxt=diagVal==='outro'?(outroEl?.value||''):(el('cipe-diag-ucin')?.options[el('cipe-diag-ucin')?.selectedIndex]?.text||'');
+    const ig=el('cipe-ig')?.value||'';
+    const idadePn=el('cipe-idade-pn')?.value||'';
+    const peso=el('cipe-peso-ucin')?.value||'';
+    notas=el('cipe-notas-ucin')?.value||'';
+    dispositivos=[...document.querySelectorAll('#cipe-devs-ucin input[type=checkbox]:checked')].map(cb=>cb.value);
+    extraInfo=`Idade gestacional: ${ig||'não especificada'}\nIdade pós-natal: ${idadePn||'não especificada'}\nPeso: ${peso?peso+'g':'não especificado'}`;
+  } else {
+    diagVal=el('cipe-diag-ucip')?.value||'';
+    const outroEl=el('cipe-diag-ucip-outro');
+    diagTxt=diagVal==='outro'?(outroEl?.value||''):(el('cipe-diag-ucip')?.options[el('cipe-diag-ucip')?.selectedIndex]?.text||'');
+    const idadeGrupo=el('cipe-idade-ucip')?.value||'';
+    const peso=el('cipe-peso-ucip')?.value||'';
+    const consciencia=el('cipe-consciencia')?.value||'';
+    notas=el('cipe-notas-ucip')?.value||'';
+    dispositivos=[...document.querySelectorAll('[onclick="_callCIPEAdm(\'ucip\')"]~div input[type=checkbox]:checked, #cipe-adm input[type=checkbox]:checked')].map(cb=>cb.value);
+    extraInfo=`Grupo etário: ${idadeGrupo||'não especificado'}\nPeso: ${peso?peso+'kg':'não especificado'}\nEstado de consciência: ${consciencia||'não especificado'}`;
+  }
+
+  if(!diagVal&&!diagTxt){
+    resultDiv.innerHTML=`<div style="color:var(--org);font-size:13px;padding:10px;background:var(--obg);border-radius:var(--rads)">⚠️ Seleciona pelo menos o diagnóstico / motivo de admissão.</div>`;
+    return;
+  }
+
+  resultDiv.innerHTML=`<div style="text-align:center;padding:18px;color:var(--t2);font-size:13px">⏳ A gerar plano CIPE...</div>`;
+  if(btn){btn.disabled=true;btn.textContent='⏳ A gerar...';}
+
+  const protocol=unit==='ucin'?_CIPE_UCIN:_CIPE_UCIP;
+  const unitLabel=unit==='ucin'?'UCIN (Neonatologia)':'UCIP (Pediatria)';
+  const userMsg=`Unidade: ${unitLabel}
+Diagnóstico / Motivo de admissão: ${diagTxt}
+${extraInfo}
+Dispositivos / situações clínicas presentes: ${dispositivos.length?dispositivos.join(', '):'nenhum especificado'}
+${notas?'Notas adicionais: '+notas:''}
+
+Com base neste perfil clínico e no protocolo CIPE acima, gera um plano de admissão de enfermagem estruturado com:
+
+1. **FOCOS CIPE A ABRIR** (Bloco A — sempre ativos na admissão, todos relevantes)
+2. **DIAGNÓSTICOS DE ENFERMAGEM** (os mais pertinentes para este doente)
+3. **INTERVENÇÕES PRIORITÁRIAS** (as mais urgentes nas primeiras horas)
+4. **BLOCO B — FOCOS E INTERVENÇÕES ESPECÍFICOS** para o diagnóstico principal
+5. **ALERTAS / NOTAS CLÍNICAS** (aspetos críticos a não esquecer nesta admissão)
+
+Responde em Português. Formato: secções com cabeçalhos a negrito, listas com bullet points (•). Sê concreto e clínico.`;
+
+  try{
+    const res=await callAI({
+      type:'cipe',
+      messages:[
+        {role:'system',content:`${protocol}\n\nÉs um assistente especializado em enfermagem de cuidados intensivos pediátricos e neonatais, com domínio da taxonomia CIPE. A tua função é ajudar enfermeiros a planear os focos, diagnósticos e intervenções CIPE mais adequados para cada doente, com base no protocolo da unidade acima. Responde sempre em Português de Portugal, de forma estruturada, precisa e clinicamente relevante.`},
+        {role:'user',content:userMsg}
+      ]
+    },25000);
+    _renderCIPEResult(res.text||'Sem resposta.','cipe-adm-result');
+  }catch(err){
+    resultDiv.innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px;background:var(--rbg);border-radius:var(--rads)">❌ ${err.message}</div>`;
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='🤖 Gerar Plano CIPE para Admissão';}
+  }
+}
+
+async function _callCIPECons(unit){
+  const txt=(el('cipe-cons-txt')?.value||'').trim();
+  const resultDiv=el('cipe-cons-result');
+  const btn=document.querySelector('[onclick="_callCIPECons(\''+unit+'\')"]');
+  if(!resultDiv)return;
+
+  if(!txt){
+    resultDiv.innerHTML=`<div style="color:var(--org);font-size:13px;padding:10px;background:var(--obg);border-radius:var(--rads)">⚠️ Descreve a situação ou dúvida antes de consultar o assistente.</div>`;
+    return;
+  }
+
+  resultDiv.innerHTML=`<div style="text-align:center;padding:18px;color:var(--t2);font-size:13px">⏳ A analisar a situação clínica...</div>`;
+  if(btn){btn.disabled=true;btn.textContent='⏳ A analisar...';}
+
+  const protocol=unit==='ucin'?_CIPE_UCIN:_CIPE_UCIP;
+  const unitLabel=unit==='ucin'?'UCIN (Neonatologia)':'UCIP (Pediatria)';
+
+  try{
+    const res=await callAI({
+      type:'cipe',
+      messages:[
+        {role:'system',content:`${protocol}\n\nÉs um assistente especializado em enfermagem de cuidados intensivos pediátricos e neonatais (${unitLabel}), com domínio da taxonomia CIPE. A tua função é ajudar enfermeiros a identificar focos, diagnósticos e intervenções CIPE adequados durante o internamento, com base em situações clínicas concretas. Responde sempre em Português de Portugal, de forma estruturada, precisa e clinicamente relevante.`},
+        {role:'user',content:`Unidade: ${unitLabel}\n\nSituação clínica / dúvida:\n${txt}\n\nCom base nesta situação e no protocolo CIPE acima, indica:\n1. **FOCOS CIPE RELEVANTES** para esta situação\n2. **DIAGNÓSTICOS DE ENFERMAGEM** mais adequados\n3. **INTERVENÇÕES DE ENFERMAGEM** recomendadas\n4. **ALERTAS / NOTAS CLÍNICAS** importantes\n\nSê concreto e clínico. Responde em Português.`}
+      ]
+    },25000);
+    _renderCIPEResult(res.text||'Sem resposta.','cipe-cons-result');
+  }catch(err){
+    resultDiv.innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px;background:var(--rbg);border-radius:var(--rads)">❌ ${err.message}</div>`;
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='🤖 Consultar Assistente CIPE';}
+  }
+}
+
+function _renderCIPEResult(text,targetId){
+  const d=el(targetId);if(!d)return;
+  // Converter markdown básico para HTML
+  let html=text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/^#{1,3}\s+(.+)$/gm,'<div style="font-weight:700;font-size:13px;color:var(--p);margin:10px 0 4px">$1</div>')
+    .replace(/^[•\-\*]\s+(.+)$/gm,'<div style="padding:2px 0 2px 14px;position:relative;font-size:13px"><span style="position:absolute;left:4px;color:var(--p)">•</span>$1</div>')
+    .replace(/\n{2,}/g,'</p><p style="margin:0">')
+    .replace(/\n/g,'<br>');
+
+  d.innerHTML=`
+<div style="background:var(--s2);border:1px solid var(--b2);border-radius:var(--rad);padding:14px;font-size:13px;line-height:1.6;color:var(--t)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--b)">
+    <span style="font-size:11px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:0.06em">Plano CIPE · Assistente IA</span>
+    <button onclick="navigator.clipboard?.writeText(document.getElementById('${targetId}')?.innerText||'');this.textContent='Copiado ✓';setTimeout(()=>this.textContent='Copiar',2000)" style="font-size:11px;padding:3px 9px;border-radius:5px;background:var(--s3);border:1px solid var(--b);color:var(--t2);cursor:pointer">Copiar</button>
+  </div>
+  <div>${html}</div>
+  <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--b);font-size:10px;color:var(--t3)">⚠️ Sugestão gerada por IA com base no protocolo CIPE da unidade. Valida sempre com o protocolo local e o julgamento clínico.</div>
+</div>`;
 }
 
 /* Reconecta automaticamente se havia código guardado na sessão anterior */
