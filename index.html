@@ -1052,6 +1052,7 @@ label{font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom
       <div id="capture-preview-wrap"><img id="capture-img" src="" alt=""></div>
       <div class="vt-full-grid" id="vitals-grid"></div>
       <div id="gluc-wrap" style="margin-bottom:8px"></div>
+      <div id="ocorrencias-wrap" style="margin-bottom:8px"></div>
       <button class="btn btn-p" style="width:100%;margin-bottom:10px;font-size:14px;font-weight:700" onclick="registarAvaliacao()">✅ Registar Avaliação</button>
       <div id="vitals-alert"></div>
       <div id="pews-wrap" class="pews-wrap"></div>
@@ -2953,7 +2954,12 @@ function isPINSet(){
 function resetPrivacyTimer(){
   if(_privTimer)clearTimeout(_privTimer);
   const ov=el('privacy-overlay');
-  if(ov)ov.classList.remove('visible');
+  /* Só esconde o overlay se: não há PIN activo, ou o overlay ainda não está visível.
+     Se o PIN está activo e o ecrã está bloqueado, nunca remover o overlay via timer —
+     só _pinCheckUnlock o pode fazer após validação correcta. */
+  if(ov && !(ov.classList.contains('visible') && isPINSet())){
+    ov.classList.remove('visible');
+  }
   if(ST.screen==='s-dashboard'||ST.screen==='s-detail'){
     _privTimer=setTimeout(activatePrivacy,PRIVACY_MS);
   }
@@ -3276,7 +3282,34 @@ function renInfoBar(){
   const p=ST.patients[ST.idx];if(!p)return;
   const {pills,alrg}=ptInfoPills(p);
   const e=el('pt-info-bar');if(!e)return;
-  e.innerHTML=`<div class="pt-info-name">${esc(p.name)}</div><div class="pt-info-meta">${pills.map(x=>`<span class="pt-info-pill">${x}</span>`).join('')}${alrg?`<span class="pt-info-pill alrg">⚠ ${alrg}</span>`:''}</div>`;
+  e.innerHTML=`
+<div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+  <div class="pt-info-name" style="flex:1;min-width:0">${esc(p.name)}</div>
+  <button onclick="_toggleWeightEdit()" title="Actualizar peso" style="background:rgba(255,255,255,.18);border:none;border-radius:6px;padding:2px 8px;color:#fff;font-size:11px;cursor:pointer;font-weight:700;white-space:nowrap">⚖ Peso</button>
+</div>
+<div class="pt-info-meta">${pills.map(x=>`<span class="pt-info-pill">${x}</span>`).join('')}${alrg?`<span class="pt-info-pill alrg">⚠ ${alrg}</span>`:''}</div>
+<div id="weight-edit-panel" style="display:none;margin-top:7px;display:none">
+  <div style="display:flex;gap:6px;align-items:center">
+    <input id="weight-edit-inp" type="number" step="0.001" min="0.1" max="350" placeholder="Novo peso (kg)" style="flex:1;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;font-size:12px;outline:none">
+    <button onclick="_saveWeight()" style="background:#fff;color:var(--pd);border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer">✓ Guardar</button>
+    <button onclick="_toggleWeightEdit()" style="background:rgba(255,255,255,.18);color:#fff;border:none;border-radius:6px;padding:5px 8px;font-size:12px;cursor:pointer">✕</button>
+  </div>
+</div>`;
+}
+function _toggleWeightEdit(){
+  const p=el('weight-edit-panel');if(!p)return;
+  const open=p.style.display!=='none';
+  p.style.display=open?'none':'block';
+  if(!open){const inp=el('weight-edit-inp');if(inp){const pat=ST.patients[ST.idx];inp.value=pat?.weightKg||'';inp.focus();inp.select();}}
+}
+function _saveWeight(){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const v=parseFloat(el('weight-edit-inp')?.value);
+  if(isNaN(v)||v<0.1||v>350){showToast('Peso inválido','err');return;}
+  const old=p.weightKg;
+  p.weightKg=v;
+  addNoteAuto(`⚖ Peso actualizado: ${v} kg${old?` (anterior: ${old} kg)`:''}`);
+  save();renInfoBar();showToast(`Peso actualizado: ${v} kg ✓`,'ok');
 }
 function updBadge(){const p=ST.patients[ST.idx];if(!p)return;const ac=alrtCnt(p);el('det-badge').innerHTML=ac>0?`<span class="badge badge-r">⚠ ${ac}</span>`:''}
 
@@ -3322,6 +3355,7 @@ function renVitals(){
   renVAlert();
   renPEWS();
   renVitalsHistory();
+  renOcorrencias();
 }
 /* Calcula tendência para um sinal vital com base nos últimos 3 registos do log */
 /* ─── PEWS — Pediatric Early Warning Score ────────────────────────────────
@@ -3514,6 +3548,48 @@ function renVitalsHistory(){
     </div>`;
   }).join('');
 }
+/* ── Ocorrências Clínicas ─────────────────────────────────────────────────── */
+const _OCORRENCIAS=[
+  {k:'bradicardia',   label:'🫀 Bradicardia',           color:'#ef4444'},
+  {k:'taquicardia',   label:'💓 Taquicardia',           color:'#f97316'},
+  {k:'dessaturacao',  label:'🫁 Dessaturação',           color:'#3b82f6'},
+  {k:'apneia',        label:'😮 Apneia/Pausa resp.',     color:'#8b5cf6'},
+  {k:'ritmo',         label:'⚡ Alt. do ritmo',          color:'#d946ef'},
+  {k:'convulsao',     label:'🧠 Convulsão',              color:'#dc2626'},
+  {k:'agitacao',      label:'😤 Agitação',               color:'#ea580c'},
+];
+
+function renOcorrencias(){
+  const ow=el('ocorrencias-wrap');if(!ow)return;
+  const p=ST.patients[ST.idx];if(!p)return;
+  const recent=(p.ocorrencias||[]).slice(-3).reverse();
+  const recentHtml=recent.length?`<div style="margin-top:7px;display:flex;flex-direction:column;gap:3px">`+
+    recent.map(o=>`<div style="font-size:10px;color:var(--t3);display:flex;gap:6px;align-items:center">
+      <span style="color:${_OCORRENCIAS.find(x=>x.k===o.k)?.color||'var(--t2)'};font-weight:700">${o.label}</span>
+      <span>${o.ts}</span>
+    </div>`).join('')+`</div>`:'';
+  ow.innerHTML=`
+  <div style="background:var(--s2);border-radius:10px;padding:10px 12px;border:1px solid var(--b)">
+    <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🚨 Ocorrências Clínicas</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px">
+      ${_OCORRENCIAS.map(o=>`<button onclick="_registarOcorrencia('${o.k}')" style="background:${o.color}18;border:1.5px solid ${o.color}55;border-radius:20px;padding:4px 10px;color:${o.color};font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">${o.label}</button>`).join('')}
+    </div>
+    ${recentHtml}
+  </div>`;
+}
+
+function _registarOcorrencia(k){
+  const p=ST.patients[ST.idx];if(!p)return;
+  const def=_OCORRENCIAS.find(o=>o.k===k);if(!def)return;
+  const now=new Date();
+  const ts=now.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+  if(!p.ocorrencias)p.ocorrencias=[];
+  p.ocorrencias.push({k,label:def.label,ts});
+  addNoteAuto(`🚨 Ocorrência: ${def.label} — ${ts}`);
+  save();renOcorrencias();
+  showToast(`${def.label} registada ✓`,'warn');
+}
+
 function openCam(){el('photo-input').click();}
 async function onPhoto(evt){if(!isPremium()){showPremiumModal('camera');evt.target.value='';return;}const file=evt.target.files[0];if(!file)return;const r=new FileReader();r.onload=async e=>{const b64=e.target.result.split(',')[1],mt=file.type||'image/jpeg';el('capture-img').src=e.target.result;el('capture-preview-wrap').style.display='block';const btn=el('cam-btn');if(btn){btn.textContent='⏳ A interpretar...';btn.disabled=true;}try{const res=await callAI({type:'vitals_image',b64,mt});const vals=JSON.parse((res.text||'{}').replace(/```json|```/g,'').trim());const p=ST.patients[ST.idx];if(!p)return;VITALS_DEF.forEach(v=>{if(vals[v.k]!==undefined)p.vitals[v.k]=String(vals[v.k]);});p.vitals.lastUp=new Date().toISOString();save();renVitals();alert(`✅ ${Object.keys(vals).length} valor(es) interpretado(s). Verifique!`);}catch(err){alert('Erro ao interpretar: '+err.message);}finally{el('capture-preview-wrap').style.display='none';if(btn){btn.textContent='📷 Capturar Ecrã';btn.disabled=false;}}};r.readAsDataURL(file);evt.target.value='';}
 
@@ -3591,8 +3667,26 @@ function renEnf(){
       <div class="sub-card-hdr">Cuidados &amp; Intervenções</div>
       <div style="padding:11px 13px">
         <div class="sect-lbl">🫁 Aspiração de Secreções</div>
-        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px">
-          ${['Orofaringe','Nasofaringe','TET','Traqueostomia'].map(l=>`<button class="i-chip" onclick="registarCuidado('Aspiração ${l}')" style="font-size:11px;padding:5px 10px">✓ ${l}</button>`).join('')}
+        <div style="margin-bottom:11px">
+          <button class="i-chip" onclick="_toggleAspPanel()" id="btn-asp-toggle" style="font-size:11px;padding:5px 10px">🫁 Caracterizar aspiração</button>
+          <div id="asp-panel" style="display:none;margin-top:8px;background:var(--s3);border-radius:var(--rads);padding:10px;border:1px solid var(--b)">
+            <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Local</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:9px">
+              ${['Orofaringe','Nasofaringe','TET','Traqueostomia'].map(l=>`<button class="asp-btn" data-group="local" data-val="${l}" onclick="_aspToggle(this,'local')" style="background:var(--s2);border:1.5px solid var(--b);border-radius:16px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer">${l}</button>`).join('')}
+            </div>
+            <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Quantidade</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:9px">
+              ${['Pequena','Moderada','Grande'].map(q=>`<button class="asp-btn" data-group="qtd" data-val="${q.toLowerCase()} quantidade" onclick="_aspRadio(this,'qtd')" style="background:var(--s2);border:1.5px solid var(--b);border-radius:16px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer">${q}</button>`).join('')}
+            </div>
+            <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Características</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:9px">
+              ${['Esverdeada','Purulenta','Hemática','Espessa','Fluida','Sialorreia','Mucosa','Serosa'].map(c=>`<button class="asp-btn" data-group="car" data-val="${c.toLowerCase()}" onclick="_aspToggle(this,'car')" style="background:var(--s2);border:1.5px solid var(--b);border-radius:16px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer">${c}</button>`).join('')}
+            </div>
+            <div style="display:flex;gap:6px;margin-top:4px">
+              <button class="btn btn-p btn-sm" style="flex:1;font-size:12px" onclick="_registarAspiracao()">✅ Registar</button>
+              <button class="btn btn-o btn-sm" style="font-size:12px" onclick="_toggleAspPanel()">Cancelar</button>
+            </div>
+          </div>
         </div>
         <div class="sect-lbl">🧪 Colheitas / Amostras</div>
         <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px">
@@ -3601,8 +3695,19 @@ function renEnf(){
         <div class="sect-lbl">🔄 Posicionamento</div>
         <div class="pos-wrap" style="margin-bottom:${pos?'4px':'11px'}">${posButtons}</div>
         ${pos?`<div class="pos-current" style="margin-bottom:9px">Posição actual: <strong>${pos}</strong></div>`:''}
-        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px">
-          <button class="i-chip" onclick="registarCuidado('Comunicação com a família')" style="font-size:11px;padding:5px 10px">👨‍👩‍👧 Comunicação com a família</button>
+        <div style="margin-bottom:11px">
+          <button class="i-chip" onclick="_toggleFamiliaPanel()" id="btn-familia" style="font-size:11px;padding:5px 10px">👨‍👩‍👧 Comunicação com a família</button>
+          <div id="familia-panel" style="display:none;margin-top:8px;background:var(--s3);border-radius:var(--rads);padding:10px;border:1px solid var(--b)">
+            <div style="font-size:11px;color:var(--t2);margin-bottom:6px;font-weight:600">Registo de comunicação com a família</div>
+            <div style="position:relative">
+              <textarea id="familia-txt" rows="3" placeholder="Descreve o conteúdo da comunicação, informações transmitidas, dúvidas dos pais..." style="width:100%;padding:8px 36px 8px 8px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:12px;resize:vertical;box-sizing:border-box"></textarea>
+              <button onclick="_familiaMic()" title="Ditar por voz" style="position:absolute;right:6px;top:6px;background:none;border:none;cursor:pointer;font-size:18px;color:var(--t2)" id="familia-mic-btn">🎤</button>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:6px">
+              <button class="btn btn-p btn-sm" style="flex:1;font-size:12px" onclick="_registarFamilia()">✅ Registar</button>
+              <button class="btn btn-o btn-sm" style="font-size:12px" onclick="_toggleFamiliaPanel()">Cancelar</button>
+            </div>
+          </div>
         </div>
         ${learnedChips.length?`<div class="sect-lbl">Aprendidos</div>${learnedChips}`:''}
         <div class="task-add"><input id="interv-inp" type="text" placeholder="Adicionar intervenção..."><button class="btn btn-o btn-sm" onclick="addIntervencao()">+</button></div>
@@ -3625,6 +3730,84 @@ function renEnf(){
     </div>`;
 }
 function focusNoteInp(){const e=el('note-inp-enf');if(e){e.focus();e.scrollIntoView({behavior:'smooth'});}}
+/* ── Aspiração de Secreções — painel de caracterização ───────────────────── */
+function _toggleAspPanel(){
+  const panel=el('asp-panel');if(!panel)return;
+  const open=panel.style.display!=='none';
+  panel.style.display=open?'none':'block';
+  if(!open){
+    /* reset all selections on open */
+    document.querySelectorAll('.asp-btn').forEach(b=>{
+      b.style.background='var(--s2)';
+      b.style.borderColor='var(--b)';
+      b.style.color='var(--t2)';
+    });
+  }
+}
+function _aspToggle(btn,group){
+  const sel=btn.style.borderColor==='var(--acc)'||btn.dataset.selected==='1';
+  if(sel){
+    btn.style.background='var(--s2)';btn.style.borderColor='var(--b)';btn.style.color='var(--t2)';
+    btn.dataset.selected='0';
+  }else{
+    btn.style.background='var(--acc)22';btn.style.borderColor='var(--acc)';btn.style.color='var(--acc)';
+    btn.dataset.selected='1';
+  }
+}
+function _aspRadio(btn,group){
+  document.querySelectorAll(`.asp-btn[data-group="${group}"]`).forEach(b=>{
+    b.style.background='var(--s2)';b.style.borderColor='var(--b)';b.style.color='var(--t2)';
+    b.dataset.selected='0';
+  });
+  btn.style.background='var(--acc)22';btn.style.borderColor='var(--acc)';btn.style.color='var(--acc)';
+  btn.dataset.selected='1';
+}
+function _registarAspiracao(){
+  const sel=k=>Array.from(document.querySelectorAll(`.asp-btn[data-group="${k}"][data-selected="1"]`)).map(b=>b.dataset.val);
+  const locais=sel('local');
+  const qtd=sel('qtd');
+  const car=sel('car');
+  if(!locais.length&&!qtd.length&&!car.length){showToast('Selecciona pelo menos uma opção','warn');return;}
+  let partes=[];
+  if(locais.length)partes.push(locais.join('+'));
+  if(qtd.length)partes.push(qtd[0]);
+  if(car.length)partes.push(car.join(', '));
+  const txt='Aspiração de secreções'+(partes.length?' — '+partes.join(' · '):'');
+  registarCuidado(txt);
+  _toggleAspPanel();
+}
+
+function _toggleFamiliaPanel(){
+  const p=el('familia-panel');if(!p)return;
+  const open=p.style.display!=='none';
+  p.style.display=open?'none':'block';
+  if(!open)setTimeout(()=>el('familia-txt')?.focus(),80);
+}
+function _registarFamilia(){
+  const txt=(el('familia-txt')?.value||'').trim();
+  if(!txt){showToast('Escreve o conteúdo da comunicação','warn');return;}
+  addNoteText('👨‍👩‍👧 Comunicação com a família: '+txt);
+  addTodoDone('Comunicação com a família');
+  save();renEnf();
+  showToast('Comunicação registada nas notas ✓','ok');
+}
+function _familiaMic(){
+  if(!isPremium()){showPremiumModal('voice');return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('Reconhecimento de voz não suportado neste browser','err');return;}
+  const btn=el('familia-mic-btn');
+  const r=new SR();r.lang='pt-PT';r.interimResults=false;r.maxAlternatives=1;
+  r.onstart=()=>{if(btn){btn.textContent='🔴';btn.style.color='var(--red)';}};
+  r.onresult=e=>{
+    const txt=e.results[0][0].transcript;
+    const ta=el('familia-txt');
+    if(ta)ta.value=(ta.value?ta.value+' ':'')+txt;
+    if(btn){btn.textContent='🎤';btn.style.color='var(--t2)';}
+  };
+  r.onerror=e=>{if(btn){btn.textContent='🎤';btn.style.color='var(--t2)';}showToast('Erro de microfone: '+e.error,'err');};
+  r.onend=()=>{if(btn){btn.textContent='🎤';btn.style.color='var(--t2)';}};
+  r.start();
+}
 function addNoteEnf(){const inp=el('note-inp-enf');if(!inp||!inp.value.trim())return;addNoteText(inp.value.trim());inp.value='';showToast('Nota registada ✓','ok');renEnf();}
 function addNoteText(txt){const p=ST.patients[ST.idx];if(!p)return;if(!p.notes)p.notes=[];p.notes.unshift({id:uid(),text:txt,timestamp:new Date().toISOString()});if(p.notes.length>50)p.notes=p.notes.slice(0,50);save();}
 function addNoteAuto(txt){addNoteText(txt);}
@@ -6203,11 +6386,49 @@ function _cipeToggle(id,fn){
   d.innerHTML=fn();
 }
 
+function _cipeIgVal(w){if(w<28)return'<28';if(w<=31)return'28-31';if(w<=35)return'32-35';if(w<=37)return'36-37';return'>=38';}
+function _cipeAgeGroupVal(d){if(d<28)return'neonato';if(d<365)return'lactente';if(d<1825)return'pre-escolar';if(d<4380)return'escolar';return'adolescente';}
+function _cipeAgeLabel(d){if(d<28)return d+'d (neonato)';if(d<365)return Math.floor(d/30)+'m (lactente)';return Math.floor(d/365)+'a';}
+function _cipeMic(targetId){
+  if(!isPremium()){showPremiumModal('voice');return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('Reconhecimento de voz não disponível neste browser','err');return;}
+  const r=new SR();r.lang='pt-PT';r.continuous=false;r.interimResults=false;
+  r.onresult=e=>{const t=e.results[0][0].transcript;const inp=el(targetId);if(inp)inp.value=(inp.value?inp.value+' ':'')+t;};
+  r.onerror=()=>showToast('Erro no microfone — verifica as permissões','err');
+  r.start();showToast('🎤 A ouvir...','ok');
+}
+
 function _renderCipeAdm(unit){
   const c=el('cipe-adm');if(!c)return;
+  const p=ST.patients?.[ST.idx];
+  const hasPt=!!(p&&p.name);
+  const devList=hasPt?(p.devices||[]).map(d=>d.label).filter(Boolean):[];
+  const medList=hasPt?(p.medications||[]).filter(m=>!m.suspended).map(m=>m.name+(m.dose?` ${m.dose}${m.unit||''}`:'')).filter(Boolean):[];
+  const igVal=hasPt&&p.gestWeeks?_cipeIgVal(p.gestWeeks):'';
+  const ageGrpVal=hasPt&&p.ageDays?_cipeAgeGroupVal(p.ageDays):'';
+  const pesoUcipVal=hasPt&&p.weightKg?p.weightKg:'';
+  const pesoUcinG=hasPt&&p.weightKg?Math.round(p.weightKg*1000):'';
+
+  const ptBanner=hasPt?`
+<div style="background:var(--acc)11;border:1px solid var(--acc)33;border-radius:8px;padding:9px 12px;margin-bottom:12px">
+  <div style="font-size:10px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">✅ Dados migrados automaticamente</div>
+  <div style="font-size:12px;color:var(--t2);display:flex;flex-wrap:wrap;gap:4px 12px">
+    <span>👤 <strong>${esc(p.name)}</strong> · Cama ${esc(p.bed||'—')}</span>
+    ${unit==='ucin'&&p.gestWeeks?`<span>🍼 IG ${p.gestWeeks}+${p.gestDays||0}sem</span>`:''}
+    ${unit==='ucip'&&p.ageDays?`<span>📅 ${_cipeAgeLabel(p.ageDays)}</span>`:''}
+    ${p.weightKg?`<span>⚖ ${unit==='ucin'?pesoUcinG+'g':pesoUcipVal+'kg'}</span>`:''}
+    ${p.diagMain?`<span style="color:var(--p);font-weight:600">🏥 ${esc(p.diagMain)}</span>`:''}
+    ${devList.length?`<span>🔌 ${esc(devList.join(', '))}</span>`:''}
+    ${medList.length?`<span>💊 ${esc(medList.slice(0,4).join(', '))}${medList.length>4?' + '+(medList.length-4)+' mais':''}</span>`:''}
+  </div>
+</div>`
+:`<div style="font-size:11px;color:var(--t3);margin-bottom:10px;padding:8px;background:var(--s2);border-radius:6px">ℹ️ Abre um doente para migrar os dados automaticamente, ou preenche o formulário abaixo.</div>`;
+
   if(unit==='ucin'){
     c.innerHTML=`
-<div style="font-size:11px;color:var(--t2);margin-bottom:10px">Preenche os dados do RN e o agente IA sugere os focos, diagnósticos e intervenções CIPE a abrir na admissão.</div>
+${ptBanner}
+<div style="font-size:11px;color:var(--t2);margin-bottom:10px">O agente IA sugere os focos, diagnósticos e intervenções CIPE a abrir na admissão com base nos dados do doente.</div>
 
 <div class="form-grp" style="margin-bottom:10px">
   <label class="form-lbl">Diagnóstico / Motivo de admissão</label>
@@ -6231,11 +6452,11 @@ function _renderCipeAdm(unit){
     <label class="form-lbl">Idade gestacional</label>
     <select id="cipe-ig" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px">
       <option value="">—</option>
-      <option value="<28">Extremo (&lt;28 sem)</option>
-      <option value="28-31">MBP (28-31 sem)</option>
-      <option value="32-35">BP (32-35 sem)</option>
-      <option value="36-37">Tardio (36-37 sem)</option>
-      <option value=">=38">Termo (≥38 sem)</option>
+      <option value="<28"${igVal==='<28'?' selected':''}>Extremo (&lt;28 sem)</option>
+      <option value="28-31"${igVal==='28-31'?' selected':''}>MBP (28-31 sem)</option>
+      <option value="32-35"${igVal==='32-35'?' selected':''}>BP (32-35 sem)</option>
+      <option value="36-37"${igVal==='36-37'?' selected':''}>Tardio (36-37 sem)</option>
+      <option value=">=38"${igVal==='>=38'?' selected':''}>Termo (≥38 sem)</option>
     </select>
   </div>
   <div class="form-grp">
@@ -6250,19 +6471,12 @@ function _renderCipeAdm(unit){
   </div>
 </div>
 
-<div class="form-grp" style="margin-bottom:10px">
-  <label class="form-lbl">Peso (g)</label>
-  <input id="cipe-peso-ucin" type="number" placeholder="ex: 1250" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;box-sizing:border-box">
-</div>
-
-<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em">Dispositivos / Situações clínicas</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px" id="cipe-devs-ucin">
-  ${['Incubadora','VMI / TET','CPAP / HFNC','CVC / PICC','Cateter umbilical (CUV/CAU)','SNG / SOG','Algaliação','Ostomia','Hipotermia terapêutica','Fototerapia','Prostaglandina E1','NP total'].map(d=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;padding:5px 6px;background:var(--s2);border-radius:var(--rads);border:1px solid var(--b)"><input type="checkbox" value="${d}" style="accent-color:var(--p)"> ${d}</label>`).join('')}
-</div>
-
 <div class="form-grp" style="margin-bottom:14px">
   <label class="form-lbl">Notas adicionais (opcional)</label>
-  <textarea id="cipe-notas-ucin" rows="2" placeholder="ex: mãe GBS+, corticóides antenatais completos, cirurgia planeada..." style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+  <div style="position:relative">
+    <textarea id="cipe-notas-ucin" rows="3" placeholder="ex: mãe GBS+, corticóides antenatais, cirurgia planeada, alergias..." style="width:100%;padding:8px 36px 8px 8px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+    <button onclick="_cipeMic('cipe-notas-ucin')" title="Ditar por voz" style="position:absolute;right:6px;top:6px;background:none;border:none;cursor:pointer;font-size:18px;color:var(--t2)">🎤</button>
+  </div>
 </div>
 
 <button class="btn btn-p" style="width:100%;font-size:14px;font-weight:700" onclick="_callCIPEAdm('ucin')">🤖 Gerar Plano CIPE para Admissão</button>
@@ -6274,7 +6488,8 @@ function _renderCipeAdm(unit){
     });
   } else {
     c.innerHTML=`
-<div style="font-size:11px;color:var(--t2);margin-bottom:10px">Preenche os dados do doente e o agente IA sugere os focos, diagnósticos e intervenções CIPE a abrir na admissão.</div>
+${ptBanner}
+<div style="font-size:11px;color:var(--t2);margin-bottom:10px">O agente IA sugere os focos, diagnósticos e intervenções CIPE a abrir na admissão com base nos dados do doente.</div>
 
 <div class="form-grp" style="margin-bottom:10px">
   <label class="form-lbl">Diagnóstico / Motivo de admissão</label>
@@ -6298,16 +6513,16 @@ function _renderCipeAdm(unit){
     <label class="form-lbl">Grupo etário</label>
     <select id="cipe-idade-ucip" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px">
       <option value="">—</option>
-      <option value="neonato">Neonato (&lt;28 dias)</option>
-      <option value="lactente">Lactente (1-12 meses)</option>
-      <option value="pre-escolar">Pré-escolar (1-5 anos)</option>
-      <option value="escolar">Escolar (5-12 anos)</option>
-      <option value="adolescente">Adolescente (&gt;12 anos)</option>
+      <option value="neonato"${ageGrpVal==='neonato'?' selected':''}>Neonato (&lt;28 dias)</option>
+      <option value="lactente"${ageGrpVal==='lactente'?' selected':''}>Lactente (1-12 meses)</option>
+      <option value="pre-escolar"${ageGrpVal==='pre-escolar'?' selected':''}>Pré-escolar (1-5 anos)</option>
+      <option value="escolar"${ageGrpVal==='escolar'?' selected':''}>Escolar (5-12 anos)</option>
+      <option value="adolescente"${ageGrpVal==='adolescente'?' selected':''}>Adolescente (&gt;12 anos)</option>
     </select>
   </div>
   <div class="form-grp">
     <label class="form-lbl">Peso (kg)</label>
-    <input id="cipe-peso-ucip" type="number" step="0.1" placeholder="ex: 12.5" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;box-sizing:border-box">
+    <input id="cipe-peso-ucip" type="number" step="0.1" placeholder="ex: 12.5" value="${pesoUcipVal}" style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;box-sizing:border-box">
   </div>
 </div>
 
@@ -6323,14 +6538,12 @@ function _renderCipeAdm(unit){
   </select>
 </div>
 
-<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em">Dispositivos / Situações clínicas</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px">
-  ${['VMI / TET','Traqueostomia','VNI / HFNC','CVC','Cateter arterial','SNG / SOG','Algaliação','Drenagem torácica','Drenagem abdominal','Ostomia','NP total','TRRC / Diálise'].map(d=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;padding:5px 6px;background:var(--s2);border-radius:var(--rads);border:1px solid var(--b)"><input type="checkbox" value="${d}" style="accent-color:var(--p)"> ${d}</label>`).join('')}
-</div>
-
 <div class="form-grp" style="margin-bottom:14px">
   <label class="form-lbl">Notas adicionais (opcional)</label>
-  <textarea id="cipe-notas-ucip" rows="2" placeholder="ex: imunodeprimido, pós-op dia 1, antibioterapia em curso, alergias..." style="width:100%;padding:8px 10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+  <div style="position:relative">
+    <textarea id="cipe-notas-ucip" rows="3" placeholder="ex: imunodeprimido, pós-op dia 1, antibioterapia em curso, alergias..." style="width:100%;padding:8px 36px 8px 8px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+    <button onclick="_cipeMic('cipe-notas-ucip')" title="Ditar por voz" style="position:absolute;right:6px;top:6px;background:none;border:none;cursor:pointer;font-size:18px;color:var(--t2)">🎤</button>
+  </div>
 </div>
 
 <button class="btn btn-p" style="width:100%;font-size:14px;font-weight:700" onclick="_callCIPEAdm('ucip')">🤖 Gerar Plano CIPE para Admissão</button>
@@ -6345,9 +6558,15 @@ function _renderCipeAdm(unit){
 
 function _renderCipeCons(unit){
   const c=el('cipe-cons');if(!c)return;
+  const p=ST.patients?.[ST.idx];
+  const ptHint=p&&p.name?`<div style="background:var(--acc)11;border:1px solid var(--acc)33;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--t2)">👤 <strong>${esc(p.name)}</strong>${p.diagMain?' — '+esc(p.diagMain):''}</div>`:'';
   c.innerHTML=`
-<div style="font-size:11px;color:var(--t2);margin-bottom:10px">Descreve a situação clínica, dúvida ou problema de enfermagem. O assistente IA sugere focos, diagnósticos e intervenções CIPE adequadas.</div>
-<textarea id="cipe-cons-txt" rows="4" placeholder="Ex: doente com SpO2 a cair, a aumentar suporte de O2, secreções abundantes, intolerância à alimentação..." style="width:100%;padding:10px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;resize:vertical;box-sizing:border-box;margin-bottom:10px"></textarea>
+${ptHint}
+<div style="font-size:11px;color:var(--t2);margin-bottom:8px">Descreve a situação clínica, dúvida ou problema de enfermagem. O assistente IA sugere focos, diagnósticos e intervenções CIPE adequadas.</div>
+<div style="position:relative;margin-bottom:10px">
+  <textarea id="cipe-cons-txt" rows="5" placeholder="Ex: doente com SpO2 a cair, a aumentar suporte de O2, secreções abundantes, intolerância à alimentação..." style="width:100%;padding:8px 36px 8px 8px;border-radius:var(--rads);border:1px solid var(--b2);background:var(--s2);color:var(--t);font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+  <button onclick="_cipeMic('cipe-cons-txt')" title="Ditar por voz" style="position:absolute;right:6px;top:6px;background:none;border:none;cursor:pointer;font-size:18px;color:var(--t2)">🎤</button>
+</div>
 <button class="btn btn-p" style="width:100%;font-size:14px;font-weight:700" onclick="_callCIPECons('${unit}')">🤖 Consultar Assistente CIPE</button>
 <div id="cipe-cons-result" style="margin-top:14px"></div>`;
 }
@@ -6357,28 +6576,29 @@ async function _callCIPEAdm(unit){
   const resultDiv=el('cipe-adm-result');
   if(!resultDiv)return;
 
-  // Recolher dados do formulário
-  let diagVal='',diagTxt='',notas='',dispositivos=[],extraInfo='';
+  const p=ST.patients?.[ST.idx];
+  const devList=p?(p.devices||[]).map(d=>d.label).filter(Boolean):[];
+  const medList=p?(p.medications||[]).filter(m=>!m.suspended).map(m=>m.name+(m.dose?` ${m.dose}${m.unit||''}`:'')).filter(Boolean):[];
+
+  let diagVal='',diagTxt='',notas='',extraInfo='';
   if(unit==='ucin'){
     diagVal=el('cipe-diag-ucin')?.value||'';
     const outroEl=el('cipe-diag-ucin-outro');
     diagTxt=diagVal==='outro'?(outroEl?.value||''):(el('cipe-diag-ucin')?.options[el('cipe-diag-ucin')?.selectedIndex]?.text||'');
     const ig=el('cipe-ig')?.value||'';
     const idadePn=el('cipe-idade-pn')?.value||'';
-    const peso=el('cipe-peso-ucin')?.value||'';
+    const pesoG=p&&p.weightKg?Math.round(p.weightKg*1000):'';
     notas=el('cipe-notas-ucin')?.value||'';
-    dispositivos=[...document.querySelectorAll('#cipe-devs-ucin input[type=checkbox]:checked')].map(cb=>cb.value);
-    extraInfo=`Idade gestacional: ${ig||'não especificada'}\nIdade pós-natal: ${idadePn||'não especificada'}\nPeso: ${peso?peso+'g':'não especificado'}`;
+    extraInfo=`Idade gestacional: ${ig||(p&&p.gestWeeks?`${p.gestWeeks}+${p.gestDays||0}sem`:'não especificada')}\nIdade pós-natal: ${idadePn||'não especificada'}\nPeso: ${pesoG?pesoG+'g':'não especificado'}`;
   } else {
     diagVal=el('cipe-diag-ucip')?.value||'';
     const outroEl=el('cipe-diag-ucip-outro');
     diagTxt=diagVal==='outro'?(outroEl?.value||''):(el('cipe-diag-ucip')?.options[el('cipe-diag-ucip')?.selectedIndex]?.text||'');
     const idadeGrupo=el('cipe-idade-ucip')?.value||'';
-    const peso=el('cipe-peso-ucip')?.value||'';
+    const peso=el('cipe-peso-ucip')?.value||(p&&p.weightKg?p.weightKg:'');
     const consciencia=el('cipe-consciencia')?.value||'';
     notas=el('cipe-notas-ucip')?.value||'';
-    dispositivos=[...document.querySelectorAll('[onclick="_callCIPEAdm(\'ucip\')"]~div input[type=checkbox]:checked, #cipe-adm input[type=checkbox]:checked')].map(cb=>cb.value);
-    extraInfo=`Grupo etário: ${idadeGrupo||'não especificado'}\nPeso: ${peso?peso+'kg':'não especificado'}\nEstado de consciência: ${consciencia||'não especificado'}`;
+    extraInfo=`Grupo etário: ${idadeGrupo||(p&&p.ageDays?_cipeAgeLabel(p.ageDays):'não especificado')}\nPeso: ${peso?peso+'kg':'não especificado'}\nEstado de consciência: ${consciencia||'não especificado'}`;
   }
 
   if(!diagVal&&!diagTxt){
@@ -6391,10 +6611,13 @@ async function _callCIPEAdm(unit){
 
   const protocol=unit==='ucin'?_CIPE_UCIN:_CIPE_UCIP;
   const unitLabel=unit==='ucin'?'UCIN (Neonatologia)':'UCIP (Pediatria)';
+  const diagMainCtx=p&&p.diagMain?`\nDiagnóstico registado na app: ${p.diagMain}`:'';
+  const devCtx=devList.length?`\nDispositivos activos: ${devList.join(', ')}`:'';
+  const medCtx=medList.length?`\nMedicação activa: ${medList.join(', ')}`:'';
+
   const userMsg=`Unidade: ${unitLabel}
-Diagnóstico / Motivo de admissão: ${diagTxt}
-${extraInfo}
-Dispositivos / situações clínicas presentes: ${dispositivos.length?dispositivos.join(', '):'nenhum especificado'}
+Diagnóstico / Motivo de admissão: ${diagTxt}${diagMainCtx}
+${extraInfo}${devCtx}${medCtx}
 ${notas?'Notas adicionais: '+notas:''}
 
 Com base neste perfil clínico e no protocolo CIPE acima, gera um plano de admissão de enfermagem estruturado com:
@@ -6439,13 +6662,17 @@ async function _callCIPECons(unit){
 
   const protocol=unit==='ucin'?_CIPE_UCIN:_CIPE_UCIP;
   const unitLabel=unit==='ucin'?'UCIN (Neonatologia)':'UCIP (Pediatria)';
+  const p=ST.patients?.[ST.idx];
+  const devList2=p?(p.devices||[]).map(d=>d.label).filter(Boolean):[];
+  const medList2=p?(p.medications||[]).filter(m=>!m.suspended).map(m=>m.name).filter(Boolean):[];
+  const ptCtx=p&&p.name?`\n\nContexto do doente: ${p.name}${p.diagMain?' — '+p.diagMain:''}${devList2.length?'\nDispositivos: '+devList2.join(', '):''}${medList2.length?'\nMedicação: '+medList2.join(', '):''}`:' ';
 
   try{
     const res=await callAI({
       type:'cipe',
       messages:[
         {role:'system',content:`${protocol}\n\nÉs um assistente especializado em enfermagem de cuidados intensivos pediátricos e neonatais (${unitLabel}), com domínio da taxonomia CIPE. A tua função é ajudar enfermeiros a identificar focos, diagnósticos e intervenções CIPE adequados durante o internamento, com base em situações clínicas concretas. Responde sempre em Português de Portugal, de forma estruturada, precisa e clinicamente relevante.`},
-        {role:'user',content:`Unidade: ${unitLabel}\n\nSituação clínica / dúvida:\n${txt}\n\nCom base nesta situação e no protocolo CIPE acima, indica:\n1. **FOCOS CIPE RELEVANTES** para esta situação\n2. **DIAGNÓSTICOS DE ENFERMAGEM** mais adequados\n3. **INTERVENÇÕES DE ENFERMAGEM** recomendadas\n4. **ALERTAS / NOTAS CLÍNICAS** importantes\n\nSê concreto e clínico. Responde em Português.`}
+        {role:'user',content:`Unidade: ${unitLabel}${ptCtx}\n\nSituação clínica / dúvida:\n${txt}\n\nCom base nesta situação e no protocolo CIPE acima, indica:\n1. **FOCOS CIPE RELEVANTES** para esta situação\n2. **DIAGNÓSTICOS DE ENFERMAGEM** mais adequados\n3. **INTERVENÇÕES DE ENFERMAGEM** recomendadas\n4. **ALERTAS / NOTAS CLÍNICAS** importantes\n\nSê concreto e clínico. Responde em Português.`}
       ]
     },25000);
     _renderCIPEResult(res.text||'Sem resposta.','cipe-cons-result');
