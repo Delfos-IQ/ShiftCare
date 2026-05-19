@@ -5,6 +5,28 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-PT/1.0.0/).
 
 ---
 
+## [3.6.0] — Maio 2026
+
+### Adicionado
+- **Assistente CIPE com IA** — nova pestaña "Assist. CIPE" no detalhe de cada doente, com dois modos:
+  - **Admissão**: formulário estruturado (unidade UCIN/UCIP, diagnóstico, idade gestacional, peso, dispositivos, situações clínicas) que gera automaticamente via IA um plano completo de focos, diagnósticos e intervenções CIPE para a admissão
+  - **Consulta**: caixa de linguagem natural para situações ou dúvidas durante o internamento, com sugestão contextualizada de focos e intervenções CIPE
+- Protocolos CIPE UCIN e UCIP embebidos como base de conhecimento do assistente (taxonomia CIPE, Blocos A e B com 9+14 secções universais e 8 grupos diagnósticos por unidade)
+- Novo tipo `cipe` no Cloudflare Worker com 2500 tokens e prefixo de contexto clínico
+
+### Corrigido
+- Strings de versão internas (resumo de turno, pie ISBAR) actualizadas de v3.4.0 → v3.6.0
+- Cabeçalho da app actualizado de v3.5.0 → v3.6.0
+
+---
+
+## [3.5.7] — Maio 2026
+
+### Corrigido
+- Auditoria de segurança: PIN reforçado com PBKDF2+salt; XSS corrigido; uid() migrado para crypto.randomUUID(); validação backupId no worker; service worker actualizado
+
+---
+
 ## [3.5.1] — Abril 2026
 
 ### Corrigido
